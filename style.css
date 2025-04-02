@@ -238,7 +238,7 @@ nav ul li a {
     justify-content: flex-start;
     transition: right 0.4s ease-in-out;
     padding-top: 20px;
-    margin-top: 20px;
+    margin-top: 15px;
   }
   nav ul li:first-child {
     margin-top: 30%;
