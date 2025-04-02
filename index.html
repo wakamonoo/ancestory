@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+    <script
+      src="https://kit.fontawesome.com/c15538e89d.js"
+      crossorigin="anonymous"
+    ></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div id="header">
+      <nav>
+        <img src="images/logo.png" title="wakamonoo" class="logo" />
+        <ul id="sidemenu">
+          <li><a href="#header">Home</a></li>
+          <li><a href="#stories">Stories</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="login.html">Login</a></li>
+          <li><a href="settings.html">Settings</a></li>
+          <i class="fas fa-times" onclick="closemenu()"></i>
+        </ul>
+        <i class="fas fa-bars" onclick="openmenu()"></i>
+      </nav>
+      <h1 class="welcome">Welcome to AnceStory, your daily web-app for local folk stories!</h1>
+      <div class="carousel-container">
+        <div id="carousel">
+          <img src="images/revved7.png" alt="Image 1" />
+          <img src="images/revved8.png" alt="Image 2" />
+          <img src="images/revved9.png" alt="Image 3" />
+        </div>
+        <div class="buttons">
+          <button onclick="goToSlide(0)" class="active"></button>
+          <button onclick="goToSlide(1)"></button>
+          <button onclick="goToSlide(2)"></button>
+        </div>
+      </div>
+      </div>
+
+      <!-- Pagination Dots -->
+      
+
+    <script>
+      let currentIndex = 0;
+      const carousel = document.getElementById("carousel");
+      const buttons = document.querySelectorAll(".buttons button");
+
+      function updateCarousel() {
+        carousel.style.transform = `translateX(-${currentIndex * 100}%)`;
+        buttons.forEach((btn, index) => {
+          btn.classList.toggle("active", index === currentIndex);
+        });
+      }
+
+      function goToSlide(index) {
+        currentIndex = index;
+        updateCarousel();
+      }
+
+      function nextSlide() {
+        currentIndex = (currentIndex + 1) % 3;
+        updateCarousel();
+      }
+
+      setInterval(nextSlide, 3000); // Auto-scroll every 3 seconds
+
+      // Hamburger menu functions
+      function openmenu() {
+        document.getElementById("sidemenu").style.right = "0";
+        document.querySelector(".fa-bars").style.display = "none"; // Hide hamburger
+        document.querySelector(".fa-times").style.display = "block"; // Show close button
+      }
+
+      function closemenu() {
+        document.getElementById("sidemenu").style.right = "-200px";
+        document.querySelector(".fa-bars").style.display = "block"; // Show hamburger
+        document.querySelector(".fa-times").style.display = "none"; // Hide close button
+      }
+    </script>
+  </body>
+</html>

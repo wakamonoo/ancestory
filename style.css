@@ -1,0 +1,143 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: auto;
+  overflow-x: hidden;
+  width: 100vw;
+}
+
+body {
+  background-color: #F1D1B5;
+  color: #f1f3f1;
+  margin: 0;
+}
+
+#header {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+
+@media only screen and (max-width: 600px) {
+  .logo {
+    width: 20%;
+  }
+  .welcome {
+    margin-top: 20%;
+    margin-bottom: -20%;
+    padding: 5%;
+    text-align: center;
+    color: #333333;
+    font-family: 'Sacramento', cursive;
+  }
+
+  .carousel-container {
+    width: 90%; /* Default width */
+    height: 50%; /* Default height */
+    overflow: hidden;
+    position: relative;
+    margin: auto;
+    border-radius: 10px; 
+    
+  }
+  #carousel {
+    display: flex;
+    width: 300%;
+    transition: transform 0.5s ease-in-out;
+  }
+
+  #carousel img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+/* Navbar styles */
+nav {
+  position: relative;
+  background-color: #FF6F61;
+  padding: 10px;
+  z-index: 5;
+}
+
+nav ul {
+  position: fixed;
+  top: 0;
+  right: -200px;
+  width: 200px;
+  height: 100vh;
+  background: #FFB84D;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: right 0.4s ease-in-out;
+  padding-top: 50px; /* Adjust this value to create space between navbar and links */
+}
+
+nav ul li {
+  list-style: none;
+}
+
+nav ul li a {
+  color: #333333;
+  text-decoration: none;
+  font-size: 18px;
+  margin-left: 10%;
+  margin-top: 20px; /* Adjust this for space between the links */
+}
+
+nav .fa-bars {
+  font-size: 24px;
+  color: #FFB84D;
+  cursor: pointer;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: block;
+}
+
+nav .fa-times {
+  font-size: 24px;
+  color: #333333;
+  cursor: pointer;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: none;
+}
+
+
+  /* Dots (Pagination) */
+  .buttons {
+    display: flex;
+    justify-content: center;
+    position: absolute; /* Make sure it’s positioned inside the container */
+    bottom: 5%; /* Position the dots at the bottom of the carousel */
+    left: 0;
+    right: 0;
+    z-index: 1; /* Ensure it's above other elements */
+  }
+
+  .buttons button {
+    width: 12px;
+    height: 12px;
+    margin: 5px;
+    border: none;
+    border-radius: 50%;
+    background-color: #FF6F61;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .buttons button.active {
+    background-color: #FFB84D; /* Add active state color */
+  }
+}

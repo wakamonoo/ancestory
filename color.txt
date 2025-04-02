@@ -1,0 +1,14 @@
+How to Use These Colors:
+Background:
+Use Peachy Beige (#F1D1B5) for your main background to keep things light and warm.
+
+Primary Buttons:
+Apply Golden Yellow (#FFB84D) for primary buttons like "Login" or "Settings," which will stand out and feel welcoming.
+
+Accent Elements (Links, Navigation):
+Use Warm Coral (#FF6F61) for call-to-action buttons, navigation highlights, or any elements that you want to draw attention to.
+
+Hover States & Secondary Buttons:
+Rich Salmon (#FF9A8B) can be used for hover effects or secondary buttons to add contrast without making the UI too harsh.
+
+#333333 - font
