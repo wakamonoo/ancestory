@@ -204,6 +204,7 @@ nav ul li a:hover {
 }
 
 #storyContainer {
+  margin-top: -5%;
   width: 60%;
   flex-grow: 1; /* Allow the container to fill the remaining height */
   background-color: #f1d1b5;
