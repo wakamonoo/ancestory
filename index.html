@@ -12,9 +12,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
   </head>
   <body>
+    
     <div id="header">
       <nav>
-        <img src="images/logo.png" title="wakamonoo" class="logo" />
+        <img src="images/logo.png" title="ancestory" class="logo" />
         
         <div class="nav-icons">
             <i class="fa fa-search search"></i>
@@ -31,13 +32,12 @@
         </ul>
       </div>
     </nav>
-    
-      
+ 
       </nav>
       <h1 class="welcome">Welcome to AnceStory, your daily web-app for local folk stories!</h1>
       <div class="carousel-container">
         <div id="carousel">
-          <img src="images/1.png" alt="Image 1" />
+            <img src="images/1.png" alt="Image 1" />
           <img src="images/2.png" alt="Image 2" />
           <img src="images/3.png" alt="Image 3" />
         </div>
@@ -48,6 +48,25 @@
         </div>
       </div>
       </div>
+
+
+
+      <div id="stories">
+        <h1 class="storytitle">Stories</h1>
+        <h1>Add a Story</h1>
+  <form id="storyForm">
+    <input type="text" id="title" placeholder="Story Title" required><br>
+    <input type="text" id="origin" placeholder="Origin" required><br>
+    <textarea id="content" placeholder="Enter the story..." required></textarea><br>
+    <input type="file" id="image"><br>
+    <button type="submit">Add Story</button>
+  </form>
+      </div>
+
+      <div id="about">
+        <h1 class="storytitle">About</h1>
+      </div>
     <script src="script.js"></script>
+    <script src="firebase-config.js"></script>
   </body>
 </html>

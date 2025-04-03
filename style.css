@@ -7,6 +7,7 @@
 
 html,
 body {
+  background-color: #ff6f61;
   overscroll-behavior-x: none;
   overscroll-behavior-y: auto;
   overflow-x: hidden;
@@ -14,12 +15,12 @@ body {
 }
 
 body {
-  background-color: #f1d1b5;
   color: #f1f3f1;
   margin: 0;
 }
 
 #header {
+  background-color: #f1d1b5;
   width: 100%;
   height: 100vh;
   display: flex;
@@ -27,25 +28,25 @@ body {
 }
 
 .logo {
-  width: 10vh;
+  width: 20vh;
   margin-left: 5%;
 }
 
 .search {
   font-size: 3vh;
-  color: #ffb84d;
+  color: #20462f;
 }
 
 .search:hover {
-  color: #ff9a8b;
+  color: #ffb84d;
   cursor: pointer;
 }
 
 .welcome {
-  font-size: 3vh;
+  font-size: 5vh;
   padding: 5%;
   text-align: center;
-  color: #333333;
+  color: #20462f;
 }
 
 .carousel-container {
@@ -54,20 +55,21 @@ body {
   overflow: hidden;
   position: relative;
   margin: auto;
-  border-radius: 10px;
   margin-bottom: 5%;
 }
 
 #carousel {
   display: flex;
-  width: 100%;
+  width: 100%; 
+  height: 100%;
   transition: transform 0.5s ease-in-out;
 }
 
 #carousel img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  flex: 0 0 100%; 
 }
 
 .buttons {
@@ -119,10 +121,10 @@ nav {
 nav ul {
   list-style: none;
   display: flex;
-  flex-direction: row; 
+  flex-direction: row;
   align-items: center;
-  justify-content: flex-start; 
-  gap: 20px; 
+  justify-content: flex-start;
+  gap: 20px;
   margin: 0;
   padding: 0;
 }
@@ -132,52 +134,61 @@ nav ul li {
 }
 
 nav ul li a {
-  color: #ffffff;
+  color: #20462f;
   font-size: 18px;
   text-decoration: none;
   padding: 10px 15px;
 }
+nav ul li a:hover {
+  color: #ffb84d;
+}
 
+
+
+.storytitle {
+  font-size: 5vh;
+  margin-bottom: 20px;
+  color: #20462f;
+  padding: 5%;
+  margin-left: 10%;
+}
 
 /*-------------------------Responsive Design-------------------------*/
 @media only screen and (max-width: 600px) {
   .logo {
-    width: 20%;
+    margin-top: 2%;
+    width: 20vh;
   }
   .search {
     font-size: 3vh;
-    color: #ffb84d;
-  }
-  .search:hover {
-    color: #ff9a8b;
   }
   .welcome {
-    font-size: 3vh;
     margin-top: 20%;
     margin-bottom: -20%;
     padding: 5%;
     text-align: center;
-    color: #333333;
+    color: #20462f;
   }
 
   .carousel-container {
-    width: 90vw;
-    height: 60vh;
+    width: 80vw;
+    height: 40vh;
     overflow: hidden;
     position: relative;
     margin: auto;
-    border-radius: 10px;
   }
   #carousel {
     display: flex;
-    width: 300%;
+    width: 100%;
+    height: 100%;
     transition: transform 0.5s ease-in-out;
   }
 
   #carousel img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    flex: 0 0 100%;
   }
 
   .buttons {
@@ -248,7 +259,7 @@ nav ul li a {
   }
 
   nav ul li a {
-    color: #333333;
+    color: #20462f;
     font-size: 18px;
     text-decoration: none;
     display: block;

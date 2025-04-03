@@ -11,4 +11,4 @@ Use Warm Coral (#FF6F61) for call-to-action buttons, navigation highlights, or a
 Hover States & Secondary Buttons:
 Rich Salmon (#FF9A8B) can be used for hover effects or secondary buttons to add contrast without making the UI too harsh.
 
-#333333 - font
+#20462f
