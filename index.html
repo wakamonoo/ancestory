@@ -62,7 +62,6 @@
         <h1 class="storytitle">About</h1>
       </div>
 
-
       <script src="script.js"></script>
         <script type="module">
           // Import necessary Firebase modules
@@ -101,15 +100,14 @@
         
                 let imageTag = "";
                 if (data.images) {
-                  imageTag = `<img src="${data.images}" alt="${data.title}" class="story-img">`;
+                  // If the images field is available, make sure it's a valid URL.
+                  imageTag = `<a href="story-detail.html?storyId=${doc.id}"><img src="${data.images}" alt="${data.title}" class="story-img" /></a>`;
                 }
         
                 // Construct HTML for each story
                 storiesHTML += `
                   <div class="story-card">
                     <h2>${data.title}</h2>
-                    <p><strong>Origin:</strong> ${data.origin}</p>
-                    <p>${data.story}</p>
                     ${imageTag}
                   </div>
                 `;
@@ -130,7 +128,6 @@
           // Fetch stories when the page is loaded
           fetchStories();
         </script>
-      
 
   </body>
 </html>

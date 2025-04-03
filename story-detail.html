@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Story Details</title>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+      import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
+        authDomain: "ancestory-c068e.firebaseapp.com",
+        databaseURL: "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "ancestory-c068e",
+        storageBucket: "ancestory-c068e.firebasestorage.app",
+        messagingSenderId: "579709470015",
+        appId: "1:579709470015:web:adbbc5cba7f4e53f617f8a",
+        measurementId: "G-S5SQWC7PEM"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);  // Initialize Firestore
+
+      // Function to fetch story details from Firestore using the story ID from the URL
+      async function fetchStoryDetails() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const storyId = urlParams.get('storyId');
+        
+        if (!storyId) {
+          console.error("Story ID not found");
+          return;
+        }
+
+        const docRef = doc(db, "Stories", storyId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          document.getElementById('story-title').innerText = data.title;
+          document.getElementById('story-origin').innerText = data.origin;
+          document.getElementById('story-content').innerText = data.story;
+          if (data.images) {
+            document.getElementById('story-image').src = data.images;
+          }
+        } else {
+          console.log("No such document!");
+        }
+      }
+
+      window.onload = fetchStoryDetails;
+    </script>
+  </head>
+  <body>
+    <div>
+      <h1 id="story-title">Story Title</h1>
+      <p id="story-origin">Origin: </p>
+      <img id="story-image" alt="Story Image" />
+      <p id="story-content"></p>
+    </div>
+  </body>
+</html>
