@@ -49,8 +49,8 @@ body {
 }
 
 .carousel-container {
-  width: 60%;
-  height: 60%;
+  width: 50vw;
+  height: 80vh;
   overflow: hidden;
   position: relative;
   margin: auto;
@@ -161,8 +161,8 @@ nav ul li a {
   }
 
   .carousel-container {
-    width: 90%;
-    height: 50%;
+    width: 90vw;
+    height: 60vh;
     overflow: hidden;
     position: relative;
     margin: auto;
