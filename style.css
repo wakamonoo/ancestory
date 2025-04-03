@@ -147,7 +147,7 @@ nav ul li a:hover {
 }
 
 
-/*-------------------------StpryDesign-------------------------*/
+/*-------------------------StoryDesign-------------------------*/
 .storytitle {
   font-size: 5vh;
   margin-bottom: 20px;
@@ -192,6 +192,56 @@ nav ul li a:hover {
   height: auto;
   border-radius: 8px;
 }
+
+/*-------------------------StoryContent-------------------------*/
+#storyContent {
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  justify-content: center; /* Center vertically */
+  align-items: center; /* Center horizontally */
+  padding: 10%;
+  color: #20462f;
+}
+
+#storyContainer {
+  width: 60%;
+  flex-grow: 1; /* Allow the container to fill the remaining height */
+  background-color: #f1d1b5;
+  padding: 5%;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column; /* Stack children elements vertically */
+  justify-content: center; /* Vertically center content */
+}
+
+.story-title-container {
+  display: flex;
+  justify-content: center; /* Horizontally center */
+  margin-bottom: 5%; /* Add some space below the title */
+}
+
+#story-title {
+  font-size: 5vh;
+  text-align: center;
+}
+
+#story-origin {
+  font-size: 2vh;
+  text-align: center; /* Ensure the text is centered */
+}
+
+#story-image {
+  width: 50vw;
+  height: auto; /* Adjust height automatically to maintain the aspect ratio */
+  object-fit: contain; /* Ensures the image maintains its aspect ratio without distortion */
+  margin-bottom: 5%; /* Add some space below the image */
+}
+
+#story-content {
+  font-size: 2vh; /* Adjust the size of the content */
+  text-align: left; /* Center the content text */
+}
+
 
 /*-------------------------Responsive Design-------------------------*/
 @media only screen and (max-width: 600px) {
@@ -339,4 +389,38 @@ nav ul li a:hover {
     right: 20px;
     display: none;
   }
+
+
+
+
+  #storyContent {
+    padding: 2%;
+  }
+  
+  #storyContainer {
+    margin-top: 15%;
+    width: 80%;
+  }
+
+  
+  #story-title {
+    font-size: 3vh;
+    text-align: center;
+  }
+  
+  #story-origin {
+    font-size: 1.5vh;
+    font-weight: 600;
+    text-align: center; /* Ensure the text is centered */
+  }
+  
+  #story-image {
+    width: 30vw;
+  }
+  
+  #story-content {
+    font-size: 1.5vh; /* Adjust the size of the content */
+    text-align: left; /* Center the content text */
+  }
+  
 }

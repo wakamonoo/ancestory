@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Story Details</title>
+    <link rel="stylesheet" href="style.css" />
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
       import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
@@ -52,11 +53,15 @@
     </script>
   </head>
   <body>
-    <div>
-      <h1 id="story-title">Story Title</h1>
-      <p id="story-origin">Origin: </p>
-      <img id="story-image" alt="Story Image" />
-      <p id="story-content"></p>
+    <div id="storyContent">
+      <div id="storyContainer">
+        <div class="story-title-container">
+          <h1 id="story-title">Story Title</h1>
+        </div>
+        <p id="story-origin">Origin: </p>
+        <img id="story-image" alt="Story Image" />
+        <p id="story-content"></p>
+      </div>
     </div>
   </body>
 </html>
