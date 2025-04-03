@@ -285,14 +285,14 @@ nav ul li a:hover {
 
   nav .fa-bars {
     font-size: 24px;
-    color: #ffb84d;
+    color: #20462f;
     cursor: pointer;
     position: relative;
   }
 
   nav .fa-times {
     font-size: 24px;
-    color: #333333;
+    color: #20462f;
     cursor: pointer;
     position: absolute;
     top: 50px;
