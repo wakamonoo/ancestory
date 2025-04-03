@@ -48,6 +48,9 @@ body {
   text-align: center;
   color: #20462f;
 }
+.span-ancest {
+  color: #ffb84d;
+}
 
 .carousel-container {
   width: 50vw;
@@ -163,7 +166,7 @@ nav ul li a:hover {
     font-size: 3vh;
   }
   .welcome {
-    margin-top: 20%;
+    margin-top: 10%;
     margin-bottom: -20%;
     padding: 5%;
     text-align: center;
