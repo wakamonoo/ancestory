@@ -231,10 +231,13 @@ nav ul li a:hover {
 }
 
 #story-image {
-  width: 50vw;
+  width: 20vw;
   height: auto; /* Adjust height automatically to maintain the aspect ratio */
   object-fit: contain; /* Ensures the image maintains its aspect ratio without distortion */
   margin-bottom: 5%; /* Add some space below the image */
+  display: block; /* Ensure the image is treated as a block element */
+  margin-left: auto; /* Horizontally center the image */
+  margin-right: auto; /* Horizontally center the image */
 }
 
 #story-content {
