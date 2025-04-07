@@ -197,7 +197,7 @@ nav ul li a:hover {
   margin-top: 8px;
   padding: 8px 16px;
   background-color: #20462f;
-  color: white;
+  color: #F1D1B5;
   text-decoration: none;
   border-radius: 5px;
   font-weight: bold;
@@ -205,7 +205,129 @@ nav ul li a:hover {
 }
 
 .read-button:hover {
-  background-color: #F1D1B5;
+  background-color: #183525;
+}
+
+.StorySub {
+  margin: 5% auto 0 auto;
+  display: block;
+  font-size: 1.8vh;
+  padding: 20px 30px;
+  background-color: #20462f;
+  color: #F1D1B5;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  text-align: center;
+  width: fit-content; 
+}
+
+  
+.StorySub:hover {
+  background-color: #183525;
+}
+
+/*-------------------------About-------------------------*/
+.About {
+  font-size: 5vh;
+  margin-bottom: 20px;
+  color: #20462f;
+  padding: 5%;
+  margin-left: 10%;
+}
+
+.aboutSubTitle {
+  font-size: 3vh;
+  color: #20462f;
+  margin-bottom: 30px;
+  margin-left: 10%;
+  padding: 0 10%;
+}
+
+#aboutContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10%;
+  padding: 20px;
+  align-items: flex-start; /* Prevents stretching to match height */
+}
+
+#aboutLeft {
+  flex: 1 1 300px;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.research {
+  font-size: 3vh;
+  color: #20462f;
+}
+.researchImage {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+#overview {
+  width: 100%;
+  max-width: 500px;
+  background-color: rgba(241, 209, 181, 0.7); /* transparent bg */
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 10px;
+}
+
+.overviewTitle {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #20462f;
+}
+
+.aboutOverview {
+  font-size: 1rem;
+  color: #333;
+}
+#aboutRight {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* This creates two equal-width columns */
+  gap: 20px;
+  max-width: 100%;
+  padding: 10px;
+  justify-items: center;
+}
+
+.researchersTitle {
+  font-size: 2rem;
+  color: #20462f;
+  margin-bottom: 10px;
+  text-align: center;
+  grid-column: span 2; /* This makes the title span both columns */
+}
+
+.researcherCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.researcherImage {
+  width: 100%;
+  max-width: 250px; /* You can adjust this size to fit your design */
+  height: auto;
+  object-fit: cover;
+}
+
+.author {
+  margin-top: 10px;
+  font-weight: bold;
+  color: #20462f;
+  text-align: center;
 }
 
 
@@ -441,4 +563,37 @@ nav ul li a:hover {
     text-align: left; 
   }
   
+
+  #aboutContainer {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; /* Reduced gap for smaller screens */
+  }
+
+  #aboutLeft,
+  #aboutRight {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #aboutRight {
+    display: flex; /* Stack the researcher cards in a single row */
+    justify-content: center; /* Ensure the items align properly */
+    gap: 20px;
+  }
+
+  .researcherCard {
+    max-width: 90%; /* Allow cards to take more space on small screens */
+    margin-bottom: 20px;
+  }
+
+  .researcherImage {
+    max-width: 200px; /* Make the images smaller for small screens */
+  }
+
+  .aboutSubTitle {
+    font-size: 3vh; /* Increase font size slightly for better readability on small screens */
+    padding: 0 5%;
+  }
 }
