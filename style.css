@@ -218,7 +218,6 @@ nav ul li a:hover {
 .story-title-container {
   display: flex;
   justify-content: center; 
-  margin-bottom: 5%; 
 }
 
 #story-title {
