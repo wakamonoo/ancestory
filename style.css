@@ -228,12 +228,23 @@ nav ul li a:hover {
   background-color: #183525;
 }
 
+
+.divider {
+  width: 100%;          
+  border: 0;            
+  border-top: 2px solid #20462f; 
+  margin: 5% 0;      
+}
+
+
 /*-------------------------About-------------------------*/
 .About {
   font-size: 5vh;
   margin-bottom: 20px;
   color: #20462f;
   padding: 5%;
+  margin-top: 5%;
+  margin-bottom: -5%;
   margin-left: 10%;
 }
 
@@ -544,7 +555,9 @@ nav ul li a:hover {
 
 
 
-
+  .storytitle {
+    margin-left: 0;
+  }
   #storyContent {
     padding: 2%;
   }
@@ -576,6 +589,10 @@ nav ul li a:hover {
   }
   
 
+  .About {
+    margin-left: 0;
+    margin-top: 10%;
+  }
   #aboutContainer {
     flex-direction: column;
     align-items: center;
