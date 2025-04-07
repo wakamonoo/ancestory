@@ -192,6 +192,22 @@ nav ul li a:hover {
   height: auto;
   border-radius: 8px;
 }
+.read-button {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 8px 16px;
+  background-color: #20462f;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.read-button:hover {
+  background-color: #F1D1B5;
+}
+
 
 /*-------------------------StoryContent-------------------------*/
 #storyContent {

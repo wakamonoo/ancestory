@@ -100,9 +100,14 @@
         
                 let imageTag = "";
                 if (data.images) {
-                  // If the images field is available, make sure it's a valid URL.
-                  imageTag = `<a href="story-detail.html?storyId=${doc.id}"><img src="${data.images}" alt="${data.title}" class="story-img" /></a>`;
+                  imageTag = `
+                    <a href="story-detail.html?storyId=${doc.id}">
+                      <img src="${data.images}" alt="${data.title}" class="story-img" />
+                    </a>
+                    <a href="story-detail.html?storyId=${doc.id}" class="read-button">Read Story</a>
+                  `;
                 }
+
         
                 // Construct HTML for each story
                 storiesHTML += `
