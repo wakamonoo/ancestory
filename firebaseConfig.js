@@ -1,6 +1,7 @@
-// Import Firebase SDK (Make sure you're using the correct version)
+// Import Firebase SDK
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
 // Your Firebase configuration
 const firebaseConfig = {
@@ -17,6 +18,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 // Fetch stories function
 async function fetchStories() {
@@ -26,7 +28,6 @@ async function fetchStories() {
 
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      console.log(data); // Check if you're getting data from Firestore
       let imageTag = "";
 
       // Check if image exists and insert into HTML
@@ -52,6 +53,26 @@ async function fetchStories() {
     console.error("Error fetching documents: ", error);
   }
 }
+
+// Google Sign-In function
+async function googleSignIn() {
+  const provider = new GoogleAuthProvider();
+
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    console.log("User signed in: ", user);
+
+    // Display user's name (optional)
+    document.getElementById("user-info").innerHTML = `Hello, ${user.displayName}`;
+
+  } catch (error) {
+    console.error("Error during Google Sign-In: ", error);
+  }
+}
+
+// Attach Google Sign-In to the button click
+document.getElementById("google-sign-in-btn").addEventListener("click", googleSignIn);
 
 // Fetch stories on page load
 window.onload = fetchStories;

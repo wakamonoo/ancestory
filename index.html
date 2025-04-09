@@ -9,12 +9,23 @@
       src="https://kit.fontawesome.com/c15538e89d.js"
       crossorigin="anonymous"
     ></script>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap"
+      rel="stylesheet"
+    />
 
     <!-- Firebase App -->
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script
+      type="module"
+      src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"
+    ></script>
     <!-- Firebase Firestore -->
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+    <script
+      type="module"
+      src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
+    ></script>
+    <!-- Firebase Authentication -->
+<script type="module" src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
 
   </head>
   <body>
@@ -22,27 +33,29 @@
     <div id="header">
       <nav>
         <img src="images/logo.png" title="ancestory" class="logo" />
-        
+
         <div class="nav-icons">
-            <i class="fa fa-search search"></i>
-            <i class="fas fa-bars" onclick="openmenu()"></i>
-        
-        <ul id="sidemenu">
+          <i class="fa fa-search search"></i>
+          <i class="fas fa-bars" onclick="openmenu()"></i>
+
+          <ul id="sidemenu">
             <li><a href="#header">Home</a></li>
             <li><a href="#stories">Stories</a></li>
             <li><a href="#about">About</a></li>
-            <li><a href="login.html">Login</a></li>
+            <li><a href="javascript:void(0);" onclick="openLoginModal()">Login</a></li>
             <li><a href="settings.html">Settings</a></li>
             <i class="fas fa-times" onclick="closemenu()"></i>
-        </ul>
-      </div>
-    </nav>
- 
+          </ul>
+        </div>
       </nav>
-      <h1 class="welcome">Welcome to <span class="span-ancest">AnceStory</span>, Where Ancestral Whispers Become Timeless Tales</h1>
+
+      <h1 class="welcome">
+        Welcome to <span class="span-ancest">AnceStory</span>, Where Ancestral
+        Whispers Become Timeless Tales
+      </h1>
       <div class="carousel-container">
         <div id="carousel">
-            <img src="images/Apit.png" alt="Image 1" />
+          <img src="images/Apit.png" alt="Image 1" />
           <img src="images/Apud.png" alt="Image 2" />
           <img src="images/Turawis.png" alt="Image 3" />
         </div>
@@ -52,140 +65,237 @@
           <button onclick="goToSlide(2)"></button>
         </div>
       </div>
-      </div>
+    </div>
 
-      <!----------------------Stories---------------------->
-      <div id="stories">
-        <h1 class="storytitle">Stories</h1>
-        <div id="stories-container"></div> 
-        <a href="login.html" class="StorySub">Wanna Submit a Story?</a>
-      </div>
-      
+    <!----------------------Stories---------------------->
+    <div id="stories">
+      <h1 class="storytitle">Stories</h1>
+      <div id="stories-container"></div>
+      <a href="login.html" class="StorySub">Wanna Submit a Story?</a>
+    </div>
 
-      <!-- Horizontal dividing line -->
-      <hr class="divider">
+    <!-- Horizontal dividing line -->
+    <hr class="divider" />
 
-      <!----------------------About---------------------->
-      <div id="about">
-        <h1 class="About">About</h1>
-        <div id="aboutContainer">
-          <!-- Left Section -->
-          <div id="aboutLeft">
-            <h2 class="research">The Research</h2>
-            <img src="images/research_ss.png" class="researchImage">
-            <a href="assets/research.pdf" download class="downloadButton">Download Research PDF</a>
-            <div id="overview">
-              <h2 class="overviewTitle">Overview</h2>
-              <p class="aboutOverview">
-                Storytelling has long been an integral part of human communication, serving as a medium for passing down knowledge, traditions, and values across generations. In rural communities, storytelling—particularly through folk stories—has played a significant role in preserving local culture and heritage. In Barangay Apud and Rawis, Libon, Albay, folk stories have been passed down orally by the elderlies, representing the unique culture, practices, and historical narratives of the local people. These stories cover various themes, including the origin of the barangay's name, patron saints, and mysterious tales about the environment and daily life in the community.
-            
-                However, the rise of modernization and technology has led to the neglect of these local folk stories. The younger generation, more attuned to modern media, has distanced itself from the oral tradition of storytelling. As a result, the practice has declined, and some valuable cultural legacies are at risk of being lost. Despite this, the folk stories of Barangay Apud and Rawis remain a vital part of their cultural identity, serving as a window into the past and helping to preserve local customs, beliefs, and values that have shaped the community over time.
-            
-                The primary goal of this study is to explore and document the folk stories of Barangay Apud and Rawis, examining their significance within the community and identifying the potential plots that can be derived from them. Through ethnographical research, this study aims to rekindle interest in these traditional stories, particularly among the youth, and underscore their importance as cultural heritage. Insights will be gathered from key informants, aged 20-85, who possess extensive knowledge of these folk stories, to help illuminate the rich storytelling tradition that has long been a part of these communities.
-            
-                This study emphasizes the need to preserve and promote local stories, not only to maintain the cultural fabric of Barangay Apud and Rawis but also to encourage future generations to embrace and share these stories. By doing so, the study hopes to foster a greater appreciation for local folk stories, ensuring they are passed down and continue to be an enduring part of the community's identity.
+    <!----------------------About---------------------->
+    <div id="about">
+      <h1 class="About">About</h1>
+      <div id="aboutContainer">
+        <!-- Left Section -->
+        <div id="aboutLeft">
+          <h2 class="research">The Research</h2>
+          <img src="images/research_ss.png" class="researchImage" />
+          <a href="assets/research.pdf" download class="downloadButton"
+            >Download Research PDF</a
+          >
+          <div id="overview">
+            <h2 class="overviewTitle">Overview</h2>
+            <p class="aboutOverview">
+              Storytelling has long been an integral part of human
+              communication, serving as a medium for passing down knowledge,
+              traditions, and values across generations. In rural communities,
+              storytelling—particularly through folk stories—has played a
+              significant role in preserving local culture and heritage. In
+              Barangay Apud and Rawis, Libon, Albay, folk stories have been
+              passed down orally by the elderlies, representing the unique
+              culture, practices, and historical narratives of the local people.
+              These stories cover various themes, including the origin of the
+              barangay's name, patron saints, and mysterious tales about the
+              environment and daily life in the community. However, the rise of
+              modernization and technology has led to the neglect of these local
+              folk stories. The younger generation, more attuned to modern
+              media, has distanced itself from the oral tradition of
+              storytelling. As a result, the practice has declined, and some
+              valuable cultural legacies are at risk of being lost. Despite
+              this, the folk stories of Barangay Apud and Rawis remain a vital
+              part of their cultural identity, serving as a window into the past
+              and helping to preserve local customs, beliefs, and values that
+              have shaped the community over time. The primary goal of this
+              study is to explore and document the folk stories of Barangay Apud
+              and Rawis, examining their significance within the community and
+              identifying the potential plots that can be derived from them.
+              Through ethnographical research, this study aims to rekindle
+              interest in these traditional stories, particularly among the
+              youth, and underscore their importance as cultural heritage.
+              Insights will be gathered from key informants, aged 20-85, who
+              possess extensive knowledge of these folk stories, to help
+              illuminate the rich storytelling tradition that has long been a
+              part of these communities. This study emphasizes the need to
+              preserve and promote local stories, not only to maintain the
+              cultural fabric of Barangay Apud and Rawis but also to encourage
+              future generations to embrace and share these stories. By doing
+              so, the study hopes to foster a greater appreciation for local
+              folk stories, ensuring they are passed down and continue to be an
+              enduring part of the community's identity.
             </p>
-            
-            </div>
           </div>
-      
-          <!-- Right Section -->
-          <div id="aboutRight">
-            <h2 class="researchersTitle">Researchers</h2>
-            <div class="researcherCard">
-              <img src="images/Bataller.jpg" class="researcherImage">
-              <p class="author">Joven Bataller</p>
-            </div>
-            <div class="researcherCard">
-              <img src="images/user.png" class="researcherImage">
-              <p class="author">Reysa Ranon</p>
-            </div>
-            <div class="researcherCard">
-              <img src="images/user.png" class="researcherImage">
-              <p class="author">Sandy Loreto</p>
-            </div>
-            <div class="researcherCard">
-              <img src="images/user.png" class="researcherImage">
-              <p class="author">Robert Sandigan</p>
-            </div>
+        </div>
+
+        <!-- Right Section -->
+        <div id="aboutRight">
+          <h2 class="researchersTitle">Researchers</h2>
+          <div class="researcherCard">
+            <img src="images/Bataller.jpg" class="researcherImage" />
+            <p class="author">Joven Bataller</p>
+          </div>
+          <div class="researcherCard">
+            <img src="images/user.png" class="researcherImage" />
+            <p class="author">Reysa Ranon</p>
+          </div>
+          <div class="researcherCard">
+            <img src="images/user.png" class="researcherImage" />
+            <p class="author">Sandy Loreto</p>
+          </div>
+          <div class="researcherCard">
+            <img src="images/user.png" class="researcherImage" />
+            <p class="author">Robert Sandigan</p>
           </div>
         </div>
       </div>
-      
-      
-      
+    </div>
 
-      <script src="script.js"></script>
-        <script type="module">
-          // Import necessary Firebase modules
-          import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-          import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
-          
-          // Your web app's Firebase configuration
-          const firebaseConfig = {
-            apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
-            authDomain: "ancestory-c068e.firebaseapp.com",
-            databaseURL: "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "ancestory-c068e",
-            storageBucket: "ancestory-c068e.firebasestorage.app",
-            messagingSenderId: "579709470015",
-            appId: "1:579709470015:web:adbbc5cba7f4e53f617f8a",
-            measurementId: "G-S5SQWC7PEM"
-          };
-        
-          // Initialize Firebase
-          const app = initializeApp(firebaseConfig);
-          const db = getFirestore(app);  // Initialize Firestore
-          
-          // Function to fetch stories from Firestore
-          async function fetchStories() {
-            try {
-              const querySnapshot = await getDocs(collection(db, "Stories"));
-              let storiesHTML = "";
-              
-              if (querySnapshot.empty) {
-                console.log("No stories found");
-              }
-        
-              querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                console.log("Fetched story:", data); // Log each fetched story
-        
-                let imageTag = "";
-                if (data.images) {
-                  imageTag = `
+<!-- Login Modal -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeLoginModal()">&times;</span>
+    <h2>Login to AnceStory</h2>
+    <form>
+      <input type="email" placeholder="Email" required />
+      <input type="password" placeholder="Password" required />
+      <button type="submit" class="login-btn">Login</button>
+    </form>
+    <div class="or-separator">or</div>
+    <div class="social-buttons">
+      <button id="google-sign-in-btn" class="google-btn">
+        <i class="fab fa-google"></i> Continue with Google
+      </button>
+    </div>
+  </div>
+</div>
+
+    <script src="script.js"></script>
+    <script type="module">
+      // Import Firebase modules
+      import { getAuth, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+  
+      // Initialize Firebase Auth
+      const auth = getAuth();
+  
+      // Google Sign-In function
+      async function googleSignIn() {
+        const provider = new GoogleAuthProvider();
+  
+        try {
+          const result = await signInWithPopup(auth, provider);
+          const user = result.user;
+          console.log("User signed in:", user);
+  
+          // Store user data in local storage or session
+          localStorage.setItem('user', JSON.stringify(user));
+  
+          // Optional: Update UI or redirect after sign-in
+          document.getElementById("user-info").innerHTML = `Hello, ${user.displayName}`;
+          window.location.href = "dashboard.html"; // Redirect to the dashboard or another page after login
+        } catch (error) {
+          console.error("Error during Google Sign-In:", error);
+          alert("Google sign-in failed. Please try again.");
+        }
+      }
+  
+      // Attach Google sign-in to button click
+      document.getElementById("google-sign-in-btn").addEventListener("click", googleSignIn);
+    </script>
+  
+    <script>
+      // Function to open the login modal
+      function openLoginModal() {
+        document.getElementById("loginModal").style.display = "block"; // Show the modal
+      }
+  
+      // Function to close the login modal
+      function closeLoginModal() {
+        document.getElementById("loginModal").style.display = "none"; // Hide the modal
+      }
+  
+      // Add event listener to open the modal when the login link is clicked
+      document.getElementById("login-link").addEventListener("click", function(event) {
+        event.preventDefault(); // Prevents default link behavior
+        openLoginModal(); // Show the modal
+      });
+    </script>
+    <script type="module">
+      // Import necessary Firebase modules
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        getDocs,
+      } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
+        authDomain: "ancestory-c068e.firebaseapp.com",
+        databaseURL:
+          "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "ancestory-c068e",
+        storageBucket: "ancestory-c068e.firebasestorage.app",
+        messagingSenderId: "579709470015",
+        appId: "1:579709470015:web:adbbc5cba7f4e53f617f8a",
+        measurementId: "G-S5SQWC7PEM",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app); // Initialize Firestore
+
+      // Function to fetch stories from Firestore
+      async function fetchStories() {
+        try {
+          const querySnapshot = await getDocs(collection(db, "Stories"));
+          let storiesHTML = "";
+
+          if (querySnapshot.empty) {
+            console.log("No stories found");
+          }
+
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            console.log("Fetched story:", data); // Log each fetched story
+
+            let imageTag = "";
+            if (data.images) {
+              imageTag = `
                     <a href="story-detail.html?storyId=${doc.id}">
                       <img src="${data.images}" alt="${data.title}" class="story-img" />
                     </a>
                     <a href="story-detail.html?storyId=${doc.id}" class="read-button">Read Story</a>
                   `;
-                }
+            }
 
-        
-                // Construct HTML for each story
-                storiesHTML += `
+            // Construct HTML for each story
+            storiesHTML += `
                   <div class="story-card">
                     <h2>${data.title}</h2>
                     ${imageTag}
                   </div>
                 `;
-              });
-        
-              // Add the HTML content to the "stories-container" div
-              const storiesContainer = document.getElementById("stories-container");
-              if (storiesHTML === "") {
-                storiesContainer.innerHTML = "<p>No stories available</p>";
-              } else {
-                storiesContainer.innerHTML = storiesHTML;
-              }
-            } catch (error) {
-              console.error("Error fetching stories: ", error);
-            }
-          }
-        
-          // Fetch stories when the page is loaded
-          fetchStories();
-        </script>
+          });
 
+          // Add the HTML content to the "stories-container" div
+          const storiesContainer = document.getElementById("stories-container");
+          if (storiesHTML === "") {
+            storiesContainer.innerHTML = "<p>No stories available</p>";
+          } else {
+            storiesContainer.innerHTML = storiesHTML;
+          }
+        } catch (error) {
+          console.error("Error fetching stories: ", error);
+        }
+      }
+
+      // Fetch stories when the page is loaded
+      fetchStories();
+    </script>
   </body>
 </html>
