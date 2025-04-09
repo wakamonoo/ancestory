@@ -255,15 +255,15 @@ padding: 20px 30px;
   justify-content: center;
   gap: 10%;
   padding: 20px;
-  align-items: flex-start; /* Prevents stretching to match height */
+  align-items: flex-start; 
 }
 
 #aboutLeft {
-  flex: 2 1 600px; /* Increase flex size and ensure width is larger */
-  max-width: 700px;  /* Make sure the left container's max-width is large enough */
+  flex: 2 1 600px; 
+  max-width: 700px;  
   display: flex;
   flex-direction: column;
-  align-items: flex-start;  /* Align content to the left */
+  align-items: flex-start; 
 }
 
 .research {
@@ -275,7 +275,7 @@ padding: 20px 30px;
 
 .researchImage {
   width: 100%;
-  max-width: 700px;  /* Increase max width of the image */
+  max-width: 700px;  
   height: auto;
   border-radius: 10px;
   object-fit: cover;
@@ -284,7 +284,7 @@ padding: 20px 30px;
 .downloadButton {
   display: inline-block;
   padding: 10px 20px;
-  background-color: #20462f; /* Green color */
+  background-color: #20462f; 
   color: #F1D1B5;
   text-align: center;
   text-decoration: none;
@@ -300,8 +300,8 @@ padding: 20px 30px;
 
 #overview {
   width: 100%;
-  max-width: 700px; /* Increase width of the overview */
-  background-color: rgba(241, 209, 181, 0.1); /* transparent bg */
+  max-width: 700px; 
+  background-color: rgba(241, 209, 181, 0.1);
   padding: 20px;
   margin-top: 20px;
 }
@@ -319,7 +319,7 @@ padding: 20px 30px;
 
 #aboutRight {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* This creates two equal-width columns */
+  grid-template-columns: repeat(2, 1fr); 
   gap: 20px;
   max-width: 100%;
   padding: 10px;
@@ -331,7 +331,7 @@ padding: 20px 30px;
   color: #20462f;
   margin-bottom: 10px;
   text-align: center;
-  grid-column: span 2; /* This makes the title span both columns */
+  grid-column: span 2; 
 }
 
 .researcherCard {
@@ -343,7 +343,7 @@ padding: 20px 30px;
 
 .researcherImage {
   width: 100%;
-  max-width: 250px; /* You can adjust this size to fit your design */
+  max-width: 250px; 
   height: auto;
   object-fit: cover;
 }
