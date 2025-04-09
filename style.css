@@ -104,6 +104,7 @@ nav {
   position: relative;
   background-color: #ff6f61;
   padding: 10px;
+  padding-right: 2%;
   z-index: 5;
   display: flex;
   align-items: center;
@@ -313,7 +314,7 @@ padding: 20px 30px;
 
 .aboutOverview {
   font-size: 1.2rem;
-  color: #333;
+  color: #20462f;
 }
 
 #aboutRight {
@@ -353,9 +354,7 @@ padding: 20px 30px;
   color: #20462f;
   text-align: center;
 }
-
-
-/* Modal Background */
+/*-------------------------LoginForm-------------------------*/
 .modal {
   display: none;
   position: fixed;
@@ -368,22 +367,21 @@ padding: 20px 30px;
   background-color: rgba(0, 0, 0, 0.4);
 }
 
-/* Modal Content */
 .modal-content {
-  background-color: #fefefe;
-  margin: 10% auto;
+  background-color: #FFB84D; 
   padding: 2rem;
   border-radius: 12px;
   width: 90%;
   max-width: 400px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  position: relative;
-  background-color: #F1D1B5;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
 }
 
-/* Close Button */
 .close {
-  color: #333;
+  color: #20462f;
   position: absolute;
   top: 1rem;
   right: 1.2rem;
@@ -391,23 +389,21 @@ padding: 20px 30px;
   cursor: pointer;
 }
 
-/* Input Fields */
 .modal-content input {
   width: 100%;
   padding: 10px;
   margin-top: 12px;
   border: none;
   border-radius: 6px;
-  background-color: #fff;
+  background-color: #F1D1B5;
   box-sizing: border-box;
 }
 
-/* Login Button */
 .login-btn {
   width: 100%;
   margin-top: 16px;
-  background-color: #FF6F61;
-  color: #fff;
+  background-color: #FF9A8B;
+  color: #20462f;
   border: none;
   padding: 10px;
   border-radius: 6px;
@@ -416,18 +412,16 @@ padding: 20px 30px;
 }
 
 .login-btn:hover {
-  background-color: #FF9A8B;
+  background-color: #FF6F61;
 }
 
-/* Or Separator */
 .or-separator {
   text-align: center;
   margin: 1rem 0;
-  color: #555;
+  color: #20462f;
   font-weight: bold;
 }
 
-/* Social Buttons */
 .social-buttons button {
   width: 100%;
   margin: 0.3rem 0;
@@ -441,30 +435,18 @@ padding: 20px 30px;
 }
 
 .google-btn {
-  background-color: #fff;
-  color: #FF6F61;
-  border: 2px solid #FF6F61;
+  background-color: #FF9A8B;
+  color: #20462f;
+  border: 2px solid #FF9A8B;
 }
 
 .google-btn:hover {
   background-color: #FF6F61;
-  color: white;
+  color: #20462f;
 }
-
-.facebook-btn {
-  background-color: #20462f;
-  color: white;
-}
-
-.facebook-btn:hover {
-  background-color: #2f6d45;
-}
-
 .social-buttons i {
   margin-right: 10px;
 }
-
-
 /*-------------------------StoryContent-------------------------*/
 #storyContent {
   display: flex;
