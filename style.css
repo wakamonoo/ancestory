@@ -250,6 +250,13 @@ nav ul li a:hover {
   margin-left: 8%;
 }
 
+.aboutDescription {
+  padding: 2%;
+  margin: 0% 10%;
+  font-size: 18px;
+  color: #20462f;
+}
+
 #aboutContainer {
   display: flex;
   flex-wrap: wrap;
@@ -512,7 +519,7 @@ nav ul li a:hover {
     margin-bottom: 20%;
   }
   .welcome {
-    margin-top: 10%;
+    margin-top: 15%;
     margin-bottom: -20%;
     padding: 5%;
     text-align: center;
@@ -568,39 +575,43 @@ nav ul li a:hover {
   .nav-icons {
     position: absolute;
     padding-top: 10%;
-    right: 20px;
+    right: 15px;
     transform: translateY(-50%);
     display: flex;
     align-items: center;
     gap: 15px;
   }
 
-  nav {
-    margin-right: -20px;
-    position: relative;
-    background-color: #ff6f61;
-    padding: 10px;
-    z-index: 5;
-  }
+ nav {
+  position: relative; /* make nav fixed on screen */
+  top: 0;
+  right: 0;
+  width: 100%; /* or your desired width */
+  z-index: 5;
+  background-color: #ff6f61;
+  padding: 10px;
+}
 
-  nav ul {
-    position: absolute;
-    top: 0;
-    right: -200px;
-    width: 200px;
-    height: 100vh;
-    background: #ffb84d;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    transition: right 0.4s ease-in-out;
-    padding-top: 25px;
-    margin-top: 15px;
-  }
-  nav ul li:first-child {
-    margin-top: 30%;
-  }
+
+nav ul {
+  position: fixed;
+  top: 0;
+  margin-right: -20px;
+  right: -200px;
+  width: 200px;
+  height: 120vh;
+  background: #ffb84d;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  transition: right 0.4s ease-in-out;
+  padding-top: 60px; /* ← reduce this if needed */
+  margin-top: 0; /* make sure this is 0 */
+  z-index: 10;
+  overflow: hidden;
+}
+
   nav ul li {
     list-style: none;
     width: 100%;
@@ -646,7 +657,7 @@ nav ul li a:hover {
     cursor: pointer;
     position: absolute;
     top: 50px;
-    right: 20px;
+    right: 25px;
     display: none;
   }
 
@@ -750,4 +761,13 @@ nav ul li a:hover {
     font-size: 14px;
   }
 
+  .aboutDescription {
+    font-size: 14px;
+    color: #20462f;
+    text-align: justify;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }  
 }

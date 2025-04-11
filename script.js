@@ -1,3 +1,11 @@
+window.addEventListener('scroll', () => {
+  const navMenu = document.querySelector('nav ul');
+  if (navMenu) {
+    navMenu.style.top = `${window.scrollY}px`;
+  }
+});
+
+
 let currentIndex = 0;
 const carousel = document.getElementById("carousel");
 const buttons = document.querySelectorAll(".buttons button");
