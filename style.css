@@ -110,10 +110,8 @@ nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  transition: background-color .5s ease; /* Slow color transition */
+  transition: background-color .5s ease; 
 }
-
-
 
 .nav-icons {
   display: flex;
@@ -150,7 +148,6 @@ nav ul li a {
 nav ul li a:hover {
   color: #ffb84d;
 }
-
 
 /*-------------------------StoryDesign-------------------------*/
 .storytitle {
