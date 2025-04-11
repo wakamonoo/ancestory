@@ -101,7 +101,8 @@ body {
 }
 
 nav {
-  position: relative;
+  position: fixed;
+  width: 100%;
   background-color: #ff6f61;
   padding: 10px;
   padding-right: 2%;
@@ -109,7 +110,10 @@ nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  transition: background-color .5s ease; /* Slow color transition */
 }
+
+
 
 .nav-icons {
   display: flex;
@@ -583,7 +587,7 @@ nav ul li a:hover {
   }
 
  nav {
-  position: relative; /* make nav fixed on screen */
+  position: fixed; /* make nav fixed on screen */
   top: 0;
   right: 0;
   width: 100%; /* or your desired width */
@@ -609,7 +613,6 @@ nav ul {
   padding-top: 60px; /* ← reduce this if needed */
   margin-top: 0; /* make sure this is 0 */
   z-index: 10;
-  overflow: hidden;
 }
 
   nav ul li {

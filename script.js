@@ -1,9 +1,14 @@
-window.addEventListener('scroll', () => {
-  const navMenu = document.querySelector('nav ul');
-  if (navMenu) {
-    navMenu.style.top = `${window.scrollY}px`;
+window.addEventListener('scroll', function() {
+  const nav = document.querySelector('nav');
+  
+  if (window.scrollY >= window.innerHeight) {
+    nav.style.backgroundColor = '#F1D1B5'; // Change background to #F1D1B5 after scroll
+  } else {
+    nav.style.backgroundColor = '#ff6f61'; // Reset to initial color
   }
 });
+
+
 
 
 let currentIndex = 0;
