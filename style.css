@@ -33,7 +33,7 @@ body {
 }
 
 .search {
-  font-size: 32px;
+  font-size: 24px;
   color: #20462f;
 }
 
@@ -139,7 +139,7 @@ nav ul li {
 
 nav ul li a {
   color: #20462f;
-  font-size: 32px;
+  font-size: 24px;
   text-decoration: none;
   padding: 10px 15px;
 }
@@ -178,7 +178,7 @@ nav ul li a:hover {
 
 .story-card h2 {
   color: #20462f;
-  font-size: 40px;
+  font-size: 32px;
   margin-bottom: 10px;
 }
 
@@ -202,7 +202,7 @@ nav ul li a:hover {
   text-decoration: none;
   border-radius: 5px;
   font-weight: bold;
-  font-size: 24px;
+  font-size: 18px;
   transition: background-color 0.3s ease;
 }
 
@@ -213,12 +213,12 @@ nav ul li a:hover {
 .StorySub {
   margin: 5% auto 0 auto;
   display: block;
-  font-size: 32px;
+  font-size: 24px;
   padding: 20px 30px;
   background-color: #20462f;
   color: #F1D1B5;
   text-decoration: none;
-  border-radius: 5px;
+  border-radius: 10px;
   font-weight: bold;
   transition: background-color 0.3s ease;
   text-align: center;
@@ -268,7 +268,7 @@ nav ul li a:hover {
 }
 
 .research {
-  font-size: 40px;
+  font-size: 32px;
   color: #20462f;
   width: 100%; 
   margin-bottom: 2%;
@@ -289,7 +289,7 @@ nav ul li a:hover {
   color: #F1D1B5;
   text-align: center;
   text-decoration: none;
-  font-size: 32px;
+  font-size: 18px;
   border-radius: 5px;
   margin-top: 2%;
   transition: background-color 0.3s ease;
@@ -308,13 +308,13 @@ nav ul li a:hover {
 }
 
 .overviewTitle {
-  font-size: 32px;
+  font-size: 24px;
   margin-bottom: 10px;
   color: #20462f;
 }
 
 .aboutOverview {
-  font-size: 24px;
+  font-size: 18px;
   color: #20462f;
 }
 
@@ -328,7 +328,7 @@ nav ul li a:hover {
 }
 
 .researchersTitle {
-  font-size: 40px;
+  font-size: 32px;
   color: #20462f;
   margin-bottom: 10px;
   text-align: center;
@@ -350,7 +350,7 @@ nav ul li a:hover {
 }
 
 .author {
-  font-size: 24px;
+  font-size: 18px;
   margin-top: 10px;
   font-weight: bold;
   color: #20462f;
@@ -477,12 +477,12 @@ nav ul li a:hover {
 }
 
 #story-title {
-  font-size: 40px;
+  font-size: 32px;
   text-align: center;
 }
 
 #story-origin {
-  font-size: 24px;
+  font-size: 18px;
   text-align: center;/
 }
 
@@ -497,7 +497,7 @@ nav ul li a:hover {
 }
 
 #story-content {
-  font-size: 24px; 
+  font-size: 18px; 
   text-align: left; 
 }
 
@@ -609,7 +609,7 @@ nav ul li a:hover {
 
   nav ul li a {
     color: #20462f;
-    font-size: 16px;
+    font-size: 14px;
     text-decoration: none;
     display: block;
     padding: 10px 15px;
@@ -669,10 +669,10 @@ nav ul li a:hover {
   }
   
   .read-button {
-    font-size: 16px;
+    font-size: 14px;
   }
   .StorySub {
-    font-size: 16px;
+    font-size: 14px;
   }
   
   #story-title {
@@ -681,7 +681,7 @@ nav ul li a:hover {
   }
   
   #story-origin {
-    font-size: 16px;
+    font-size: 14px;
     text-align: center; 
   }
   
@@ -690,7 +690,7 @@ nav ul li a:hover {
   }
   
   #story-content {
-    font-size: 16px; 
+    font-size: 14px; 
     text-align: justify; 
   }
   
@@ -732,14 +732,14 @@ nav ul li a:hover {
   }
 
   .downloadButton {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .overviewTitle {
     font-size: 24px;
   }
   .aboutOverview {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .researchersTitle {
@@ -747,7 +747,7 @@ nav ul li a:hover {
   }
 
   .author {
-    font-size: 16px;
+    font-size: 14px;
   }
 
 }

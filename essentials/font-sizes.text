@@ -1,5 +1,8 @@
-Default - Nav, StorySub : 32 px
-        - StoryTitle, Subt: 40px
+Default - Nav, StorySub : 24 px
+        - StoryTitle, Subt: 32px
         - SectionTitle : 5vh
-        - normal text : 24px
-600px   - - normal text : 16px
+        - normal text : 18px
+600px   - Nav, StorySub : 24 px
+        - StoryTitle, Subt: 24px
+        - SectionTitle : 5vh
+        - normal text : 14px
