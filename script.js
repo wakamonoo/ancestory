@@ -2,9 +2,9 @@ window.addEventListener('scroll', function() {
   const nav = document.querySelector('nav');
   
   if (window.scrollY >= window.innerHeight) {
-    nav.style.backgroundColor = '#F1D1B5'; // Change background to #F1D1B5 after scroll
+    nav.style.backgroundColor = '#F1D1B5'; 
   } else {
-    nav.style.backgroundColor = '#ff6f61'; // Reset to initial color
+    nav.style.backgroundColor = '#ff6f61'; 
   }
 });
 
@@ -32,19 +32,19 @@ function nextSlide() {
   updateCarousel();
 }
 
-setInterval(nextSlide, 3000); // Auto-scroll every 3 seconds
+setInterval(nextSlide, 3000); 
 
-// Hamburger menu functions
+
 function openmenu() {
   document.getElementById("sidemenu").style.right = "0";
-  document.querySelector(".fa-bars").style.display = "none"; // Hide hamburger
-  document.querySelector(".fa-times").style.display = "block"; // Show close button
+  document.querySelector(".fa-bars").style.display = "none"; 
+  document.querySelector(".fa-times").style.display = "block"; 
 }
 
 function closemenu() {
   document.getElementById("sidemenu").style.right = "-200px";
-  document.querySelector(".fa-bars").style.display = "block"; // Show hamburger
-  document.querySelector(".fa-times").style.display = "none"; // Hide close button
+  document.querySelector(".fa-bars").style.display = "block"; 
+  document.querySelector(".fa-times").style.display = "none";
 }
 
 // Manual scroll for mobile and PC
@@ -58,35 +58,11 @@ carousel.addEventListener('touchstart', (e) => {
 carousel.addEventListener('touchend', (e) => {
   touchEndX = e.changedTouches[0].screenX;
   if (touchStartX - touchEndX > 50) {
-    nextSlide(); // Swipe left
+    nextSlide(); 
   } else if (touchEndX - touchStartX > 50) {
-    currentIndex = (currentIndex - 1 + 3) % 3; // Swipe right
+    currentIndex = (currentIndex - 1 + 3) % 3; 
     updateCarousel();
   }
 });
 
-// For PC: Mouse drag event
-let mouseDown = false;
-let mouseStartX = 0;
 
-carousel.addEventListener('mousedown', (e) => {
-  mouseDown = true;
-  mouseStartX = e.clientX;
-});
-
-carousel.addEventListener('mouseup', (e) => {
-  if (mouseDown) {
-    const mouseEndX = e.clientX;
-    if (mouseStartX - mouseEndX > 50) {
-      nextSlide(); // Drag left
-    } else if (mouseEndX - mouseStartX > 50) {
-      currentIndex = (currentIndex - 1 + 3) % 3; // Drag right
-      updateCarousel();
-    }
-    mouseDown = false;
-  }
-});
-
-carousel.addEventListener('mouseleave', () => {
-  mouseDown = false; // Prevent drag events when mouse leaves
-});
