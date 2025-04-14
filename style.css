@@ -64,7 +64,7 @@ body {
 
 #carousel {
   display: flex;
-  width: 100%; 
+  width: 100%;
   height: 100%;
   transition: transform 0.5s ease-in-out;
 }
@@ -73,7 +73,7 @@ body {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  flex: 0 0 100%; 
+  flex: 0 0 100%;
 }
 
 .buttons {
@@ -111,7 +111,7 @@ nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  transition: background-color .5s ease; 
+  transition: background-color 0.5s ease;
 }
 
 .nav-icons {
@@ -159,14 +159,13 @@ nav ul li a:hover {
   margin-left: 8%;
 }
 
-
 #stories-container {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
   margin-top: 20px;
-  justify-content: center; 
-  align-items: center; /
+  justify-content: center;
+  align-items: center;
 }
 
 .story-card {
@@ -200,7 +199,7 @@ nav ul li a:hover {
   margin-top: 8px;
   padding: 8px 16px;
   background-color: #20462f;
-  color: #F1D1B5;
+  color: #f1d1b5;
   text-decoration: none;
   border-radius: 5px;
   font-weight: bold;
@@ -218,28 +217,25 @@ nav ul li a:hover {
   font-size: 24px;
   padding: 20px 30px;
   background-color: #20462f;
-  color: #F1D1B5;
+  color: #f1d1b5;
   text-decoration: none;
   border-radius: 10px;
   font-weight: bold;
   transition: background-color 0.3s ease;
   text-align: center;
-  width: fit-content; 
+  width: fit-content;
 }
 
-  
 .StorySub:hover {
   background-color: #183525;
 }
 
-
 .divider {
-  width: 100%;          
-  border: 0;            
-  border-top: 2px solid #20462f; 
-  margin: 5% 0;      
+  width: 100%;
+  border: 0;
+  border-top: 2px solid #20462f;
+  margin: 5% 0;
 }
-
 
 /*-------------------------About-------------------------*/
 .About {
@@ -265,27 +261,27 @@ nav ul li a:hover {
   justify-content: center;
   gap: 10%;
   padding: 20px;
-  align-items: flex-start; 
+  align-items: flex-start;
 }
 
 #aboutLeft {
-  flex: 2 1 600px; 
-  max-width: 700px;  
+  flex: 2 1 600px;
+  max-width: 700px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start; 
+  align-items: flex-start;
 }
 
 .research {
   font-size: 32px;
   color: #20462f;
-  width: 100%; 
+  width: 100%;
   margin-bottom: 2%;
 }
 
 .researchImage {
   width: 100%;
-  max-width: 700px;  
+  max-width: 700px;
   height: auto;
   border-radius: 10px;
   object-fit: cover;
@@ -294,8 +290,8 @@ nav ul li a:hover {
 .downloadButton {
   display: inline-block;
   padding: 10px 20px;
-  background-color: #20462f; 
-  color: #F1D1B5;
+  background-color: #20462f;
+  color: #f1d1b5;
   text-align: center;
   text-decoration: none;
   font-size: 18px;
@@ -310,7 +306,7 @@ nav ul li a:hover {
 
 #overview {
   width: 100%;
-  max-width: 700px; 
+  max-width: 700px;
   background-color: rgba(241, 209, 181, 0.1);
   padding: 20px;
   margin-top: 20px;
@@ -329,7 +325,7 @@ nav ul li a:hover {
 
 #aboutRight {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); 
+  grid-template-columns: repeat(2, 1fr);
   gap: 20px;
   max-width: 100%;
   padding: 10px;
@@ -341,7 +337,7 @@ nav ul li a:hover {
   color: #20462f;
   margin-bottom: 10px;
   text-align: center;
-  grid-column: span 2; 
+  grid-column: span 2;
 }
 
 .researcherCard {
@@ -353,7 +349,7 @@ nav ul li a:hover {
 
 .researcherImage {
   width: 100%;
-  max-width: 250px; 
+  max-width: 250px;
   height: auto;
   object-fit: cover;
 }
@@ -379,7 +375,7 @@ nav ul li a:hover {
 }
 
 .modal-content {
-  background-color: #FFB84D; 
+  background-color: #ffb84d;
   padding: 2rem;
   border-radius: 12px;
   width: 90%;
@@ -388,7 +384,7 @@ nav ul li a:hover {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); 
+  transform: translate(-50%, -50%);
 }
 
 .close {
@@ -406,14 +402,14 @@ nav ul li a:hover {
   margin-top: 12px;
   border: none;
   border-radius: 6px;
-  background-color: #F1D1B5;
+  background-color: #f1d1b5;
   box-sizing: border-box;
 }
 
 .login-btn {
   width: 100%;
   margin-top: 16px;
-  background-color: #FF9A8B;
+  background-color: #ff9a8b;
   color: #20462f;
   border: none;
   padding: 10px;
@@ -423,7 +419,7 @@ nav ul li a:hover {
 }
 
 .login-btn:hover {
-  background-color: #FF6F61;
+  background-color: #ff6f61;
 }
 
 .or-separator {
@@ -446,13 +442,13 @@ nav ul li a:hover {
 }
 
 .google-btn {
-  background-color: #FF9A8B;
+  background-color: #ff9a8b;
   color: #20462f;
-  border: 2px solid #FF9A8B;
+  border: 2px solid #ff9a8b;
 }
 
 .google-btn:hover {
-  background-color: #FF6F61;
+  background-color: #ff6f61;
   color: #20462f;
 }
 .social-buttons i {
@@ -461,11 +457,14 @@ nav ul li a:hover {
 /*-------------------------StoryContent-------------------------*/
 #storyContent {
   display: flex;
-  flex-direction: column; 
-  justify-content: center; 
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
   padding: 10%;
   color: #20462f;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: normal;
 }
 
 #storyContainer {
@@ -476,13 +475,13 @@ nav ul li a:hover {
   padding: 5%;
   border-radius: 10px;
   display: flex;
-  flex-direction: column; 
-  justify-content: center; 
+  flex-direction: column;
+  justify-content: center;
 }
 
 .story-title-container {
   display: flex;
-  justify-content: center; 
+  justify-content: center;
 }
 
 #story-title {
@@ -492,25 +491,22 @@ nav ul li a:hover {
 
 #story-origin {
   font-size: 18px;
-  text-align: center;/
+  text-align: center;
 }
 
 #story-image {
   width: 20vw;
-  height: auto; 
-  object-fit: contain; 
-  margin-bottom: 5%; 
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 5%;
   display: block;
   margin-left: auto;
-  margin-right: auto; 
+  margin-right: auto;
 }
-
 #story-content {
-  font-size: 18px; 
-  text-align: left; 
+  font-size: 18px;
+  text-align: justify;
 }
-
-
 /*-------------------------Footer-------------------------*/
 footer {
   padding: 10% 20px 40px 20px;
@@ -529,7 +525,7 @@ footer {
 
 .leftFooter img {
   width: 200px;
-  height: auto; 
+  height: auto;
 }
 
 .footerclass > div,
@@ -569,7 +565,7 @@ footer {
 .footerFollow {
   font-size: 24px;
   margin-bottom: 10px;
-  color: #F1D1B5;
+  color: #f1d1b5;
 }
 
 .footerclass .social-icons a {
@@ -679,34 +675,33 @@ footer {
     gap: 15px;
   }
 
- nav {
-  position: fixed; /* make nav fixed on screen */
-  top: 0;
-  right: 0;
-  width: 100%; /* or your desired width */
-  z-index: 5;
-  background-color: #ff6f61;
-  padding: 10px;
-}
+  nav {
+    position: fixed; /* make nav fixed on screen */
+    top: 0;
+    right: 0;
+    width: 100%; /* or your desired width */
+    z-index: 5;
+    background-color: #ff6f61;
+    padding: 10px;
+  }
 
-
-nav ul {
-  position: fixed;
-  top: 0;
-  margin-right: -20px;
-  right: -200px;
-  width: 200px;
-  height: 120vh;
-  background: #ffb84d;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  transition: right 0.4s ease-in-out;
-  padding-top: 60px; /* ← reduce this if needed */
-  margin-top: 0; /* make sure this is 0 */
-  z-index: 10;
-}
+  nav ul {
+    position: fixed;
+    top: 0;
+    margin-right: -20px;
+    right: -200px;
+    width: 200px;
+    height: 120vh;
+    background: #ffb84d;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    transition: right 0.4s ease-in-out;
+    padding-top: 60px; /* ← reduce this if needed */
+    margin-top: 0; /* make sure this is 0 */
+    z-index: 10;
+  }
 
   nav ul li {
     list-style: none;
@@ -757,15 +752,13 @@ nav ul {
     display: none;
   }
 
-
-
   .storytitle {
     margin-left: 0;
   }
   #storyContent {
     padding: 2%;
   }
-  
+
   #storyContainer {
     margin-top: 15%;
     width: 90%;
@@ -774,33 +767,32 @@ nav ul {
   .story-card h2 {
     font-size: 24px;
   }
-  
+
   .read-button {
     font-size: 14px;
   }
   .StorySub {
     font-size: 14px;
   }
-  
+
   #story-title {
     font-size: 32px;
     text-align: center;
   }
-  
+
   #story-origin {
     font-size: 14px;
-    text-align: center; 
+    text-align: center;
   }
-  
+
   #story-image {
     width: 30vw;
   }
-  
+
   #story-content {
-    font-size: 14px; 
-    text-align: justify; 
+    font-size: 14px;
+    text-align: justify;
   }
-  
 
   .About {
     margin-left: 0;
@@ -809,7 +801,7 @@ nav ul {
   #aboutContainer {
     flex-direction: column;
     align-items: center;
-    gap: 20px; 
+    gap: 20px;
   }
 
   #aboutLeft,
@@ -820,8 +812,8 @@ nav ul {
   }
 
   #aboutRight {
-    display: flex; 
-    justify-content: center; 
+    display: flex;
+    justify-content: center;
     gap: 20px;
   }
 
@@ -865,7 +857,7 @@ nav ul {
     padding: 0;
     width: 100%;
     box-sizing: border-box;
-  }  
+  }
   .footerclass > div,
   .foorterRight {
     max-width: 100%;
@@ -874,21 +866,21 @@ nav ul {
   .footerCTA {
     font-size: 14px;
   }
-  
+
   .footerclass ul li a {
     font-size: 14px;
   }
-  
+
   .footerSupport,
   .footerLinks,
   .footerFollow {
     font-size: 24px;
   }
-  
+
   .footerclass .social-icons a {
     font-size: 24px;
   }
-  
+
   .GcashText {
     font-size: 18px;
   }
