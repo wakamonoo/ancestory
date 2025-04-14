@@ -25,13 +25,15 @@
       type="module"
       src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"
     ></script>
-    <link rel="icon" href="images/logo.png" type="image/png">
+    <link rel="icon" href="images/logo.png" type="image/png" />
   </head>
   <body>
     <!----------------------Header---------------------->
     <div id="header">
       <nav>
-        <img src="images/logo.png" title="ancestory" class="logo" />
+        <a href="#header" title="ancestory">
+          <img src="images/logo.png" alt="ancestory logo" class="logo" />
+        </a>
         <div class="nav-icons">
           <i class="fa fa-search search"></i>
           <i class="fas fa-bars" onclick="openmenu()"></i>
@@ -77,11 +79,16 @@
       <div id="aboutContainer">
         <p class="aboutDescription">
           This platform draws inspiration from a 2021 senior high school
-          research project conducted at <strong>Rawis High School</strong> of Rawis, Libon, Albay
-          under the Practical Research subject. Titled <strong>"Local Folk Stories of Baranggay Rawis and Apud, Libon, Albay: An Ethnological Research"</strong> the project
-          documented the vibrant cultural heritage of these communities through
-          their oral traditions, myths, and legends. As one of the student
-          researchers, I <strong>Joven Bataller,</strong> alongside my peers, sought to
+          research project conducted at <strong>Rawis High School</strong> of
+          Rawis, Libon, Albay under the Practical Research subject. Titled
+          <strong
+            >"Local Folk Stories of Baranggay Rawis and Apud, Libon, Albay: An
+            Ethnological Research"</strong
+          >
+          the project documented the vibrant cultural heritage of these
+          communities through their oral traditions, myths, and legends. As one
+          of the student researchers, I
+          <strong>Joven Bataller,</strong> alongside my peers, sought to
           safeguard these stories from being lost to time. Building on that
           foundation, this website reimagines the initiative as an inclusive,
           global platform. While rooted in the traditions of Apud and Rawis, it
@@ -184,4 +191,59 @@
     <script src="login.js"></script>
     <script type="module" src="stories.js"></script>
   </body>
+  <footer>
+    <div class="footerclass">
+      <div class="leftFooter">
+        <img src="images/logo.png" class="footerLogo" />
+        <p class="footerCTA">
+          Step into the world of Ancestory, where the past meets the present.
+          Sign up today to honor your roots, share the rich stories of your
+          ancestors, and contribute to a living tapestry of history. Together,
+          we’ll preserve the legacies that shape who we are.
+        </p>
+      </div>
+
+      <div class="footerMiddleone">
+        <h1 class="footerLinks">Useful Links!</h1>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#stories">Stories</a></li>
+          <li><a href="#about">About</a></li>
+          <li>
+            <a href="javascript:void(0);" onclick="openLoginModal()">Login</a>
+          </li>
+          <li><a href="#">Settings</a></li>
+        </ul>
+      </div>
+
+      <div class="footerMiddletwo">
+        <h1 class="footerSupport">Send Support</h1>
+        <div class="Gcash">
+          <img src="images/gcash.png" class="gcashImage" />
+          <p class="GcashText">09934937214</p>
+        </div>
+      </div>
+
+      <div class="foorterRight">
+        <h1 class="footerFollow">Follow Me!</h1>
+        <div class="social-icons">
+          <a href="https://web.facebook.com/joven.serdanbataller"
+            ><i class="fa-brands fa-facebook"></i
+          ></a>
+          <a href="https://www.instagram.com/wakamonoooo/"
+            ><i class="fa-brands fa-instagram"></i
+          ></a>
+          <a href="https://www.linkedin.com/in/joven-bataller-085761350"
+            ><i class="fa-brands fa-linkedin"></i
+          ></a>
+          <a href="https://github.com/wakamonoo"
+            ><i class="fa-brands fa-github"></i
+          ></a>
+        </div>
+        <a href="https://jovenbataller21.vercel.app">
+          <img src="images/wakamonoo.png" class="wakamonoo" />
+        </a>
+      </div>
+    </div>
+  </footer>
 </html>

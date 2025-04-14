@@ -29,7 +29,8 @@ body {
 
 .logo {
   width: 20vh;
-  margin-left: 5%;
+  margin-left: 15%;
+  display: block;
 }
 
 .search {
@@ -509,6 +510,101 @@ nav ul li a:hover {
   text-align: left; 
 }
 
+
+/*-------------------------Footer-------------------------*/
+footer {
+  padding: 10% 20px 40px 20px;
+}
+
+.footerclass {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 30px 20px;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.leftFooter img {
+  width: 200px;
+  height: auto; 
+}
+
+.footerclass > div,
+.foorterRight {
+  flex: 1 1 220px;
+  min-width: 220px;
+  max-width: 25%;
+}
+
+.footerCTA {
+  color: #20462f;
+  font-size: 18px;
+}
+
+.footerclass ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footerclass ul li {
+  margin: 5px 0;
+}
+
+.footerclass ul li a {
+  text-decoration: none;
+  color: #20462f;
+  font-size: 18px;
+  transition: color 0.3s;
+}
+
+.footerclass ul li a:hover {
+  color: #ffb84d;
+}
+
+.footerSupport,
+.footerLinks,
+.footerFollow {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #F1D1B5;
+}
+
+.footerclass .social-icons a {
+  margin-right: 10px;
+  font-size: 24px;
+  color: #20462f;
+  transition: color 0.3s;
+}
+
+.footerclass .social-icons a:hover {
+  color: #ffb84d;
+}
+
+.Gcash {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gcashImage {
+  width: 40px;
+  height: auto;
+}
+
+.GcashText {
+  font-size: 18px;
+  color: #20462f;
+}
+
+.wakamonoo {
+  width: 100px;
+  height: auto;
+  margin-top: 10px;
+}
+
 /*-------------------------Responsive Design-------------------------*/
 @media only screen and (max-width: 600px) {
   .logo {
@@ -770,4 +866,30 @@ nav ul {
     width: 100%;
     box-sizing: border-box;
   }  
+  .footerclass > div,
+  .foorterRight {
+    max-width: 100%;
+  }
+
+  .footerCTA {
+    font-size: 14px;
+  }
+  
+  .footerclass ul li a {
+    font-size: 14px;
+  }
+  
+  .footerSupport,
+  .footerLinks,
+  .footerFollow {
+    font-size: 24px;
+  }
+  
+  .footerclass .social-icons a {
+    font-size: 24px;
+  }
+  
+  .GcashText {
+    font-size: 18px;
+  }
 }

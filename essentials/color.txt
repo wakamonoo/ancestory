@@ -1,9 +1,9 @@
-#F1D1B5
+#F1D1B5 - header
 
-#FFB84D
+#FFB84D - hover
 
-#FF6F61
+#FF6F61 - background
 
-#FF9A8B
+#FF9A8B - 
 
-#20462f
+#20462f - promary text color
