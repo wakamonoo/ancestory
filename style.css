@@ -329,14 +329,14 @@ nav ul li a:hover {
   gap: 20px;
   max-width: 100%;
   padding: 10px;
-  justify-items: center;
+  justify-items: left;
 }
 
 .researchersTitle {
   font-size: 32px;
   color: #20462f;
   margin-bottom: 10px;
-  text-align: center;
+  text-align: left;
   grid-column: span 2;
 }
 
@@ -812,18 +812,25 @@ footer {
   }
 
   #aboutRight {
-    display: flex;
+    display: grid;
     justify-content: center;
     gap: 20px;
+    grid-template-columns: repeat(2, 1fr);
+    padding: 10px;
   }
 
   .researcherCard {
-    max-width: 90%;
-    margin-bottom: 20px;
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .researcherImage {
     max-width: 200px;
+    width: 100%;
+    height: auto;
   }
 
   .research {
@@ -837,12 +844,15 @@ footer {
   .overviewTitle {
     font-size: 24px;
   }
+
   .aboutOverview {
     font-size: 14px;
   }
 
   .researchersTitle {
     font-size: 24px;
+    grid-column: span 2; /* make sure this spans both columns in grid */
+    text-align: left;
   }
 
   .author {
