@@ -5,16 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Story Details</title>
     <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
     <div id="storyContent">
       <div id="storyContainer">
+        <a href="index.html#stories" class="backStory">
+          <img src="images/back.png" alt="Back" />
+        </a>
         <div class="story-title-container">
           <h1 id="story-title">Story Title</h1>
         </div>
         <p id="story-origin">Origin:</p>
         <img id="story-image" alt="Story Image" />
         <div id="story-content"></div>
+        
+        <!-- Inline Reaction Section -->
+        <div class="reaction-section">
+          <div class="reaction-stats">
+            <i class="fas fa-thumbs-up"></i>
+            <span id="like-count">Quent Bryan Reyes and 575 others</span>
+          </div>
+          <div class="reaction-stats">
+            <span id="comment-count">19 comments</span>
+            <span style="margin: 0 5px">•</span>
+            <span id="share-count">14 shares</span>
+          </div>
+        </div>
+        
+        <div class="reaction-actions">
+          <div class="reaction-container">
+            <div class="reaction-action like-btn">
+              <i class="fas fa-thumbs-up"></i>
+              <span>Like</span>
+            </div>
+            <div class="reaction-options">
+              <div class="reaction-option" data-reaction="like" title="Like">
+                <i class="fas fa-thumbs-up" style="color: #216fdb;"></i>
+              </div>
+              <div class="reaction-option" data-reaction="love" title="Love">
+                <i class="fas fa-heart" style="color: #f33e58;"></i>
+              </div>
+              <div class="reaction-option" data-reaction="wow" title="Wow">
+                <i class="fas fa-surprise" style="color: #f7b125;"></i>
+              </div>
+              <div class="reaction-option" data-reaction="angry" title="Angry">
+                <i class="fas fa-angry" style="color: #e9710f;"></i>
+              </div>
+            </div>
+          </div>
+          
+          <div class="reaction-action comment-btn">
+            <i class="fas fa-comment-dots"></i>
+            <span>Comment</span>
+          </div>
+          
+          <div class="reaction-action share-btn">
+            <i class="fas fa-share"></i>
+            <span>Share</span>
+          </div>
+        </div>
+        
+        <div class="comment-section">
+          <div class="comment-box">
+            <div class="comment-input-container">
+              <input type="text" id="comment-input" placeholder="Write a comment..." />
+            </div>
+            <button id="post-comment">Post</button>
+          </div>
+          
+          <div id="comments-section"></div>
+        </div>
       </div>
     </div>
 
@@ -89,6 +154,108 @@
       }
 
       window.onload = fetchStoryDetails;
+
+      document.addEventListener("DOMContentLoaded", () => {
+        // Reaction handling
+        const likeBtn = document.querySelector('.like-btn');
+        const reactionOptions = document.querySelector('.reaction-options');
+        let reactionTimeout;
+        
+        // Show reactions on long press
+        likeBtn.addEventListener('mousedown', () => {
+          reactionTimeout = setTimeout(() => {
+            reactionOptions.style.display = 'block';
+          }, 500);
+        });
+        
+        likeBtn.addEventListener('mouseup', () => {
+          clearTimeout(reactionTimeout);
+        });
+        
+        likeBtn.addEventListener('mouseleave', () => {
+          clearTimeout(reactionTimeout);
+          reactionOptions.style.display = 'none';
+        });
+        
+        // Hide reactions when clicking elsewhere
+        document.addEventListener('click', (e) => {
+          if (!likeBtn.contains(e.target) && !reactionOptions.contains(e.target)) {
+            reactionOptions.style.display = 'none';
+          }
+        });
+        
+        // Select a reaction
+        const reactionOptionsList = document.querySelectorAll('.reaction-option');
+        reactionOptionsList.forEach(option => {
+          option.addEventListener('click', () => {
+            const reaction = option.dataset.reaction;
+            alert(`You reacted with ${reaction}`);
+            reactionOptions.style.display = 'none';
+            // Here you can save to Firebase later
+          });
+        });
+        
+        // Simple like button click
+        likeBtn.addEventListener('click', (e) => {
+          // Only trigger if not showing reaction options
+          if (reactionOptions.style.display !== 'block') {
+            alert('You liked this post');
+            // Here you can save to Firebase later
+          }
+        });
+        
+        // Comment button
+        document.querySelector('.comment-btn').addEventListener('click', () => {
+          document.getElementById('comment-input').focus();
+        });
+        
+        // Share button
+        document.querySelector('.share-btn').addEventListener('click', () => {
+          navigator.clipboard.writeText(window.location.href).then(() => {
+            alert('Link copied to clipboard!');
+          });
+        });
+        
+        // Comment handling
+        const postBtn = document.getElementById("post-comment");
+        const commentInput = document.getElementById("comment-input");
+        const commentSection = document.getElementById("comments-section");
+        
+        commentInput.addEventListener('input', () => {
+          if (commentInput.value.trim() !== "") {
+            postBtn.classList.add('active');
+          } else {
+            postBtn.classList.remove('active');
+          }
+        });
+        
+        postBtn.addEventListener("click", () => {
+          const comment = commentInput.value.trim();
+          if (comment !== "") {
+            const commentEl = document.createElement("div");
+            commentEl.className = "comment";
+            commentEl.innerHTML = `
+              <div class="comment-avatar">
+                <i class="fas fa-user-circle" style="font-size: 32px; color: #20462f;"></i>
+              </div>
+              <div class="comment-content">
+                <span class="comment-username">You</span>
+                ${comment}
+              </div>
+            `;
+            commentSection.prepend(commentEl);
+            commentInput.value = "";
+            postBtn.classList.remove('active');
+          }
+        });
+        
+        // Allow pressing Enter to post comment
+        commentInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            postBtn.click();
+          }
+        });
+      });
     </script>
   </body>
 </html>
