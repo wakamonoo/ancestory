@@ -151,30 +151,29 @@ nav ul li a:hover {
 }
 
 #user-profile {
-  display: flex; /* Make it a flex container */
-  align-items: center; /* Vertically align items */
-  padding: 10px 15px; /* Adjust padding */
-  text-align: left; /* Align text to the left within the container */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
 }
 
 .profile-photo {
-  width: 40px; /* Smaller profile photo */
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  margin-right: 10px; /* Space between image and text */
 }
 
 .display-name {
-  font-size: 1.2em; /* Adjust name size */
-  margin-bottom: 0; /* Remove default bottom margin */
+  font-size: 1em;
+  margin: 0;
   color: #20462f;
 }
 
 #user-profile p {
-  font-size: 0.9em; /* Adjust welcome text size */
+  font-size: 0.8em;
   color: #20462f;
-  margin-top: 0; /* Remove default top margin */
+  margin: 0;
 }
-
 
 /*-------------------------StoryDesign-------------------------*/
 .storytitle {

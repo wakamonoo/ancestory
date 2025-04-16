@@ -18,38 +18,31 @@
   <body>
     <div id="header">
       <nav>
-        <a href="#header" title="ancestory">
-          <img src="images/logo.png" alt="ancestory logo" class="logo" />
-        </a>
-        <div class="nav-icons">
-          <i class="fa fa-search search"></i>
-          <i class="fas fa-bars" onclick="openmenu()"></i>
-          <ul id="sidemenu">
-            <div
-              id="user-profile"
-              style="display: none; padding: 20px; text-align: center"
-            >
-              <img
-                src="images/user.png"
-                alt="Profile Photo"
-                class="profile-photo"
-                width="80"
-                style="border-radius: 50%"
-              />
-              <h2 class="display-name"></h2>
+        <div style="display: flex; align-items: center; gap: 20px; margin-left: 2%;">
+          <a href="#header" title="ancestory">
+            <img src="images/logo.png" alt="ancestory logo" class="logo" />
+          </a>
+          <div id="user-profile">
+            <img src="images/user.png" alt="Profile Photo" class="profile-photo" />
+            <div>
+              <h2 class="display-name">Joven Bataller</h2>
               <p>Welcome back!</p>
             </div>
+          </div>
+        </div>
+      
+        <div class="nav-icons">
+          <i class="fa fa-search search"></i>
+          <ul id="sidemenu">
             <li><a href="#header">Home</a></li>
             <li><a href="#stories">Stories</a></li>
             <li><a href="#about">About</a></li>
-            <li>
-              <a href="#" id="loginLink">Login</a>
-            </li>
+            <li><a href="#" id="loginLink">Logout</a></li>
             <li><a href="settings.html">Settings</a></li>
-            <i class="fas fa-times" onclick="closemenu()"></i>
           </ul>
         </div>
       </nav>
+      
       <h1 class="welcome">
         Welcome to <span class="span-ancest">AnceStory</span>, Where Ancestral
         Whispers Become Timeless Tales
