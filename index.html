@@ -13,22 +13,9 @@
       href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap"
       rel="stylesheet"
     />
-    <script
-      type="module"
-      src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"
-    ></script>
-    <script
-      type="module"
-      src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
-    ></script>
-    <script
-      type="module"
-      src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"
-    ></script>
     <link rel="icon" href="images/logo.png" type="image/png" />
   </head>
   <body>
-    <!----------------------Header---------------------->
     <div id="header">
       <nav>
         <a href="#header" title="ancestory">
@@ -42,7 +29,7 @@
             <li><a href="#stories">Stories</a></li>
             <li><a href="#about">About</a></li>
             <li>
-              <a href="javascript:void(0);" onclick="openLoginModal()">Login</a>
+              <a href="#" id="loginLink">Login</a>
             </li>
             <li><a href="settings.html">Settings</a></li>
             <i class="fas fa-times" onclick="closemenu()"></i>
@@ -66,14 +53,26 @@
         </div>
       </div>
     </div>
-    <!----------------------Stories---------------------->
+    <div
+      id="user-profile"
+      style="display: none; padding: 20px; text-align: center"
+    >
+      <img
+        src="images/user.png"
+        alt="Profile Photo"
+        class="profile-photo"
+        width="80"
+        style="border-radius: 50%"
+      />
+      <h2 class="display-name"></h2>
+      <p>Welcome back!</p>
+    </div>
     <div id="stories">
       <h1 class="storytitle">Stories</h1>
       <div id="stories-container"></div>
-      <a href="login.html" class="StorySub">Wanna Submit a Story?</a>
+      <a href="#stories" class="StorySub">Wanna Submit a Story?</a>
     </div>
     <hr class="divider" />
-    <!----------------------About---------------------->
     <div id="about">
       <h1 class="About">About</h1>
       <div id="aboutContainer">
@@ -137,13 +136,7 @@
               Insights will be gathered from key informants, aged 20-85, who
               possess extensive knowledge of these folk stories, to help
               illuminate the rich storytelling tradition that has long been a
-              part of these communities. This study emphasizes the need to
-              preserve and promote local stories, not only to maintain the
-              cultural fabric of Barangay Apud and Rawis but also to encourage
-              future generations to embrace and share these stories. By doing
-              so, the study hopes to foster a greater appreciation for local
-              folk stories, ensuring they are passed down and continue to be an
-              enduring part of the community's identity.
+              part of
             </p>
           </div>
         </div>
@@ -168,7 +161,6 @@
         </div>
       </div>
     </div>
-    <!----------------------LoginModal---------------------->
     <div id="loginModal" class="modal">
       <div class="modal-content">
         <span class="close" onclick="closeLoginModal()">&times;</span>
@@ -186,9 +178,8 @@
         </div>
       </div>
     </div>
-    <!----------------------Script---------------------->
-    <script src="script.js"></script>
-    <script src="login.js"></script>
+    <script src="script.js" type="module"></script>
+    <script type="module" src="login.js"></script>
     <script type="module" src="stories.js"></script>
   </body>
   <footer>
@@ -210,7 +201,7 @@
           <li><a href="#stories">Stories</a></li>
           <li><a href="#about">About</a></li>
           <li>
-            <a href="javascript:void(0);" onclick="openLoginModal()">Login</a>
+            <a href="#" onclick="openLoginModal()">Login</a>
           </li>
           <li><a href="#">Settings</a></li>
         </ul>
