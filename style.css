@@ -149,6 +149,48 @@ nav ul li a {
 nav ul li a:hover {
   color: #ffb84d;
 }
+
+/*-------------------------UserProfile-------------------------*/
+.user-profile {
+  display: none;
+  padding: 20px;
+  text-align: center;
+  width: 80%;
+  border-top: 2px solid #20462f;
+  border-bottom: 2px solid #20462f;
+  background-color: #FF6F61; 
+  margin: 0 auto;
+  color: #20462f;
+  margin-bottom: 5vh;
+}
+
+.profile-photo {
+  width: 80px;
+  border-radius: 50%;
+  border: 2px solid #FF9A8B; 
+  padding: 4px;
+  margin-bottom: 10px;
+  display: block; 
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.display-name {
+  color: #20462f;
+  padding: 10px;
+  font-size: 24px;
+  border-radius: 5px;
+  display: block; 
+}
+
+.user-profile p {
+  color: #20462f;
+  font-size: 18px;
+  margin: 0;
+  display: block; 
+}
+
+
 /*-------------------------StoryDesign-------------------------*/
 .storytitle {
   font-size: 5vh;
