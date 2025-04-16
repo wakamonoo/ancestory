@@ -1,7 +1,43 @@
+rules_version = '2';
 service cloud.firestore {
- match /databases/{database}/documents {
-   match /{document=**} {
-     allow read: if true;
+  match /databases/{database}/documents {
+    // Public read access to all documents
+    match /{document=**} {
+      allow read: if true;
+    }
+
+    // Specific write rules for reactions
+    match /reactions/{reactionId} {
+      allow create: if request.auth != null 
+                    && request.resource.data.storyId is string
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.reactionType in ["like", "love", "wow", "angry"];
+      
+      allow delete: if request.auth != null 
+                    && resource.data.userId == request.auth.uid;
+      
+      // No updates allowed - users must delete and recreate
+      allow update: if false;
+    }
+
+    // Specific write rules for comments
+    match /comments/{commentId} {
+      allow create: if request.auth != null 
+                    && request.resource.data.storyId is string
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.text is string
+                    && request.resource.data.text.size() > 0
+                    && request.resource.data.text.size() < 1000;
+      
+      allow delete: if request.auth != null 
+                    && resource.data.userId == request.auth.uid;
+      
+      // No updates allowed to prevent comment editing
+      allow update: if false;
+    }
+
+    // Block all other writes by default
+    match /{document=**} {
       allow write: if false;
     }
   }
