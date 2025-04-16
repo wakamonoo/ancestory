@@ -149,43 +149,6 @@ nav ul li a {
 nav ul li a:hover {
   color: #ffb84d;
 }
-
-#user-profile {
-  display: flex;
-  flex-direction: row !important;
-  align-items: center;
-  gap: 10px;
-  white-space: nowrap;
-}
-
-.profile-photo {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.profile-text {
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding: 0;
-  line-height: 1.2;
-}
-
-.display-name {
-  font-size: 1em;
-  margin: 0;
-  color: #20462f;
-  font-weight: bold;
-}
-
-.profile-text p {
-  font-size: 0.8em;
-  margin: 0;
-  color: #20462f;
-}
-
 /*-------------------------StoryDesign-------------------------*/
 .storytitle {
   font-size: 5vh;
