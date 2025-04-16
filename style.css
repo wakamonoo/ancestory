@@ -152,19 +152,24 @@ nav ul li a:hover {
 
 #user-profile {
   display: flex;
+  flex-direction: row !important;
   align-items: center;
   gap: 10px;
+  white-space: nowrap;
 }
 
 .profile-photo {
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  object-fit: cover;
 }
 
 .profile-text {
   display: flex;
   flex-direction: column;
+  margin: 0;
+  padding: 0;
   line-height: 1.2;
 }
 
@@ -177,8 +182,8 @@ nav ul li a:hover {
 
 .profile-text p {
   font-size: 0.8em;
-  color: #20462f;
   margin: 0;
+  color: #20462f;
 }
 
 /*-------------------------StoryDesign-------------------------*/
