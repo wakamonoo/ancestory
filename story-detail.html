@@ -386,22 +386,32 @@
       }
 
       function addCommentToDOM(comment) {
-        const commentEl = document.createElement("div");
-        commentEl.className = "comment";
-        commentEl.innerHTML = `
-          <div class="comment-avatar">
-            <i class="fas fa-user-circle" style="font-size: 32px; color: #20462f;"></i>
-          </div>
-          <div class="comment-content">
-            <span class="comment-username">${
-              comment.userName || "Anonymous"
-            }</span>
-            ${comment.text}
-            <div class="comment-time">${formatTime(
-              comment.timestamp?.toDate()
-            )}</div>
-          </div>
-        `;
+  console.log("Comment object in addCommentToDOM:", comment);
+  console.log("Comment has userPhotoURL:", comment.userPhotoURL); // <--- ADD THIS LINE
+
+  const commentEl = document.createElement("div");
+  commentEl.className = "comment";
+  let avatarContent = '';
+  if (comment.userPhotoURL) {
+   avatarContent = `<img src="${comment.userPhotoURL}" alt="User Avatar" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">`;
+  } else {
+   avatarContent = `<i class="fas fa-user-circle" style="font-size: 32px; color: #20462f;"></i>`;
+  }
+
+  commentEl.innerHTML = `
+   <div class="comment-avatar">
+    ${avatarContent}
+   </div>
+   <div class="comment-content">
+    <span class="comment-username">${
+     comment.userName || "Anonymous"
+    }</span>
+    ${comment.text}
+    <div class="comment-time">${formatTime(
+     comment.timestamp?.toDate()
+    )}</div>
+   </div>
+  `;
 
         // Add to top of comments section
         const commentsSection = document.getElementById("comments-section");
