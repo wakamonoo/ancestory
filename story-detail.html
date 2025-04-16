@@ -386,15 +386,15 @@
       }
 
       function addCommentToDOM(comment) {
-  const commentEl = document.createElement("div");
-  commentEl.className = "comment";
-  
-  // Use the user's photo if available, otherwise use the default icon
-  const avatarContent = comment.userPhoto 
-    ? `<img src="${comment.userPhoto}" alt="User Avatar" class="comment-avatar-img">`
-    : `<i class="fas fa-user-circle" style="font-size: 32px; color: #20462f;"></i>`;
-  
-  commentEl.innerHTML = `
+        const commentEl = document.createElement("div");
+        commentEl.className = "comment";
+
+        // Use the user's photo if available, otherwise use the default icon
+        const avatarContent = comment.userPhoto
+          ? `<img src="${comment.userPhoto}" alt="User Avatar" class="comment-avatar-img">`
+          : `<i class="fas fa-user-circle" style="font-size: 32px; color: #20462f;"></i>`;
+
+        commentEl.innerHTML = `
     <div class="comment-avatar">
       ${avatarContent}
     </div>
@@ -405,16 +405,15 @@
     </div>
   `;
 
-  // Add to top of comments section
-  const commentsSection = document.getElementById("comments-section");
-  const firstChild = commentsSection.firstChild;
+        const commentsSection = document.getElementById("comments-section");
+        const firstChild = commentsSection.firstChild;
 
-  if (firstChild && firstChild.textContent.includes("No comments yet")) {
-    commentsSection.innerHTML = ""; // Remove the "no comments" message
-  }
+        if (firstChild && firstChild.textContent.includes("No comments yet")) {
+          commentsSection.innerHTML = ""; 
+        }
 
-  commentsSection.prepend(commentEl); // Add new comment at the top
-}
+        commentsSection.prepend(commentEl); 
+      }
 
       function formatTime(date) {
         if (!date) return "";
@@ -429,26 +428,25 @@
       }
 
       async function postComment(commentText) {
-  if (!currentUser) {
-    alert("Please login to post comments");
-    return;
-  }
+        if (!currentUser) {
+          alert("Please login to post comments");
+          return;
+        }
 
-  if (!commentText.trim()) {
-    alert("Comment cannot be empty");
-    return;
-  }
+        if (!commentText.trim()) {
+          alert("Comment cannot be empty");
+          return;
+        }
 
-  try {
-    // Add comment to Firestore
-    const commentRef = await addDoc(collection(db, "comments"), {
-      storyId: currentStoryId,
-      userId: currentUser.uid,
-      userName: currentUser.displayName || "Anonymous",
-      userPhoto: currentUser.photoURL || null, // Add this line to store the photo URL
-      text: commentText,
-      timestamp: serverTimestamp(),
-    });
+        try {
+          const commentRef = await addDoc(collection(db, "comments"), {
+            storyId: currentStoryId,
+            userId: currentUser.uid,
+            userName: currentUser.displayName || "Anonymous",
+            userPhoto: currentUser.photoURL || null, 
+            text: commentText,
+            timestamp: serverTimestamp(),
+          });
 
           // Get the newly added comment with its ID
           const commentDoc = await getDoc(commentRef);
