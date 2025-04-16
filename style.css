@@ -154,7 +154,6 @@ nav ul li a:hover {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0;
 }
 
 .profile-photo {
@@ -163,13 +162,20 @@ nav ul li a:hover {
   border-radius: 50%;
 }
 
+.profile-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
 .display-name {
   font-size: 1em;
   margin: 0;
   color: #20462f;
+  font-weight: bold;
 }
 
-#user-profile p {
+.profile-text p {
   font-size: 0.8em;
   color: #20462f;
   margin: 0;
