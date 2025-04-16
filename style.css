@@ -544,12 +544,12 @@ nav ul li a:hover {
 .reaction-stats {
   display: flex;
   align-items: center;
-  color: #65676b;
-  font-size: 15px;
+  color: #20462f;
+  font-size: 18px;
 }
 
 .reaction-stats i {
-  color: #216fdb;
+  color: #ffb84d;
   margin-right: 5px;
 }
 
@@ -561,13 +561,14 @@ nav ul li a:hover {
 }
 
 .reaction-action {
+  font-size: 18px;
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 8px 0;
   cursor: pointer;
-  color: #65676b;
+  color: #20462f;
   font-weight: 600;
   transition: background-color 0.2s;
   border-radius: 4px;
@@ -601,7 +602,7 @@ nav ul li a:hover {
 
 .reaction-option {
   display: inline-block;
-  font-size: 24px;
+  font-size: 18px;
   margin: 0 3px;
   transform: scale(0.8);
   transition: transform 0.2s;
@@ -633,10 +634,11 @@ nav ul li a:hover {
   border-radius: 20px;
   border: 1px solid #c39e7d;
   background-color: #f8f1eb;
-  font-size: 15px;
+  font-size: 18px;
 }
 
 #post-comment {
+  font-size: 18px;
   background: none;
   border: none;
   color: #20462f;
@@ -664,7 +666,7 @@ nav ul li a:hover {
 }
 
 .comment-content {
-  background-color: #f0f2f5;
+  background-color: #ffb84d;
   border-radius: 18px;
   padding: 8px 12px;
   flex-grow: 1;
@@ -1070,5 +1072,30 @@ footer {
 
   .GcashText {
     font-size: 18px;
+  }
+  
+  .reaction-stats {
+    font-size: 14px;
+  }
+  
+  
+  .reaction-actions {
+    gap: 8vw;
+  }
+  
+  .reaction-action {
+    font-size: 14px;
+  }
+  
+  .reaction-action i {
+    font-size: 14px;
+  }
+  
+  #comment-input {
+    font-size: 14px;
+  }
+  
+  #post-comment {
+    font-size: 14px;
   }
 }
