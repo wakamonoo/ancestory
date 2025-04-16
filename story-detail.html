@@ -9,7 +9,6 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
-    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div id="storyContent">
@@ -28,12 +27,12 @@
         <div class="reaction-section">
           <div class="reaction-stats">
             <i class="fas fa-thumbs-up"></i>
-            <span id="like-count">Quent Bryan Reyes and 575 others</span>
+            <span id="like-count">0 reactions</span>
           </div>
           <div class="reaction-stats">
-            <span id="comment-count">19 comments</span>
+            <span id="comment-count">0 comments</span>
             <span style="margin: 0 5px">•</span>
-            <span id="share-count">14 shares</span>
+            <span id="share-count">0 shares</span>
           </div>
         </div>
 
@@ -71,7 +70,7 @@
         </div>
 
         <div class="comment-section">
-          <div class="comment-box">
+          <div class="comment-box" id="comment-form">
             <div class="comment-input-container">
               <input
                 type="text"
@@ -88,20 +87,29 @@
     </div>
 
     <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
       import {
         getFirestore,
         doc,
         getDoc,
-      } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+        collection,
+        addDoc,
+        query,
+        where,
+        getDocs,
+        serverTimestamp,
+        updateDoc,
+        arrayUnion,
+        arrayRemove
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+      import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
       const firebaseConfig = {
         apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
         authDomain: "ancestory-c068e.firebaseapp.com",
-        databaseURL:
-          "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
+        databaseURL: "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
         projectId: "ancestory-c068e",
-        storageBucket: "ancestory-c068e.firebasestorage.app",
+        storageBucket: "ancestory-c068e.appspot.com",
         messagingSenderId: "579709470015",
         appId: "1:579709470015:web:adbbc5cba7f4e53f617f8a",
         measurementId: "G-S5SQWC7PEM",
@@ -109,17 +117,36 @@
 
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
+      const auth = getAuth(app);
+
+      let currentUser = null;
+      let currentStoryId = null;
+      let currentUserReaction = null;
+
+      // Check auth state
+      onAuthStateChanged(auth, (user) => {
+        currentUser = user;
+        if (user) {
+          // User is signed in
+          document.getElementById('comment-form').style.display = 'flex';
+          checkUserReaction();
+        } else {
+          // User is signed out
+          document.getElementById('comment-form').style.display = 'none';
+        }
+      });
 
       async function fetchStoryDetails() {
         const urlParams = new URLSearchParams(window.location.search);
-        const storyId = urlParams.get("storyId");
+        currentStoryId = urlParams.get("storyId");
 
-        if (!storyId) {
+        if (!currentStoryId) {
           console.error("Story ID not found");
           return;
         }
 
-        const docRef = doc(db, "Stories", storyId);
+        // Fetch story details
+        const docRef = doc(db, "Stories", currentStoryId);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
@@ -142,6 +169,10 @@
           document.getElementById("story-content").innerHTML =
             "<p>Story not found</p>";
         }
+
+        // Load reactions and comments
+        loadReactions();
+        loadComments();
       }
 
       function formatStoryContent(content) {
@@ -155,6 +186,229 @@
             )}</p>`;
           })
           .join("");
+      }
+
+      async function loadReactions() {
+        const reactionsRef = collection(db, "reactions");
+        const q = query(reactionsRef, where("storyId", "==", currentStoryId));
+        const querySnapshot = await getDocs(q);
+        
+        const reactions = {};
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (!reactions[data.reactionType]) {
+            reactions[data.reactionType] = 0;
+          }
+          reactions[data.reactionType]++;
+        });
+
+        updateReactionUI(reactions);
+      }
+
+      async function checkUserReaction() {
+        if (!currentUser || !currentStoryId) return;
+        
+        const reactionsRef = collection(db, "reactions");
+        const q = query(
+          reactionsRef, 
+          where("storyId", "==", currentStoryId),
+          where("userId", "==", currentUser.uid)
+        );
+        
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          currentUserReaction = querySnapshot.docs[0].data().reactionType;
+          updateReactionButton(currentUserReaction);
+        }
+      }
+
+      function updateReactionUI(reactions) {
+        const totalReactions = Object.values(reactions).reduce((a, b) => a + b, 0);
+        const likeCountElement = document.getElementById("like-count");
+        
+        if (totalReactions === 0) {
+          likeCountElement.textContent = "0 reactions";
+        } else {
+          const reactionTypes = Object.keys(reactions);
+          if (reactionTypes.length === 1) {
+            // Only one reaction type
+            const reactionType = reactionTypes[0];
+            const count = reactions[reactionType];
+            likeCountElement.textContent = `${count} ${getReactionDisplayName(reactionType)}${count !== 1 ? 's' : ''}`;
+          } else {
+            // Multiple reaction types
+            likeCountElement.textContent = `${totalReactions} reactions`;
+          }
+        }
+      }
+
+      function getReactionDisplayName(reactionType) {
+        const names = {
+          like: "Like",
+          love: "Love",
+          wow: "Wow",
+          angry: "Angry"
+        };
+        return names[reactionType] || reactionType;
+      }
+
+      function updateReactionButton(reactionType) {
+        const likeBtn = document.querySelector(".like-btn");
+        const icon = likeBtn.querySelector("i");
+        const text = likeBtn.querySelector("span");
+        
+        switch(reactionType) {
+          case "like":
+            icon.className = "fas fa-thumbs-up";
+            icon.style.color = "#216fdb";
+            text.textContent = "Liked";
+            break;
+          case "love":
+            icon.className = "fas fa-heart";
+            icon.style.color = "#f33e58";
+            text.textContent = "Loved";
+            break;
+          case "wow":
+            icon.className = "fas fa-surprise";
+            icon.style.color = "#f7b125";
+            text.textContent = "Wow";
+            break;
+          case "angry":
+            icon.className = "fas fa-angry";
+            icon.style.color = "#e9710f";
+            text.textContent = "Angry";
+            break;
+          default:
+            icon.className = "fas fa-thumbs-up";
+            icon.style.color = "";
+            text.textContent = "Like";
+        }
+      }
+
+      async function handleReaction(reactionType) {
+        if (!currentUser) {
+          alert("Please login to react to stories");
+          return;
+        }
+        
+        try {
+          const reactionsRef = collection(db, "reactions");
+          
+          // First check if user already reacted
+          const q = query(
+            reactionsRef, 
+            where("storyId", "==", currentStoryId),
+            where("userId", "==", currentUser.uid)
+          );
+          
+          const querySnapshot = await getDocs(q);
+          
+          if (!querySnapshot.empty) {
+            // User already reacted - remove or update reaction
+            const existingReaction = querySnapshot.docs[0];
+            if (existingReaction.data().reactionType === reactionType) {
+              // Same reaction - remove it
+              await deleteDoc(existingReaction.ref);
+              currentUserReaction = null;
+              updateReactionButton(null);
+            } else {
+              // Different reaction - update it
+              await updateDoc(existingReaction.ref, {
+                reactionType: reactionType,
+                timestamp: serverTimestamp()
+              });
+              currentUserReaction = reactionType;
+              updateReactionButton(reactionType);
+            }
+          } else {
+            // New reaction
+            await addDoc(reactionsRef, {
+              storyId: currentStoryId,
+              userId: currentUser.uid,
+              reactionType: reactionType,
+              timestamp: serverTimestamp()
+            });
+            currentUserReaction = reactionType;
+            updateReactionButton(reactionType);
+          }
+          
+          // Reload reactions
+          loadReactions();
+        } catch (error) {
+          console.error("Error handling reaction:", error);
+        }
+      }
+
+      async function loadComments() {
+        const commentsRef = collection(db, "comments");
+        const q = query(
+          commentsRef, 
+          where("storyId", "==", currentStoryId),
+          orderBy("timestamp", "desc")
+        );
+        
+        const querySnapshot = await getDocs(q);
+        const commentsSection = document.getElementById("comments-section");
+        commentsSection.innerHTML = "";
+        
+        if (querySnapshot.empty) {
+          commentsSection.innerHTML = "<p>No comments yet. Be the first to comment!</p>";
+          document.getElementById("comment-count").textContent = "0 comments";
+          return;
+        }
+        
+        document.getElementById("comment-count").textContent = 
+          `${querySnapshot.size} comment${querySnapshot.size !== 1 ? 's' : ''}`;
+        
+        querySnapshot.forEach((doc) => {
+          const comment = doc.data();
+          const commentEl = document.createElement("div");
+          commentEl.className = "comment";
+          commentEl.innerHTML = `
+            <div class="comment-avatar">
+              <i class="fas fa-user-circle" style="font-size: 32px; color: #20462f;"></i>
+            </div>
+            <div class="comment-content">
+              <span class="comment-username">${comment.userName || "Anonymous"}</span>
+              ${comment.text}
+              <div class="comment-time">${formatTime(comment.timestamp?.toDate())}</div>
+            </div>
+          `;
+          commentsSection.appendChild(commentEl);
+        });
+      }
+
+      function formatTime(date) {
+        if (!date) return "";
+        return date.toLocaleDateString() + " " + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      }
+
+      async function postComment(commentText) {
+        if (!currentUser) {
+          alert("Please login to post comments");
+          return;
+        }
+        
+        if (!commentText.trim()) {
+          alert("Comment cannot be empty");
+          return;
+        }
+        
+        try {
+          await addDoc(collection(db, "comments"), {
+            storyId: currentStoryId,
+            userId: currentUser.uid,
+            userName: currentUser.displayName || "Anonymous",
+            text: commentText,
+            timestamp: serverTimestamp()
+          });
+          
+          // Clear input and reload comments
+          document.getElementById("comment-input").value = "";
+          loadComments();
+        } catch (error) {
+          console.error("Error posting comment:", error);
+        }
       }
 
       window.onload = fetchStoryDetails;
@@ -192,23 +446,19 @@
         });
 
         // Select a reaction
-        const reactionOptionsList =
-          document.querySelectorAll(".reaction-option");
+        const reactionOptionsList = document.querySelectorAll(".reaction-option");
         reactionOptionsList.forEach((option) => {
           option.addEventListener("click", () => {
             const reaction = option.dataset.reaction;
-            alert(`You reacted with ${reaction}`);
+            handleReaction(reaction);
             reactionOptions.style.display = "none";
-            // Here you can save to Firebase later
           });
         });
 
         // Simple like button click
         likeBtn.addEventListener("click", (e) => {
-          // Only trigger if not showing reaction options
           if (reactionOptions.style.display !== "block") {
-            alert("You liked this post");
-            // Here you can save to Firebase later
+            handleReaction("like");
           }
         });
 
@@ -227,7 +477,6 @@
         // Comment handling
         const postBtn = document.getElementById("post-comment");
         const commentInput = document.getElementById("comment-input");
-        const commentSection = document.getElementById("comments-section");
 
         commentInput.addEventListener("input", () => {
           if (commentInput.value.trim() !== "") {
@@ -239,28 +488,13 @@
 
         postBtn.addEventListener("click", () => {
           const comment = commentInput.value.trim();
-          if (comment !== "") {
-            const commentEl = document.createElement("div");
-            commentEl.className = "comment";
-            commentEl.innerHTML = `
-              <div class="comment-avatar">
-                <i class="fas fa-user-circle" style="font-size: 32px; color: #20462f;"></i>
-              </div>
-              <div class="comment-content">
-                <span class="comment-username">You</span>
-                ${comment}
-              </div>
-            `;
-            commentSection.prepend(commentEl);
-            commentInput.value = "";
-            postBtn.classList.remove("active");
-          }
+          postComment(comment);
         });
 
         // Allow pressing Enter to post comment
         commentInput.addEventListener("keypress", (e) => {
           if (e.key === "Enter") {
-            postBtn.click();
+            postComment(commentInput.value.trim());
           }
         });
       });
