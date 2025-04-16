@@ -455,7 +455,6 @@ nav ul li a:hover {
   margin-right: 10px;
 }
 /*-------------------------StoryContent-------------------------*/
-/*-------------------------StoryContent-------------------------*/
 #storyContent {
   display: flex;
   flex-direction: column;
@@ -518,7 +517,6 @@ nav ul li a:hover {
   text-align: justify;
 }
 
-/* Inline reaction section */
 .reaction-section {
   display: flex;
   justify-content: space-between;
@@ -543,18 +541,27 @@ nav ul li a:hover {
 
 .reaction-actions {
   display: flex;
+  justify-content: space-between; 
+  width: 100%; 
+  gap: 13vw;
 }
 
 .reaction-action {
+  flex: 1; /* This makes each button grow equally to fill available space */
   display: flex;
   align-items: center;
-  padding: 8px 15px;
+  justify-content: center; /* Center content horizontally */
+  padding: 8px 0; /* Adjust padding as needed */
   cursor: pointer;
   color: #65676B;
   font-weight: 600;
   transition: background-color 0.2s;
   border-radius: 4px;
+  margin: 0 2px; /* Small margin between buttons */
+  text-align: center; /* Ensure text is centered */
 }
+
+/* Keep the rest of your existing CSS the same */
 
 .reaction-action:hover {
   background-color: rgba(0,0,0,0.05);
@@ -565,7 +572,6 @@ nav ul li a:hover {
   font-size: 18px;
 }
 
-/* Reaction options */
 .reaction-container {
   position: relative;
 }
