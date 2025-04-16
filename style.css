@@ -158,7 +158,7 @@ nav ul li a:hover {
   width: 80%;
   border-top: 2px solid #20462f;
   border-bottom: 2px solid #20462f;
-  background-color: #FF6F61; 
+  background-color: #ff6f61;
   margin: 0 auto;
   color: #20462f;
   margin-bottom: 5vh;
@@ -167,10 +167,10 @@ nav ul li a:hover {
 .profile-photo {
   width: 80px;
   border-radius: 50%;
-  border: 2px solid #FF9A8B; 
+  border: 2px solid #ff9a8b;
   padding: 4px;
   margin-bottom: 10px;
-  display: block; 
+  display: block;
   margin-left: auto;
   margin-right: auto;
 }
@@ -180,17 +180,15 @@ nav ul li a:hover {
   padding: 10px;
   font-size: 24px;
   border-radius: 5px;
-  display: block; 
+  display: block;
 }
 
 .user-profile p {
   color: #20462f;
   font-size: 18px;
   margin: 0;
-  display: block; 
+  display: block;
 }
-
-
 /*-------------------------StoryDesign-------------------------*/
 .storytitle {
   font-size: 5vh;
@@ -515,20 +513,20 @@ nav ul li a:hover {
   position: absolute;
   top: 10%;
   left: 25%;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-  transform-origin: center; 
+  transform-origin: center;
 }
 
 .backStory img:hover {
-  transform: scale(1.15); 
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)); 
-  cursor: pointer; 
+  transform: scale(1.15);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+  cursor: pointer;
 }
 
 .backStory img:active {
-  transform: scale(0.95); 
-  transition-duration: 0.1s; 
+  transform: scale(0.95);
+  transition-duration: 0.1s;
 }
 
 #storyContainer {
@@ -1114,28 +1112,27 @@ footer {
   .GcashText {
     font-size: 18px;
   }
-  
+
   .reaction-stats {
     font-size: 14px;
   }
-  
-  
+
   .reaction-actions {
     gap: 8vw;
   }
-  
+
   .reaction-action {
     font-size: 14px;
   }
-  
+
   .reaction-action i {
     font-size: 14px;
   }
-  
+
   #comment-input {
     font-size: 14px;
   }
-  
+
   #post-comment {
     font-size: 14px;
   }

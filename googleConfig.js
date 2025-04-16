@@ -1,4 +1,3 @@
-// Firebase Authentication Logic
 import {
   getAuth,
   onAuthStateChanged,
@@ -6,7 +5,6 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
-// **REPLACE WITH YOUR ACTUAL FIREBASE CONFIGURATION!**
 const firebaseConfig = {
   apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
   authDomain: "ancestory-c068e.firebaseapp.com",
@@ -46,13 +44,13 @@ document.addEventListener("DOMContentLoaded", () => {
     openLoginModal();
   };
 
-  // Function to handle the logout link click
+  
   const handleLogoutClick = (event) => {
     event.preventDefault();
     signOut(auth)
       .then(() => {
         console.log("User signed out");
-        // Reload the page after successful logout
+  
         window.location.reload();
       })
       .catch((error) => {
@@ -62,18 +60,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const updateUI = (user) => {
     if (user) {
-      // User is logged in
       console.log("User is logged in:", user);
 
-      // Update navigation link to "Logout"
       if (loginLink) {
         loginLink.textContent = "Logout";
         loginLink.href = "#";
-        loginLink.removeEventListener("click", handleLoginClick); // Remove login listener
-        loginLink.addEventListener("click", handleLogoutClick); // Add logout listener
+        loginLink.removeEventListener("click", handleLoginClick); 
+        loginLink.addEventListener("click", handleLogoutClick); 
       }
 
-      // Show user profile section
       if (userProfileSection) {
         userProfileSection.style.display = "block";
         const displayNameElement =
@@ -88,30 +83,25 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      // Update "Submit a Story" link
       if (submitStoryLink) {
         submitStoryLink.textContent = "Submit a Story";
-        submitStoryLink.href = "submit-story.html"; // Adjust the link as needed
-        submitStoryLink.style.display = "block"; // Make sure it's visible
+        submitStoryLink.href = "submit-story.html"; 
+        submitStoryLink.style.display = "block"; 
       }
 
-      // Optionally hide the login modal if it's still open
       if (loginModal && loginModal.style.display === "block") {
         closeLoginModal();
       }
     } else {
-      // User is logged out
       console.log("User is logged out");
 
-      // Update navigation link to "Login"
       if (loginLink) {
         loginLink.textContent = "Login";
         loginLink.href = "#";
-        loginLink.removeEventListener("click", handleLogoutClick); // Remove logout listener
-        loginLink.addEventListener("click", handleLoginClick); // Add login listener
+        loginLink.removeEventListener("click", handleLogoutClick); 
+        loginLink.addEventListener("click", handleLoginClick); 
       }
 
-      // Hide user profile section
       if (userProfileSection) {
         userProfileSection.style.display = "none";
       }
@@ -119,8 +109,8 @@ document.addEventListener("DOMContentLoaded", () => {
       // Update "Submit a Story" link
       if (submitStoryLink) {
         submitStoryLink.textContent = "Wanna Submit a Story?";
-        submitStoryLink.href = "#stories"; // Revert to the non-logged-in behavior
-        submitStoryLink.style.display = "block"; // Make sure it's visible
+        submitStoryLink.href = "#stories"; 
+        submitStoryLink.style.display = "block"; 
       }
     }
   };

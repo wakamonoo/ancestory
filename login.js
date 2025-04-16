@@ -10,7 +10,6 @@ import {
   setDoc,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// **REPLACE THESE WITH YOUR ACTUAL FIREBASE PROJECT CONFIGURATION!**
 const firebaseConfig = {
   apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
   authDomain: "ancestory-c068e.firebaseapp.com",
@@ -71,10 +70,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   if (googleSignInBtn) {
-    console.log("Google Sign-in button element found:", googleSignInBtn); // Debugging line
+    console.log("Google Sign-in button element found:", googleSignInBtn);
 
     googleSignInBtn.addEventListener("click", async () => {
-      console.log("Google Sign-in button was definitely clicked!"); // Debugging line
+      console.log("Google Sign-in button was definitely clicked!");
 
       try {
         const result = await signInWithPopup(auth, googleAuthProvider);
