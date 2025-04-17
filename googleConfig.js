@@ -61,7 +61,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const updateUI = (user) => {
     if (user) {
       console.log("User is logged in:", user);
-
+  
+      // Check if the user is the admin
+      if (user.email === "joven.serdanbataller21@gmail.com") {
+        window.location.href = "admin.html";
+        return; // Exit early since we're redirecting
+      }
+  
+      // Rest of your existing code for regular users...
       if (loginLink) {
         loginLink.textContent = "Logout";
         loginLink.href = "#";
