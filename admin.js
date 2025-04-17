@@ -9,8 +9,10 @@ import {
   collection, 
   addDoc,
   getDocs,
+  getDoc,
   deleteDoc,
-  doc 
+  doc,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -29,15 +31,25 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// DOM Elements
+const logoutBtn = document.getElementById('admin-logout-btn');
+const storyForm = document.getElementById('admin-story-form');
+const storiesList = document.getElementById('admin-stories-list');
+const editModal = document.getElementById('admin-edit-modal');
+const editForm = document.getElementById('admin-edit-form');
+const closeModalBtn = document.querySelector('.admin-edit-modal-close');
+
 // Check authentication state
 onAuthStateChanged(auth, (user) => {
   if (!user || user.email !== "joven.serdanbataller21@gmail.com") {
     window.location.href = "index.html";
+    return;
   }
+  loadStories();
 });
 
 // Logout functionality
-document.getElementById('logout-btn').addEventListener('click', () => {
+logoutBtn.addEventListener('click', () => {
   signOut(auth).then(() => {
     window.location.href = "index.html";
   }).catch((error) => {
@@ -45,66 +57,176 @@ document.getElementById('logout-btn').addEventListener('click', () => {
   });
 });
 
-// Form submission
-document.getElementById('story-form').addEventListener('submit', async (e) => {
+// Add new story
+storyForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   
-  const title = document.getElementById('title').value;
-  const origin = document.getElementById('origin').value;
-  const story = document.getElementById('story').value;
-  const image = document.getElementById('image').value;
+  const title = document.getElementById('admin-title').value.trim();
+  const origin = document.getElementById('admin-origin').value.trim();
+  const story = document.getElementById('admin-story').value.trim();
+  const image = document.getElementById('admin-image').value.trim();
+
+  if (!title || !origin || !story) {
+    alert("Please fill in all required fields");
+    return;
+  }
 
   try {
     await addDoc(collection(db, "Stories"), {
       title,
       origin,
       story,
-      images: image || ""
+      images: image || "",
+      createdAt: new Date(),
+      createdBy: auth.currentUser.uid
     });
     
-    alert("Story added successfully!");
-    document.getElementById('story-form').reset();
+    storyForm.reset();
     loadStories();
   } catch (error) {
     console.error("Error adding story: ", error);
-    alert("Error adding story. Please try again.");
+    showError("Error adding story. Please try again.");
   }
 });
 
-// Load existing stories
+// Load stories
 async function loadStories() {
-  const querySnapshot = await getDocs(collection(db, "Stories"));
-  const container = document.getElementById('admin-stories-container');
-  container.innerHTML = '';
+  storiesList.innerHTML = '<div class="admin-loading">Loading stories...</div>';
 
-  querySnapshot.forEach((doc) => {
-    const data = doc.data();
-    const storyElement = document.createElement('div');
-    storyElement.className = 'admin-story-card';
-    storyElement.innerHTML = `
-      <h3>${data.title}</h3>
-      <p><strong>Origin:</strong> ${data.origin}</p>
-      <p>${data.story.substring(0, 100)}...</p>
-      ${data.images ? `<img src="${data.images}" alt="${data.title}" class="admin-story-img">` : ''}
-      <button class="delete-btn" data-id="${doc.id}">Delete</button>
-    `;
-    container.appendChild(storyElement);
-  });
+  try {
+    const querySnapshot = await getDocs(collection(db, "Stories"));
+    storiesList.innerHTML = '';
 
-  // Add delete event listeners
-  document.querySelectorAll('.delete-btn').forEach(button => {
-    button.addEventListener('click', async (e) => {
-      if (confirm('Are you sure you want to delete this story?')) {
-        try {
-          await deleteDoc(doc(db, "Stories", e.target.dataset.id));
-          loadStories();
-        } catch (error) {
-          console.error("Error deleting story: ", error);
-        }
-      }
+    if (querySnapshot.empty) {
+      storiesList.innerHTML = '<div class="admin-loading">No stories found.</div>';
+      return;
+    }
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      const storyElement = document.createElement('div');
+      storyElement.className = 'admin-story-card';
+      storyElement.innerHTML = `
+        <h3 class="admin-story-title">${data.title || 'Untitled Story'}</h3>
+        <p class="admin-story-origin"><strong>Origin:</strong> ${data.origin || 'Unknown'}</p>
+        <div class="admin-story-content">
+          <p>${data.story.substring(0, 100)}${data.story.length > 100 ? '...' : ''}</p>
+          ${data.images ? `<img src="${data.images}" alt="${data.title}" class="admin-story-img">` : ''}
+        </div>
+        <div class="admin-story-meta">
+          <small>Added: ${data.createdAt?.toDate().toLocaleDateString() || 'Unknown date'}</small>
+        </div>
+        <div class="admin-story-actions">
+          <button class="admin-edit-btn" data-id="${doc.id}">Edit</button>
+          <button class="admin-delete-btn" data-id="${doc.id}">Delete</button>
+        </div>
+      `;
+      storiesList.appendChild(storyElement);
     });
-  });
+
+    // Add event listeners for edit and delete buttons
+    document.querySelectorAll('.admin-edit-btn').forEach(btn => {
+      btn.addEventListener('click', () => openEditModal(btn.dataset.id));
+    });
+
+    document.querySelectorAll('.admin-delete-btn').forEach(btn => {
+      btn.addEventListener('click', () => deleteStory(btn.dataset.id));
+    });
+
+  } catch (error) {
+    console.error("Error loading stories: ", error);
+    showError("Error loading stories. Please try again.");
+  }
 }
 
-// Initial load
-loadStories();
+// Delete story
+async function deleteStory(storyId) {
+  if (!confirm('Are you sure you want to delete this story?')) return;
+
+  try {
+    await deleteDoc(doc(db, "Stories", storyId));
+    loadStories();
+  } catch (error) {
+    console.error("Error deleting story: ", error);
+    showError("Error deleting story. Please try again.");
+  }
+}
+
+// Edit story functions
+async function openEditModal(storyId) {
+  try {
+    const docRef = doc(db, "Stories", storyId);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      document.getElementById('admin-edit-id').value = storyId;
+      document.getElementById('admin-edit-title').value = data.title || '';
+      document.getElementById('admin-edit-origin').value = data.origin || '';
+      document.getElementById('admin-edit-story').value = data.story || '';
+      document.getElementById('admin-edit-image').value = data.images || '';
+      
+      editModal.style.display = 'flex';
+    } else {
+      showError("Story not found");
+    }
+  } catch (error) {
+    console.error("Error opening edit modal: ", error);
+    showError("Error loading story for editing.");
+  }
+}
+
+// Close modal
+closeModalBtn.addEventListener('click', () => {
+  editModal.style.display = 'none';
+});
+
+window.addEventListener('click', (e) => {
+  if (e.target === editModal) {
+    editModal.style.display = 'none';
+  }
+});
+
+// Save edited story
+editForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const storyId = document.getElementById('admin-edit-id').value;
+  const title = document.getElementById('admin-edit-title').value.trim();
+  const origin = document.getElementById('admin-edit-origin').value.trim();
+  const story = document.getElementById('admin-edit-story').value.trim();
+  const image = document.getElementById('admin-edit-image').value.trim();
+
+  if (!title || !origin || !story) {
+    showError("Please fill in all required fields");
+    return;
+  }
+
+  try {
+    await updateDoc(doc(db, "Stories", storyId), {
+      title,
+      origin,
+      story,
+      images: image || "",
+      updatedAt: new Date()
+    });
+    
+    editModal.style.display = 'none';
+    loadStories();
+  } catch (error) {
+    console.error("Error updating story: ", error);
+    showError("Error updating story. Please try again.");
+  }
+});
+
+// Helper function to show errors
+function showError(message) {
+  const errorElement = document.createElement('div');
+  errorElement.className = 'admin-error';
+  errorElement.textContent = message;
+  storiesList.prepend(errorElement);
+  
+  setTimeout(() => {
+    errorElement.remove();
+  }, 5000);
+}
