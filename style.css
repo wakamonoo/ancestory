@@ -401,6 +401,81 @@ nav ul li a:hover {
   color: #20462f;
   text-align: center;
 }
+/*-------------------------Submit Story Modal Styling-------------------------*/
+#submitStoryModal .modal-content {
+  background-color: #f1d1b5; /* A lighter background */
+}
+
+#submitStoryModal h2 {
+  color: #20462f;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+#submitStoryModal .form-group {
+  margin-bottom: 1rem;
+}
+
+#submitStoryModal label {
+  display: block;
+  color: #20462f;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+#submitStoryModal input[type="text"],
+#submitStoryModal textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+#submitStoryModal input[type="text"]:focus,
+#submitStoryModal textarea:focus {
+  outline: none;
+  border-color: #ff9a8b;
+  box-shadow: 0 0 5px rgba(255, 154, 139, 0.5);
+}
+
+/* Improved Submit Button */
+.submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 2rem;
+  background-color: #20462f;
+  color: #f1d1b5;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #386b4b;
+}
+
+.submit-btn i {
+  margin-right: 0.75rem;
+  font-size: 1.1rem;
+}
+
+#submitStoryModal .close {
+  color: #ff6f61;
+}
+
+#submitStoryModal .close:hover,
+#submitStoryModal .close:focus {
+  color: #ff9a8b;
+}
 /*-------------------------LoginForm-------------------------*/
 .modal {
   display: none;
