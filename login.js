@@ -3,6 +3,7 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
+  onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import {
   getFirestore,
@@ -28,10 +29,34 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const googleAuthProvider = new GoogleAuthProvider();
 
+// Function to show login modal after delay if not logged in
+function checkAuthAndPrompt() {
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      setTimeout(() => {
+        const modal = document.getElementById("loginModal");
+        if (modal) {
+          modal.style.display = "block";
+
+          // Close modal when clicking outside
+          window.addEventListener("click", (event) => {
+            if (event.target === modal) {
+              modal.style.display = "none";
+            }
+          });
+        }
+      }, 5000); // 5 seconds delay
+    }
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const googleSignInBtn = document.getElementById("google-sign-in-btn");
   const loginModal = document.getElementById("loginModal");
-  const closeBtn = loginModal.querySelector(".close");
+  const closeBtn = loginModal?.querySelector(".close");
+
+  // Check auth state and prompt if needed
+  checkAuthAndPrompt();
 
   const openLoginModal = () => {
     if (loginModal) {
@@ -50,8 +75,12 @@ document.addEventListener("DOMContentLoaded", () => {
     'nav ul#sidemenu li a[href="#"]'
   );
   if (loginLinkModalTrigger) {
-    loginLinkModalTrigger.addEventListener("click", openLoginModal);
+    loginLinkModalTrigger.addEventListener("click", (e) => {
+      e.preventDefault();
+      openLoginModal();
+    });
   }
+
   const loginStorySub = document.querySelector("#stories a.StorySub");
   if (loginStorySub) {
     loginStorySub.addEventListener("click", (event) => {
@@ -63,24 +92,12 @@ document.addEventListener("DOMContentLoaded", () => {
   if (closeBtn) {
     closeBtn.addEventListener("click", closeLoginModal);
   }
-  window.addEventListener("click", (event) => {
-    if (loginModal && event.target === loginModal) {
-      closeLoginModal();
-    }
-  });
 
   if (googleSignInBtn) {
-    console.log("Google Sign-in button element found:", googleSignInBtn);
-
     googleSignInBtn.addEventListener("click", async () => {
-      console.log("Google Sign-in button was definitely clicked!");
-
       try {
         const result = await signInWithPopup(auth, googleAuthProvider);
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential?.accessToken;
         const user = result.user;
-        console.log("Google Sign-in successful!", { user, token });
 
         if (user) {
           const userRef = doc(db, "users", user.uid);
@@ -94,33 +111,18 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             { merge: true }
           );
-          console.log("User data stored in Firestore.");
 
-          // REFRESH THE PAGE ON SUCCESSFUL LOGIN
+          closeLoginModal();
           window.location.reload();
         }
-
-        closeLoginModal();
       } catch (error) {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        const email = error.customData?.email;
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        console.error("Google Sign-in error:", {
-          errorCode,
-          errorMessage,
-          email,
-          credential,
-        });
-        // alert(`Google Sign-in failed: ${errorMessage}`); // Removed the alert
+        console.error("Google Sign-in error:", error);
       }
     });
-  } else {
-    console.error("Error: Google Sign-in button element not found!");
   }
 });
 
-// Ensure these functions are globally available (though script.js will handle modal now)
+// Global functions for modal control
 window.openLoginModal = () => {
   const modal = document.getElementById("loginModal");
   if (modal) {
