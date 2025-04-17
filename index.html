@@ -61,8 +61,10 @@
         width="80"
       />
       <h2 class="display-name"></h2>
-      <p>Welcome, Every journey starts with the step of those who came before.</p>
-    </div>    
+      <p>
+        Welcome, Every journey starts with the step of those who came before.
+      </p>
+    </div>
     <div id="stories">
       <h1 class="storytitle">Stories</h1>
       <div id="stories-container"></div>
@@ -181,15 +183,42 @@
         <form id="storyForm">
           <div class="form-group">
             <label for="origin">Origin:</label>
-            <input type="text" id="origin" name="origin" placeholder="Where does your story come from?" required>
+            <input
+              type="text"
+              id="origin"
+              name="origin"
+              placeholder="Where does your story come from?"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="title">Title:</label>
-            <input type="text" id="title" name="title" placeholder="Give your story a title" required>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              placeholder="Give your story a title"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="story">Your Story:</label>
-            <textarea id="story" name="story" rows="6" placeholder="Tell us your story..." required></textarea>
+            <textarea
+              id="story"
+              name="story"
+              rows="6"
+              placeholder="Tell us the story of your ancestors..."
+              required
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="displayName">Your Name (Optional):</label>
+            <input
+              type="text"
+              id="displayName"
+              name="displayName"
+              placeholder="Enter a name to display with your story"
+            />
           </div>
           <button type="submit" class="submit-btn">
             <i class="fas fa-upload"></i> Share Your Story

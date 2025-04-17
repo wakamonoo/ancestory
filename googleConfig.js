@@ -7,8 +7,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import {
   getFirestore,
   collection,
-  addDoc, // Add this import
-  serverTimestamp, // Add this import
+  addDoc,
+  serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -31,36 +31,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginLink = document.querySelector('nav ul#sidemenu li a[href="#"]');
   const loginModal = document.getElementById("loginModal");
   const userProfileSection = document.getElementById("user-profile");
-  const submitStoryLink = document.querySelector("#stories a.StorySub");
-  const submitStoryModal = document.getElementById("submitStoryModal"); // New
-  const closeSubmitStoryModalBtn = submitStoryModal?.querySelector(".close"); //New
-  const storyForm = document.getElementById("storyForm"); // New
+  let submitStoryLink = document.querySelector("#stories a.StorySub");
+  const submitStoryModal = document.getElementById("submitStoryModal");
+  const closeSubmitStoryModalBtn = submitStoryModal?.querySelector(".close");
+  const storyForm = document.getElementById("storyForm");
 
   const openLoginModal = () => {
-    if (loginModal) {
-      loginModal.style.display = "block";
-    }
+    if (loginModal) loginModal.style.display = "block";
   };
 
   const closeLoginModal = () => {
-    if (loginModal) {
-      loginModal.style.display = "none";
-    }
+    if (loginModal) loginModal.style.display = "none";
   };
 
   const openSubmitStoryModal = () => {
-    if (submitStoryModal) {
-      submitStoryModal.style.display = "block";
-    }
+    if (submitStoryModal) submitStoryModal.style.display = "block";
   };
 
   const closeSubmitStoryModal = () => {
-    if (submitStoryModal) {
-      submitStoryModal.style.display = "none";
-    }
+    if (submitStoryModal) submitStoryModal.style.display = "none";
   };
 
-  // Function to handle the login link click (opens modal)
   const handleLoginClick = (event) => {
     event.preventDefault();
     openLoginModal();
@@ -71,7 +62,6 @@ document.addEventListener("DOMContentLoaded", () => {
     signOut(auth)
       .then(() => {
         console.log("User signed out");
-
         window.location.reload();
       })
       .catch((error) => {
@@ -84,6 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const origin = document.getElementById("origin").value;
     const title = document.getElementById("title").value;
     const story = document.getElementById("story").value;
+    const displayName = document.getElementById("displayName").value;
 
     const user = auth.currentUser;
     if (user) {
@@ -94,10 +85,11 @@ document.addEventListener("DOMContentLoaded", () => {
           story: story,
           timestamp: serverTimestamp(),
           userID: user.uid,
+          userName: displayName || "Anonymous",
         });
         alert("Story submitted successfully!");
         closeSubmitStoryModal();
-        storyForm.reset(); // Clear the form
+        storyForm.reset();
         window.location.reload();
       } catch (error) {
         console.error("Error submitting story:", error);
@@ -113,13 +105,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (user) {
       console.log("User is logged in:", user);
 
-      // Check if the user is the admin
       if (user.email === "joven.serdanbataller21@gmail.com") {
         window.location.href = "admin.html";
-        return; // Exit early since we're redirecting
+        return;
       }
 
-      // Rest of your existing code for regular users...
       if (loginLink) {
         loginLink.textContent = "Logout";
         loginLink.href = "#";
@@ -141,15 +131,23 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      // Update "Submit a Story" link
+      // Clean and re-attach the submit story link
       if (submitStoryLink) {
         submitStoryLink.textContent = "Submit a Story";
-        submitStoryLink.href = "#"; // Change to '#' to handle with JS
+        submitStoryLink.href = "#";
         submitStoryLink.style.display = "block";
-        submitStoryLink.removeEventListener("click", openLoginModal); // Remove old listener
+
+        const newSubmitStoryLink = submitStoryLink.cloneNode(true);
+        submitStoryLink.parentNode.replaceChild(
+          newSubmitStoryLink,
+          submitStoryLink
+        );
+        submitStoryLink = newSubmitStoryLink;
+
         submitStoryLink.addEventListener("click", (event) => {
           event.preventDefault();
-          openSubmitStoryModal(); // Open submit story modal
+          console.log("✅ Logged-in: Opening story submission modal");
+          openSubmitStoryModal();
         });
       }
 
@@ -170,18 +168,22 @@ document.addEventListener("DOMContentLoaded", () => {
         userProfileSection.style.display = "none";
       }
 
-      // Update "Submit a Story" link
       if (submitStoryLink) {
         submitStoryLink.textContent = "Wanna Submit a Story?";
-        submitStoryLink.href = "#stories";
+        submitStoryLink.href = "#";
         submitStoryLink.style.display = "block";
-        submitStoryLink.removeEventListener("click", (event) => {
-          event.preventDefault();
-          openSubmitStoryModal();
-        });
+
+        const newSubmitStoryLink = submitStoryLink.cloneNode(true);
+        submitStoryLink.parentNode.replaceChild(
+          newSubmitStoryLink,
+          submitStoryLink
+        );
+        submitStoryLink = newSubmitStoryLink;
+
         submitStoryLink.addEventListener("click", (event) => {
           event.preventDefault();
-          openLoginModal(); // Open login modal if not logged in
+          console.log("❌ Logged-out: Opening login modal");
+          openLoginModal();
         });
       }
     }
@@ -189,7 +191,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   onAuthStateChanged(auth, updateUI);
 
-  // Event listeners for the submit story modal
   if (closeSubmitStoryModalBtn) {
     closeSubmitStoryModalBtn.addEventListener("click", closeSubmitStoryModal);
   }
@@ -198,7 +199,6 @@ document.addEventListener("DOMContentLoaded", () => {
     storyForm.addEventListener("submit", handleStorySubmit);
   }
 
-  // Close modal when clicking outside
   window.addEventListener("click", (event) => {
     if (event.target === submitStoryModal) {
       submitStoryModal.style.display = "none";
