@@ -191,12 +191,17 @@ nav ul li a:hover {
   display: block;
 }
 /*-------------------------StoryDesign-------------------------*/
+#stories {
+  width: 85%;
+  /* align-items: center; Remove this, it's for flex items within #stories */
+  margin: 0 auto; /* Center the #stories section horizontally */
+}
 .storytitle {
   font-size: 5vh;
   margin-bottom: 20px;
   color: #20462f;
   padding: 5%;
-  margin-left: 8%;
+  margin-left: 2%;
 }
 
 #stories-container {
@@ -1400,7 +1405,7 @@ footer {
   }
 
   .storytitle {
-    margin-left: 0;
+    margin-left: -8%;
   }
   #storyContent {
     padding: 2%;
@@ -1645,30 +1650,30 @@ footer {
   .admin-main-container {
     padding: 1rem;
   }
-  
+
   .admin-content-wrapper {
     flex-direction: column;
     padding: 0;
     gap: 1rem;
   }
-  
-  .admin-stories-container, 
+
+  .admin-stories-container,
   .admin-form-container {
     width: 100%;
     min-width: unset;
     padding: 1rem;
     box-sizing: border-box;
   }
-  
+
   .admin-stories-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .admin-story-card {
     margin-bottom: 1rem;
     padding: 1rem;
   }
-  
+
   .admin-story-actions {
     justify-content: flex-end;
   }
