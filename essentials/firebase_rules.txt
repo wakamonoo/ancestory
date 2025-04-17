@@ -6,7 +6,17 @@ service cloud.firestore {
       allow read: if true;
     }
 
-    // Specific write rules for reactions
+    // Specific rules for Stories collection
+    match /Stories/{storyId} {
+      // Allow admin (specific email) to create, update, and delete stories
+      allow create, update, delete: if request.auth != null 
+                                    && request.auth.token.email == "joven.serdanbataller21@gmail.com";
+      
+      // Allow all users to read stories
+      allow read: if true;
+    }
+
+    // Keep your existing rules for reactions and comments
     match /reactions/{reactionId} {
       allow create: if request.auth != null 
                     && request.resource.data.storyId is string
@@ -16,11 +26,9 @@ service cloud.firestore {
       allow delete: if request.auth != null 
                     && resource.data.userId == request.auth.uid;
       
-      // No updates allowed - users must delete and recreate
       allow update: if false;
     }
 
-    // Specific write rules for comments
     match /comments/{commentId} {
       allow create: if request.auth != null 
                     && request.resource.data.storyId is string
@@ -32,7 +40,6 @@ service cloud.firestore {
       allow delete: if request.auth != null 
                     && resource.data.userId == request.auth.uid;
       
-      // No updates allowed to prevent comment editing
       allow update: if false;
     }
 
