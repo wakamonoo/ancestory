@@ -177,7 +177,7 @@ nav {
   background-color: #ff6f61;
   padding: 10px;
   padding-right: 2%;
-  z-index: 5;
+  z-index: 15;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -231,8 +231,8 @@ nav ul li a:hover {
   background-color: #ff6f61;
   margin: 0 auto;
   color: #20462f;
-  margin-bottom: 5vh;
-  margin-top: 5vh;
+  margin-bottom: 10vh;
+  margin-top: 10vh;
 }
 
 .profile-photo {
@@ -263,8 +263,8 @@ nav ul li a:hover {
 /*-------------------------StoryDesign-------------------------*/
 #stories {
   width: 85%;
-  /* align-items: center; Remove this, it's for flex items within #stories */
-  margin: 0 auto; /* Center the #stories section horizontally */
+  margin: 0 auto; 
+  margin-bottom: 10vh;
 }
 .storytitle {
   font-size: 5vh;
@@ -345,20 +345,103 @@ nav ul li a:hover {
   background-color: #183525;
 }
 
-.divider {
-  width: 100%;
-  border: 0;
-  border-top: 2px solid #20462f;
-  margin: 5% 0;
+/*-------------------------Divider-------------------------*/
+.row{
+  width:100%;
+  height:100%;
+  padding:0;
+  margin:0;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  position:relative;
 }
 
+/* -- SVG CSS -- */
+
+.svg-separator{
+  display: block;
+  background: 0 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 9;
+  -webkit-transform: translateY(-100%) translateY(2px);
+  transform: translateY(-100%) translateY(2px);
+  width: 100%;
+  height: 100%;
+}
+.svg-separator.bottom{
+  top: auto;
+  bottom: 0;
+}
+.sep1{
+  transform: translateY(-100%) translateY(2px) scale(1,1);
+  transform-origin: top;
+}
+.sep2 {
+  transform: translateY(-100%) translateY(2px) scale(1,1);
+  transform-origin: top;
+}
+.sep3 {
+  transform: translateY(-100%) translateY(2px) scale(1,1);
+  transform-origin: top;
+}
+.sep4 {
+  transform: translateY(-100%) translateY(2px) scale(1,1);
+  transform-origin: top;
+}
+.sep5 {
+  transform: translateY(-100%) translateY(2px) scale(1,1);
+  transform-origin: top;
+}
+.sep6 {
+  transform: translateY(-100%) translateY(2px) scale(1,1);
+  transform-origin: top;
+}
+.sep7 {
+  transform: translateY(-100%) translateY(2px) scale(1,1);
+  transform-origin: top;
+}
+.sep8 {
+  transform: translateY(-100%) translateY(2px) scale(1,1);
+  transform-origin: top;
+}
+.sep9 {
+  transform: translateY(0%) translateY(-2px) scale(-1,-1);
+  transform-origin: bottom;
+}
+.sep10 {
+  transform: translateY(-100%) translateY(2px) scale(1,1);
+  transform-origin: top;
+}
+.sep11 {
+  transform: translateY(-100%) translateY(2px) scale(1,1);
+  transform-origin: top;
+}
+.sep12 {
+  transform: translateY(-100%) translateY(2px) scale(1,1);
+  transform-origin: top;
+}
+
+/* -- Row BG Color -- */
+
+.green{background-color:#03a678;}
+.green2{background-color:#1bbc9b;}
+.red{background-color:#FF9A8B;}
+.light-grey{background-color:#ecf0f1;}
+.light-grey2{background-color:#ecf0f1;}
+.dark-blue{background-color:#22313f;}
+.grey-blue{background-color:#6c7a89;}
+.black{background-color:#333;}
+.stupid-blue{background-color:#FF6F61;}
 /*-------------------------About-------------------------*/
 .About {
   font-size: 5vh;
   margin-bottom: 20px;
   color: #20462f;
   padding: 5%;
-  margin-top: 5%;
   margin-bottom: -5%;
   margin-left: 8%;
 }
@@ -874,6 +957,7 @@ nav ul li a:hover {
 }
 
 .comment-content {
+  width: 80%;
   background-color: #ffb84d;
   border-radius: 18px;
   padding: 8px 12px;
@@ -1461,7 +1545,7 @@ footer {
     top: 0;
     right: 0;
     width: 100%; /* or your desired width */
-    z-index: 5;
+    z-index: 15;
     background-color: #ff6f61;
     padding: 10px;
   }
