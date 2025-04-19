@@ -438,7 +438,8 @@ nav ul li a:hover {
   background-color: #1bbc9b;
 }
 .red {
-  background-color: #fff1ed;
+  background-color: #FAE0D9;
+  background-image: url(images/arches.png);
 }
 .light-grey {
   background-color: #ecf0f1;
