@@ -607,88 +607,96 @@
       document.addEventListener("DOMContentLoaded", () => {
         // Reaction Handling
         // Reaction Handling
-                const likeBtn = document.querySelector(".like-btn");
-        const reactionOptions = document.querySelector(".reaction-options");
-        let pressTimer;
-        let isReactionOpen = false;
-        let isLongPress = false;
-        let touchStartTime = 0;
+const likeBtn = document.querySelector(".like-btn");
+const reactionOptions = document.querySelector(".reaction-options");
+let pressTimer;
+let isReactionOpen = false;
+let isLongPress = false;
+let touchStartTime = 0;
 
-        function toggleReactions(show) {
-          if (show) {
-            reactionOptions.classList.add("show");
-            isReactionOpen = true;
-          } else {
-            reactionOptions.classList.remove("show");
-            isReactionOpen = false;
-            isLongPress = false;
-          }
-        }
+function toggleReactions(show) {
+  if (show) {
+    reactionOptions.classList.add("show");
+    isReactionOpen = true;
+  } else {
+    reactionOptions.classList.remove("show");
+    isReactionOpen = false;
+    isLongPress = false;
+  }
+}
 
-        function startPressTimer(e) {
-          e.preventDefault(); // Prevent potential default touch behaviors
-          isLongPress = true;
-          touchStartTime = Date.now();
-          pressTimer = setTimeout(() => {
-            toggleReactions(true);
-          }, 500);
-        }
+function startPressTimer(e) {
+  e.preventDefault(); // Prevent potential default touch behaviors
+  isLongPress = true;
+  touchStartTime = Date.now();
+  pressTimer = setTimeout(() => {
+    if (isLongPress) { // Check if it's still considered a long press
+      toggleReactions(true);
+    }
+  }, 500);
+}
 
-        function cancelPressTimer() {
-          clearTimeout(pressTimer);
-          isLongPress = false;
-        }
+function cancelPressTimer() {
+  clearTimeout(pressTimer);
+  isLongPress = false;
+}
 
-        // Handle single tap for like on touch devices
-        likeBtn.addEventListener("touchend", (e) => {
-          const touchDuration = Date.now() - touchStartTime;
-          if (!isReactionOpen && touchDuration < 500) {
-            e.preventDefault(); // Prevent potential default click after touch
-            handleReaction("like");
-          }
-          cancelPressTimer(); // Ensure timer is cleared
-          touchStartTime = 0; // Reset touch start time
-        });
+// Handle single tap for like on touch devices
+likeBtn.addEventListener("touchend", (e) => {
+  const touchDuration = Date.now() - touchStartTime;
+  if (!isReactionOpen && touchDuration < 500) {
+    e.preventDefault(); // Prevent potential default click after touch
+    handleReaction("like");
+  }
+  cancelPressTimer(); // Ensure timer is cleared
+  touchStartTime = 0; // Reset touch start time
+});
 
-        // Click handler for non-touch devices (PC) - Keep this for mouse users
-        likeBtn.addEventListener("click", (e) => {
-          if (!isReactionOpen) {
-            handleReaction("like");
-          }
-        });
+// Click handler for non-touch devices (PC) - Keep this for mouse users
+likeBtn.addEventListener("click", (e) => {
+  if (!isReactionOpen) {
+    handleReaction("like");
+  }
+});
 
-        // Touch start to initiate long press timer
-        likeBtn.addEventListener("touchstart", startPressTimer);
+// Touch start to initiate long press timer
+likeBtn.addEventListener("touchstart", startPressTimer);
 
-        // Mouse down for PC long press
-        likeBtn.addEventListener("mousedown", startPressTimer);
+// Mouse down for PC long press
+likeBtn.addEventListener("mousedown", startPressTimer);
 
-        // Clear timer on mouse up/leave/touch move/end (if long press didn't happen)
-        likeBtn.addEventListener("mouseup", cancelPressTimer);
-        likeBtn.addEventListener("mouseleave", cancelPressTimer);
-        likeBtn.addEventListener("touchmove", cancelPressTimer);
-        // touchend is now handled separately for tap
+// Clear timer on mouse up/leave (for mouse) and touchmove/touchcancel (for touch) if long press didn't happen
+likeBtn.addEventListener("mouseup", cancelPressTimer);
+likeBtn.addEventListener("mouseleave", cancelPressTimer);
+likeBtn.addEventListener("touchmove", cancelPressTimer);
+likeBtn.addEventListener("touchcancel", cancelPressTimer); // Add touchcancel
 
-        // Close reactions when clicking outside
-        document.addEventListener("click", (e) => {
-          if (
-            !likeBtn.contains(e.target) &&
-            !reactionOptions.contains(e.target)
-          ) {
-            toggleReactions(false);
-          }
-        });
+// Close reactions when clicking outside
+document.addEventListener("click", (e) => {
+  if (
+    !likeBtn.contains(e.target) &&
+    !reactionOptions.contains(e.target)
+  ) {
+    toggleReactions(false);
+  }
+});
 
-        // Select a reaction from the options
-        const reactionOptionsList = document.querySelectorAll(".reaction-option");
-        reactionOptionsList.forEach((option) => {
-          option.addEventListener("click", (e) => {
-            e.stopPropagation();
-            const reaction = option.dataset.reaction;
-            handleReaction(reaction);
-            toggleReactions(false);
-          });
-        });
+// Select a reaction from the options
+const reactionOptionsList = document.querySelectorAll(".reaction-option");
+reactionOptionsList.forEach((option) => {
+  option.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const reaction = option.dataset.reaction;
+    handleReaction(reaction);
+    toggleReactions(false);
+  });
+});
+
+// Placeholder for your handleReaction function
+function handleReaction(reaction) {
+  console.log("Reaction selected:", reaction);
+  // Your logic to handle the selected reaction (e.g., send to server, update UI)
+}
 
         // Simple like button click (only if reactions aren't showing)
         likeBtn.addEventListener("click", (e) => {
