@@ -605,88 +605,96 @@
       window.onload = fetchStoryDetails;
 
       document.addEventListener("DOMContentLoaded", () => {
-  // Reaction Handling
-  const likeBtn = document.querySelector(".like-btn");
-  const reactionOptions = document.querySelector(".reaction-options");
-  let isReactionOpen = false;
-  let lastTapTime = 0;
-  const doubleTapDelay = 300; // milliseconds
+        // Reaction Handling
+        const likeBtn = document.querySelector(".like-btn");
+        const reactionOptions = document.querySelector(".reaction-options");
+        let pressTimer;
+        let isReactionOpen = false;
+        let touchStartTime = 0;
+        let touchMoved = false;
 
-  function toggleReactions(show) {
-    if (show) {
-      reactionOptions.classList.add("show");
-      isReactionOpen = true;
-    } else {
-      reactionOptions.classList.remove("show");
-      isReactionOpen = false;
-    }
-  }
+        function toggleReactions(show) {
+          if (show) {
+            reactionOptions.classList.add("show");
+            isReactionOpen = true;
+          } else {
+            reactionOptions.classList.remove("show");
+            isReactionOpen = false;
+          }
+        }
 
-  // Detect if the device is touch-enabled
-  function isTouchDevice() {
-    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-  }
+        function startPressTimer(e) {
+          e.preventDefault();
+          touchStartTime = Date.now();
+          touchMoved = false;
+          pressTimer = setTimeout(() => {
+            if (!touchMoved) {
+              toggleReactions(true);
+            }
+          }, 500);
+        }
 
-  // Handle mobile touch interactions
-  if (isTouchDevice()) {
-    likeBtn.addEventListener("touchstart", (e) => {
-      e.preventDefault();
-      const currentTime = new Date().getTime();
-      const tapLength = currentTime - lastTapTime;
-      
-      if (tapLength < doubleTapDelay && tapLength > 0) {
-        // Double tap - perform like action
-        handleReaction("like");
-        lastTapTime = 0;
-      } else {
-        // Single tap - show reaction options
-        toggleReactions(true);
-        lastTapTime = currentTime;
-      }
-    }, { passive: false });
+        function cancelPressTimer() {
+          clearTimeout(pressTimer);
+        }
 
-    // Close reactions when tapping outside
-    document.addEventListener("touchstart", (e) => {
-      if (!likeBtn.contains(e.target) && !reactionOptions.contains(e.target)) {
-        toggleReactions(false);
-      }
-    });
-  } 
-  // Handle desktop interactions
-  else {
-    likeBtn.addEventListener("mouseenter", () => {
-      toggleReactions(true);
-    });
+        likeBtn.addEventListener("touchstart", startPressTimer);
 
-    likeBtn.addEventListener("mouseleave", () => {
-      toggleReactions(false);
-    });
+        likeBtn.addEventListener("touchmove", () => {
+          touchMoved = true;
+          cancelPressTimer();
+        });
 
-    likeBtn.addEventListener("click", (e) => {
-      if (!isReactionOpen) {
-        handleReaction("like");
-      }
-    });
-  }
+        likeBtn.addEventListener("touchend", (e) => {
+          const touchDuration = Date.now() - touchStartTime;
+          if (!isReactionOpen && !touchMoved && touchDuration < 500) {
+            e.preventDefault();
+            handleReaction("like");
+          }
+          cancelPressTimer();
+          touchStartTime = 0;
+          touchMoved = false;
+        });
 
-  // Close reactions when clicking outside (for both mobile and desktop)
-  document.addEventListener("click", (e) => {
-    if (!likeBtn.contains(e.target) && !reactionOptions.contains(e.target)) {
-      toggleReactions(false);
-    }
-  });
+        // Click handler for non-touch devices (PC)
+        likeBtn.addEventListener("click", (e) => {
+          if (!isReactionOpen) {
+            handleReaction("like");
+          }
+        });
 
-  // Select a reaction from the options
-  const reactionOptionsList = document.querySelectorAll(".reaction-option");
-  reactionOptionsList.forEach((option) => {
-    option.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const reaction = option.dataset.reaction;
-      handleReaction(reaction);
-      toggleReactions(false);
-    });
-  });
-});
+        // Mouse event listeners for PC
+        likeBtn.addEventListener("mousedown", startPressTimer);
+        likeBtn.addEventListener("mouseup", cancelPressTimer);
+        likeBtn.addEventListener("mouseleave", cancelPressTimer);
+
+        // Close reactions when clicking outside
+        document.addEventListener("click", (e) => {
+          if (
+            !likeBtn.contains(e.target) &&
+            !reactionOptions.contains(e.target)
+          ) {
+            toggleReactions(false);
+          }
+        });
+
+        // Select a reaction from the options
+        const reactionOptionsList = document.querySelectorAll(".reaction-option");
+        reactionOptionsList.forEach((option) => {
+          option.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const reaction = option.dataset.reaction;
+            handleReaction(reaction);
+            toggleReactions(false);
+          });
+        });
+
+        // Simple like button click (only if reactions aren't showing)
+        likeBtn.addEventListener("click", (e) => {
+          if (!isReactionOpen && !isTouchDevice) {
+            handleReaction("like");
+          }
+        });
 
         // Comment button
         document.querySelector(".comment-btn").addEventListener("click", () => {
