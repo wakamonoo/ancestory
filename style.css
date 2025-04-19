@@ -747,7 +747,7 @@ nav ul li a:hover {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  gap: 8vw;
+  gap: 13vw;
 }
 
 .reaction-action {
@@ -811,8 +811,15 @@ nav ul li a:hover {
   transform: scale(1.3);
 }
 
-.like-btn {
-  width: 150px;
+@keyframes fadeInUp {
+  from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(10px);
+  }
+  to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+  }
 }
 /* Comment section */
 .comment-section {
@@ -897,17 +904,38 @@ nav ul li a:hover {
   font-size: 32px;
   color: #20462f;
 }
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
+
+.social-share-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
 }
 
+.social-share-buttons button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  padding: 10px;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.social-share-buttons button:hover {
+  transform: scale(1.1);
+}
+
+.share-facebook { color: #3b5998; }
+.share-twitter { color: #1DA1F2; }
+.share-whatsapp { color: #25D366; }
+.share-linkedin { color: #0077B5; }
+.share-copy { color: #20462f; }
 /* ===== ADMIN STYLES ===== */
 /* Layout Structure */
 .admin-header {
@@ -1652,7 +1680,7 @@ footer {
   }
 
   .reaction-actions {
-    gap: 4vw;
+    gap: 8vw;
   }
 
   .reaction-action {
@@ -1792,15 +1820,11 @@ footer {
   }
   .reaction-options {
     bottom: 120%;
-    margin-left: 5%;
-  }
+    margin-left: 50%;
+}
 
-  .reaction-option {
+.reaction-option {
     font-size: 24px;
     padding: 2px;
-  }
-
-  .like-btn {
-    width: 70px;
-  }
+}
 }
