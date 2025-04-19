@@ -610,9 +610,8 @@
         const reactionOptions = document.querySelector(".reaction-options");
         let pressTimer;
         let isReactionOpen = false;
-        let isLongPress = false;
         let touchStartTime = 0;
-        let touchMoved = false; // Flag to track if touch moved
+        let touchMoved = false;
 
         function toggleReactions(show) {
           if (show) {
@@ -621,17 +620,15 @@
           } else {
             reactionOptions.classList.remove("show");
             isReactionOpen = false;
-            isLongPress = false;
           }
         }
 
         function startPressTimer(e) {
           e.preventDefault();
-          isLongPress = true;
           touchStartTime = Date.now();
-          touchMoved = false; // Reset touch moved flag
+          touchMoved = false;
           pressTimer = setTimeout(() => {
-            if (!touchMoved) { // Only trigger long press if touch didn't move
+            if (!touchMoved) {
               toggleReactions(true);
             }
           }, 500);
@@ -639,14 +636,13 @@
 
         function cancelPressTimer() {
           clearTimeout(pressTimer);
-          isLongPress = false;
         }
 
         likeBtn.addEventListener("touchstart", startPressTimer);
 
         likeBtn.addEventListener("touchmove", () => {
-          touchMoved = true; // Set flag if touch moves
-          cancelPressTimer(); // Cancel long press if touch moves
+          touchMoved = true;
+          cancelPressTimer();
         });
 
         likeBtn.addEventListener("touchend", (e) => {
@@ -657,7 +653,7 @@
           }
           cancelPressTimer();
           touchStartTime = 0;
-          touchMoved = false; // Reset flag
+          touchMoved = false;
         });
 
         // Click handler for non-touch devices (PC)
