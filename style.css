@@ -438,11 +438,8 @@ nav ul li a:hover {
   background-color: #1bbc9b;
 }
 .red {
-  background-color: #FAE0D9;
-  background-image: url(images/arches.png);
-  background-position: top center; /* Keep it at the top center for the tiling to originate there */
-  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 80%); /* Fade to transparent at the top */
-  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 80%); /* For Safari and older Chrome */
+background-color: #FAE0D9;
+background-image: url(images/arches.png);
 }
 
 .light-grey {
