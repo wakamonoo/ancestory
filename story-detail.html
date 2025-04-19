@@ -9,6 +9,12 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div id="storyContent">
@@ -101,6 +107,7 @@
         orderBy,
         deleteDoc,
         updateDoc,
+        writeBatch, // Add this import
       } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
       import {
         getAuth,
@@ -227,29 +234,53 @@
       }
 
       function updateReactionUI(reactions) {
-        const totalReactions = Object.values(reactions).reduce(
-          (a, b) => a + b,
-          0
-        );
-        const likeCountElement = document.getElementById("like-count");
+  const totalReactions = Object.values(reactions).reduce((a, b) => a + b, 0);
+  const likeCountElement = document.getElementById("like-count");
+  const reactionIcon = likeCountElement.previousElementSibling; // Get the icon element
 
-        if (totalReactions === 0) {
-          likeCountElement.textContent = "0 reactions";
-        } else {
-          const reactionTypes = Object.keys(reactions);
-          if (reactionTypes.length === 1) {
-            // Only one reaction type
-            const reactionType = reactionTypes[0];
-            const count = reactions[reactionType];
-            likeCountElement.textContent = `${count} ${getReactionDisplayName(
-              reactionType
-            )}${count !== 1 ? "s" : ""}`;
-          } else {
-            // Multiple reaction types
-            likeCountElement.textContent = `${totalReactions} reactions`;
-          }
-        }
-      }
+  if (totalReactions === 0) {
+    likeCountElement.textContent = "0 reactions";
+    // Reset to default like icon if no reactions
+    reactionIcon.className = "fas fa-thumbs-up";
+    reactionIcon.style.color = "";
+  } else {
+    // Get the top 1-3 reactions sorted by count
+    const sortedReactions = Object.entries(reactions)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3);
+
+    // Update the icon to show the top reaction
+    const topReaction = sortedReactions[0][0];
+    switch (topReaction) {
+      case "like":
+        reactionIcon.className = "fas fa-thumbs-up";
+        reactionIcon.style.color = "#216fdb";
+        break;
+      case "love":
+        reactionIcon.className = "fas fa-heart";
+        reactionIcon.style.color = "#f33e58";
+        break;
+      case "wow":
+        reactionIcon.className = "fas fa-surprise";
+        reactionIcon.style.color = "#f7b125";
+        break;
+      case "angry":
+        reactionIcon.className = "fas fa-angry";
+        reactionIcon.style.color = "#e9710f";
+        break;
+    }
+
+    if (sortedReactions.length === 1) {
+      // Only one reaction type
+      const reactionType = sortedReactions[0][0];
+      const count = sortedReactions[0][1];
+      likeCountElement.textContent = `${count} ${getReactionDisplayName(reactionType)}${count !== 1 ? "s" : ""}`;
+    } else {
+      // Multiple reaction types
+      likeCountElement.textContent = `${totalReactions} reactions`;
+    }
+  }
+}
 
       function getReactionDisplayName(reactionType) {
         const names = {
@@ -296,7 +327,21 @@
 
       async function handleReaction(reactionType) {
         if (!currentUser) {
-          alert("Please login to react to stories");
+          Swal.fire({
+            title: "Please login to react to stories",
+            icon: "warning",
+            showConfirmButton: true,
+            confirmButtonText: "Okay",
+            background: "#FF6F61",
+            color: "#20462f",
+            confirmButtonColor: "#FF9A8B",
+            showClass: {
+              popup: "animate__animated animate__fadeIn",
+            },
+            hideClass: {
+              popup: "animate__animated animate__fadeOut",
+            },
+          });
           return;
         }
 
@@ -330,7 +375,7 @@
               updateReactionButton(reactionType);
             }
           } else {
-            // New reaction
+            // New reaction - use addDoc instead of batch for simplicity
             await addDoc(reactionsRef, {
               storyId: currentStoryId,
               userId: currentUser.uid,
@@ -345,6 +390,26 @@
           loadReactions();
         } catch (error) {
           console.error("Error handling reaction:", error);
+          let errorMessage = "Please try again later.";
+
+          if (error.code === "permission-denied") {
+            errorMessage = "You don't have permission to react to this story.";
+          } else if (error.code === "unavailable") {
+            errorMessage = "Network error. Please check your connection.";
+          }
+
+          Swal.fire({
+            title: "Failed to react",
+            text: errorMessage,
+            icon: "error",
+            confirmButtonText: "Okay",
+            background: "#FF6F61",
+            color: "#20462f",
+            confirmButtonColor: "#FF9A8B",
+            showClass: {
+              popup: "animate__animated animate__shakeX",
+            },
+          });
         }
       }
 
@@ -395,24 +460,28 @@
           : `<i class="fas fa-user-circle" style="font-size: 32px; color: #20462f;"></i>`;
 
         commentEl.innerHTML = `
-    <div class="comment-avatar">
-      ${avatarContent}
-    </div>
-    <div class="comment-content">
-      <span class="comment-username">${comment.userName || "Anonymous"}</span>
-      ${comment.text}
-      <div class="comment-time">${formatTime(comment.timestamp?.toDate())}</div>
-    </div>
-  `;
+          <div class="comment-avatar">
+            ${avatarContent}
+          </div>
+          <div class="comment-content">
+            <span class="comment-username">${
+              comment.userName || "Anonymous"
+            }</span>
+            ${comment.text}
+            <div class="comment-time">${formatTime(
+              comment.timestamp?.toDate()
+            )}</div>
+          </div>
+        `;
 
         const commentsSection = document.getElementById("comments-section");
         const firstChild = commentsSection.firstChild;
 
         if (firstChild && firstChild.textContent.includes("No comments yet")) {
-          commentsSection.innerHTML = ""; 
+          commentsSection.innerHTML = "";
         }
 
-        commentsSection.prepend(commentEl); 
+        commentsSection.prepend(commentEl);
       }
 
       function formatTime(date) {
@@ -429,12 +498,40 @@
 
       async function postComment(commentText) {
         if (!currentUser) {
-          alert("Please login to post comments");
+          Swal.fire({
+            title: "Please login to post comments",
+            icon: "warning",
+            showConfirmButton: true,
+            confirmButtonText: "Okay",
+            background: "#FF6F61",
+            color: "#20462f",
+            confirmButtonColor: "#FF9A8B",
+            showClass: {
+              popup: "animate__animated animate__fadeIn",
+            },
+            hideClass: {
+              popup: "animate__animated animate__fadeOut",
+            },
+          });
           return;
         }
 
         if (!commentText.trim()) {
-          alert("Comment cannot be empty");
+          Swal.fire({
+            title: "Comment cannot be empty",
+            icon: "error",
+            showConfirmButton: true,
+            confirmButtonText: "Okay",
+            background: "#FF6F61",
+            color: "#20462f",
+            confirmButtonColor: "#FF9A8B",
+            showClass: {
+              popup: "animate__animated animate__shakeX",
+            },
+            hideClass: {
+              popup: "animate__animated animate__fadeOut",
+            },
+          });
           return;
         }
 
@@ -443,7 +540,7 @@
             storyId: currentStoryId,
             userId: currentUser.uid,
             userName: currentUser.displayName || "Anonymous",
-            userPhoto: currentUser.photoURL || null, 
+            userPhoto: currentUser.photoURL || null,
             text: commentText,
             timestamp: serverTimestamp(),
           });
@@ -468,60 +565,115 @@
           // Clear input
           document.getElementById("comment-input").value = "";
           document.getElementById("post-comment").classList.remove("active");
+
+          Swal.fire({
+            title: "Comment posted successfully!",
+            icon: "success",
+            showConfirmButton: false,
+            timer: 1500,
+            background: "#FF6F61",
+            color: "#20462f",
+            showClass: {
+              popup: "animate__animated animate__fadeIn",
+            },
+            hideClass: {
+              popup: "animate__animated animate__fadeOut",
+            },
+          });
         } catch (error) {
           console.error("Error posting comment:", error);
-          alert("Failed to post comment. Please try again.");
+          Swal.fire({
+            title: "Failed to post comment",
+            text: "Please try again later.",
+            icon: "error",
+            confirmButtonText: "Okay",
+            background: "#FF6F61",
+            color: "#20462f",
+            confirmButtonColor: "#FF9A8B",
+            showClass: {
+              popup: "animate__animated animate__shakeX",
+            },
+          });
         }
       }
 
       window.onload = fetchStoryDetails;
 
       document.addEventListener("DOMContentLoaded", () => {
-        // Reaction handling
+        // Reaction Handling
         const likeBtn = document.querySelector(".like-btn");
         const reactionOptions = document.querySelector(".reaction-options");
-        let reactionTimeout;
+        let pressTimer;
+        let isReactionOpen = false;
 
-        // Show reactions on long press
-        likeBtn.addEventListener("mousedown", () => {
-          reactionTimeout = setTimeout(() => {
-            reactionOptions.style.display = "block";
+        // Function to toggle reaction options
+        function toggleReactions(show) {
+          if (show) {
+            reactionOptions.classList.add("show");
+            isReactionOpen = true;
+          } else {
+            reactionOptions.classList.remove("show");
+            isReactionOpen = false;
+          }
+        }
+
+        // Start timer on mouse down/touch start
+        likeBtn.addEventListener("mousedown", startPressTimer);
+        likeBtn.addEventListener("touchstart", startPressTimer);
+
+        // Clear timer on mouse up/touch end
+        likeBtn.addEventListener("mouseup", cancelPressTimer);
+        likeBtn.addEventListener("mouseleave", cancelPressTimer);
+        likeBtn.addEventListener("touchend", cancelPressTimer);
+        likeBtn.addEventListener("touchmove", cancelPressTimer);
+
+        // Click handler for instant like
+        likeBtn.addEventListener("click", (e) => {
+          if (!isReactionOpen) {
+            // Only like if reactions aren't showing
+            handleReaction("like");
+          }
+        });
+
+        function startPressTimer(e) {
+          // Prevent default to avoid text selection/other browser behaviors
+          e.preventDefault();
+
+          // Start timer for long press (500ms)
+          pressTimer = setTimeout(() => {
+            toggleReactions(true);
           }, 500);
-        });
+        }
 
-        likeBtn.addEventListener("mouseup", () => {
-          clearTimeout(reactionTimeout);
-        });
+        function cancelPressTimer() {
+          clearTimeout(pressTimer);
+        }
 
-        likeBtn.addEventListener("mouseleave", () => {
-          clearTimeout(reactionTimeout);
-          reactionOptions.style.display = "none";
-        });
-
-        // Hide reactions when clicking elsewhere
+        // Close reactions when clicking outside
         document.addEventListener("click", (e) => {
           if (
             !likeBtn.contains(e.target) &&
             !reactionOptions.contains(e.target)
           ) {
-            reactionOptions.style.display = "none";
+            toggleReactions(false);
           }
         });
 
-        // Select a reaction
+        // Select a reaction from the options
         const reactionOptionsList =
           document.querySelectorAll(".reaction-option");
         reactionOptionsList.forEach((option) => {
-          option.addEventListener("click", () => {
+          option.addEventListener("click", (e) => {
+            e.stopPropagation();
             const reaction = option.dataset.reaction;
             handleReaction(reaction);
-            reactionOptions.style.display = "none";
+            toggleReactions(false);
           });
         });
 
-        // Simple like button click
+        // Simple like button click (only if reactions aren't showing)
         likeBtn.addEventListener("click", (e) => {
-          if (reactionOptions.style.display !== "block") {
+          if (!isReactionOpen && !isTouchDevice) {
             handleReaction("like");
           }
         });
@@ -532,11 +684,98 @@
         });
 
         // Share button
-        document.querySelector(".share-btn").addEventListener("click", () => {
-          navigator.clipboard.writeText(window.location.href).then(() => {
-            alert("Link copied to clipboard!");
-          });
-        });
+document.querySelector(".share-btn").addEventListener("click", async () => {
+  // First try to use the Web Share API if available (mobile devices)
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: document.getElementById("story-title").textContent,
+        text: 'Check out this interesting story!',
+        url: window.location.href,
+      });
+      return;
+    } catch (err) {
+      console.log('Web Share API not supported or share was cancelled', err);
+      // Fall through to custom share dialog
+    }
+  }
+
+  // Custom share dialog for browsers without Web Share API
+  Swal.fire({
+    title: 'Share this story',
+    html: `
+      <div class="social-share-buttons">
+        <button class="share-facebook" title="Share on Facebook">
+          <i class="fab fa-facebook"></i>
+        </button>
+        <button class="share-twitter" title="Share on Twitter">
+          <i class="fab fa-twitter"></i>
+        </button>
+        <button class="share-whatsapp" title="Share on WhatsApp">
+          <i class="fab fa-whatsapp"></i>
+        </button>
+        <button class="share-linkedin" title="Share on LinkedIn">
+          <i class="fab fa-linkedin"></i>
+        </button>
+        <button class="share-copy" title="Copy link">
+          <i class="fas fa-link"></i>
+        </button>
+      </div>
+    `,
+    showConfirmButton: false,
+    background: "#FF6F61",
+    color: "#20462f",
+    showClass: {
+      popup: "animate__animated animate__fadeIn",
+    },
+  });
+
+  // Add event listeners for each share button
+  document.querySelector('.share-facebook').addEventListener('click', () => {
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
+    window.open(url, '_blank', 'width=600,height=400');
+    Swal.close();
+  });
+
+  document.querySelector('.share-twitter').addEventListener('click', () => {
+    const text = `Check out this story: ${document.getElementById("story-title").textContent}`;
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`;
+    window.open(url, '_blank', 'width=600,height=400');
+    Swal.close();
+  });
+
+  document.querySelector('.share-whatsapp').addEventListener('click', () => {
+    const text = `Check out this story: ${document.getElementById("story-title").textContent} - ${window.location.href}`;
+    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+    Swal.close();
+  });
+
+  document.querySelector('.share-linkedin').addEventListener('click', () => {
+    const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`;
+    window.open(url, '_blank', 'width=600,height=400');
+    Swal.close();
+  });
+
+  document.querySelector('.share-copy').addEventListener('click', () => {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      Swal.fire({
+        title: "Link copied to clipboard!",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1500,
+        background: "#FF6F61",
+        color: "#20462f",
+        showClass: {
+          popup: "animate__animated animate__fadeIn",
+        },
+        hideClass: {
+          popup: "animate__animated animate__fadeOut",
+        },
+      });
+    });
+  });
+});
 
         // Comment handling
         const postBtn = document.getElementById("post-comment");
@@ -555,7 +794,6 @@
           postComment(comment);
         });
 
-        // Allow pressing Enter to post comment
         commentInput.addEventListener("keypress", (e) => {
           if (e.key === "Enter") {
             postComment(commentInput.value.trim());

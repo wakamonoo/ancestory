@@ -11,6 +11,7 @@ import {
   serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
   authDomain: "ancestory-c068e.firebaseapp.com",
@@ -23,6 +24,7 @@ const firebaseConfig = {
   measurementId: "G-S5SQWC7PEM",
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -75,8 +77,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const title = document.getElementById("title").value;
     const story = document.getElementById("story").value;
     const displayName = document.getElementById("displayName").value;
-
     const user = auth.currentUser;
+
     if (user) {
       try {
         await addDoc(collection(db, "UserStories"), {
@@ -87,17 +89,51 @@ document.addEventListener("DOMContentLoaded", () => {
           userID: user.uid,
           userName: displayName || "Anonymous",
         });
-        alert("Story submitted successfully!");
-        closeSubmitStoryModal();
-        storyForm.reset();
-        window.location.reload();
+
+        Swal.fire({
+          title: "Success!",
+          text: "Story submitted successfully!",
+          icon: "success",
+          iconColor: "#20462f",
+          confirmButtonText: "Awesome!",
+          confirmButtonColor: "#FF9A8B",
+          background: "#FF6F61",
+          color: "#20462f",
+          showClass: { popup: "animate__animated animate__fadeInDown" },
+          hideClass: { popup: "animate__animated animate__fadeOutUp" },
+        }).then(() => {
+          closeSubmitStoryModal();
+          storyForm.reset();
+          window.location.reload();
+        });
       } catch (error) {
         console.error("Error submitting story:", error);
-        alert("Error submitting story. Please try again.");
+        Swal.fire({
+          title: "Oops!",
+          text: "There was a problem submitting your story.",
+          icon: "error",
+          iconColor: "#20462f",
+          confirmButtonText: "Try Again",
+          confirmButtonColor: "#FF9A8B",
+          background: "#FF6F61",
+          color: "#20462f",
+          showClass: { popup: "animate__animated animate__shakeX" },
+          hideClass: { popup: "animate__animated animate__fadeOutUp" },
+        });
       }
     } else {
-      console.error("No user logged in when submitting story.");
-      alert("Please log in to submit a story.");
+      Swal.fire({
+        title: "Not Logged In",
+        text: "Please log in to submit a story.",
+        icon: "warning",
+        iconColor: "#20462f",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#FF9A8B",
+        background: "#FF6F61",
+        color: "#20462f",
+        showClass: { popup: "animate__animated animate__headShake" },
+        hideClass: { popup: "animate__animated animate__fadeOutUp" },
+      });
     }
   };
 
@@ -123,15 +159,12 @@ document.addEventListener("DOMContentLoaded", () => {
           userProfileSection.querySelector(".display-name");
         const photoURLElement =
           userProfileSection.querySelector(".profile-photo");
-        if (displayNameElement) {
+        if (displayNameElement)
           displayNameElement.textContent = user.displayName || "User";
-        }
-        if (photoURLElement && user.photoURL) {
+        if (photoURLElement && user.photoURL)
           photoURLElement.src = user.photoURL;
-        }
       }
 
-      // Clean and re-attach the submit story link
       if (submitStoryLink) {
         submitStoryLink.textContent = "Submit a Story";
         submitStoryLink.href = "#";
@@ -201,7 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.addEventListener("click", (event) => {
     if (event.target === submitStoryModal) {
-      submitStoryModal.style.display = "none";
+      closeSubmitStoryModal();
     }
   });
 });
