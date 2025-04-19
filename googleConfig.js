@@ -31,6 +31,7 @@ const db = getFirestore(app);
 
 document.addEventListener("DOMContentLoaded", () => {
   const loginLink = document.querySelector('nav ul#sidemenu li a[href="#"]');
+  const footerLoginLink = document.getElementById("footerLoginLink");
   const loginModal = document.getElementById("loginModal");
   const userProfileSection = document.getElementById("user-profile");
   let submitStoryLink = document.querySelector("#stories a.StorySub");
@@ -153,6 +154,13 @@ document.addEventListener("DOMContentLoaded", () => {
         loginLink.addEventListener("click", handleLogoutClick);
       }
 
+      if (footerLoginLink) {
+        footerLoginLink.textContent = "Logout";
+        footerLoginLink.href = "#";
+        footerLoginLink.removeEventListener("click", handleLoginClick);
+        footerLoginLink.addEventListener("click", handleLogoutClick);
+      }
+
       if (userProfileSection) {
         userProfileSection.style.display = "block";
         const displayNameElement =
@@ -195,6 +203,13 @@ document.addEventListener("DOMContentLoaded", () => {
         loginLink.href = "#";
         loginLink.removeEventListener("click", handleLogoutClick);
         loginLink.addEventListener("click", handleLoginClick);
+      }
+
+      if (footerLoginLink) {
+        footerLoginLink.textContent = "Login";
+        footerLoginLink.href = "#";
+        footerLoginLink.removeEventListener("click", handleLogoutClick);
+        footerLoginLink.addEventListener("click", handleLoginClick);
       }
 
       if (userProfileSection) {

@@ -1,9 +1,7 @@
-#F1D1B5 - header
-
-#FFB84D - hover
-
-#FF6F61 - background
-
-#FF9A8B - 
-
-#20462f - promary text color
+Purpose	                Hex Code	 Description
+Header  	             #F1D1B5	  Soft beige
+Hover	               #FFB84D	  Warm amber
+Background (Primary)	 #FF6F61	  Coral red
+Accent / Soft Shade	 #FF9A8B	  Light coral pink
+Primary Text Color	   #20462F	  Deep forest green
+Secondary Background	 #FFF1ED	  Pale peach / light background contrast
