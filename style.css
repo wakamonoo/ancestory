@@ -743,42 +743,27 @@ nav ul li a:hover {
   margin-right: 5px;
 }
 
-/* Update the reaction-actions container */
 .reaction-actions {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  gap: 5vw; /* Reduced from 13vw */
-  padding: 10px 0; /* Added padding */
+  gap: 8vw;
 }
 
-/* Make reaction buttons larger and easier to tap */
 .reaction-action {
   font-size: 18px;
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 0; /* Increased padding */
+  padding: 8px 0;
   cursor: pointer;
   color: #20462f;
   font-weight: 600;
   transition: background-color 0.2s;
-  border-radius: 8px; /* Larger radius */
+  border-radius: 4px;
   margin: 0 2px;
   text-align: center;
-  min-height: 44px; /* Minimum touch target size */
-  position: relative; /* For absolute positioning of pseudo-element */
-}
-
-/* Add invisible hit area */
-.reaction-action::after {
-  content: '';
-  position: absolute;
-  top: -10px;
-  left: -10px;
-  right: -10px;
-  bottom: -10px;
 }
 
 .reaction-action:hover {
@@ -792,10 +777,7 @@ nav ul li a:hover {
 
 .reaction-container {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 80px; /* Minimum width */
+  display: inline-block;
 }
 
 .reaction-options {
@@ -829,15 +811,8 @@ nav ul li a:hover {
   transform: scale(1.3);
 }
 
-@keyframes fadeInUp {
-  from {
-      opacity: 0;
-      transform: translateX(-50%) translateY(10px);
-  }
-  to {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-  }
+.like-btn {
+  width: 150px;
 }
 /* Comment section */
 .comment-section {
@@ -922,38 +897,17 @@ nav ul li a:hover {
   font-size: 32px;
   color: #20462f;
 }
-
-.social-share-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-top: 20px;
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
-.social-share-buttons button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 24px;
-  padding: 10px;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-
-.social-share-buttons button:hover {
-  transform: scale(1.1);
-}
-
-.share-facebook { color: #3b5998; }
-.share-twitter { color: #1DA1F2; }
-.share-whatsapp { color: #25D366; }
-.share-linkedin { color: #0077B5; }
-.share-copy { color: #20462f; }
 /* ===== ADMIN STYLES ===== */
 /* Layout Structure */
 .admin-header {
@@ -1698,16 +1652,15 @@ footer {
   }
 
   .reaction-actions {
-    gap: 8vw;
+    gap: 4vw;
   }
 
   .reaction-action {
     font-size: 14px;
-    padding: 15px 0;
   }
 
   .reaction-action i {
-    font-size: 18px;
+    font-size: 14px;
   }
 
   #comment-input {
@@ -1839,18 +1792,15 @@ footer {
   }
   .reaction-options {
     bottom: 120%;
-    margin-left: 50%;
-}
+    margin-left: 5%;
+  }
 
-.reaction-option {
+  .reaction-option {
     font-size: 24px;
     padding: 2px;
-}
-/* Make the entire button area tappable */
-.like-btn {
-  padding: 15px 0;
-  width: 100%;
-}
+  }
 
-
+  .like-btn {
+    width: 70px;
+  }
 }
