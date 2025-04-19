@@ -813,12 +813,12 @@ nav ul li a:hover {
 
 @keyframes fadeInUp {
   from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(10px);
+      opacity: 0;
+      transform: translateX(-50%) translateY(10px);
   }
   to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
   }
 }
 /* Comment section */
@@ -931,21 +931,11 @@ nav ul li a:hover {
   transform: scale(1.1);
 }
 
-.share-facebook {
-  color: #3b5998;
-}
-.share-twitter {
-  color: #1da1f2;
-}
-.share-whatsapp {
-  color: #25d366;
-}
-.share-linkedin {
-  color: #0077b5;
-}
-.share-copy {
-  color: #20462f;
-}
+.share-facebook { color: #3b5998; }
+.share-twitter { color: #1DA1F2; }
+.share-whatsapp { color: #25D366; }
+.share-linkedin { color: #0077B5; }
+.share-copy { color: #20462f; }
 /* ===== ADMIN STYLES ===== */
 /* Layout Structure */
 .admin-header {
@@ -1831,12 +1821,12 @@ footer {
   .reaction-options {
     bottom: 120%;
     margin-left: 50%;
-  }
+}
 
-  .reaction-option {
+.reaction-option {
     font-size: 24px;
-    width: 40px;
-    height: 40px;
     padding: 2px;
-  }
+}
+
+
 }
