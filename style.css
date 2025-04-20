@@ -122,7 +122,11 @@ body {
 }
 .span-ancest {
   color: #ffb84d;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px #20462F;
 }
+
+
 
 .carousel-container {
   width: 50vw;
@@ -390,8 +394,6 @@ nav ul li a:hover {
   background-color: #ff6f61;
 }
 /*-------------------------SectionDivider-------------------------*/
-@import url("https://fonts.googleapis.com/css?family=Share+Tech+Mono");
-
 .secDivide {
   display: flex;
   justify-content: center;
@@ -809,7 +811,6 @@ nav ul li a:hover {
 
 .reaction-stats i {
   color: #ffb84d;
-  margin-right: 5px;
 }
 
 .reaction-actions {
@@ -844,6 +845,9 @@ nav ul li a:hover {
   font-size: 18px;
 }
 
+#like-count {
+  margin-left: 5px; /* Adjust this value as needed */
+}
 .reaction-container {
   position: relative;
   display: inline-block;
@@ -894,7 +898,10 @@ nav ul li a:hover {
 .comment-section {
   margin-top: 15px;
 }
-
+.comment-time {
+  font-size: 14px;
+  color: #F1D1B5;
+}
 .comment-box {
   display: flex;
   margin-top: 10px;
@@ -2367,5 +2374,10 @@ footer {
   }
   .row {
     margin-top: 0.5vh;
+  }
+
+  .comment-time {
+    font-size: 12px;
+    color: #F1D1B5;
   }
 }
