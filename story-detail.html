@@ -15,6 +15,33 @@
       href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"
     />
     <link rel="stylesheet" href="style.css" />
+    <style>
+      .translate-btn {
+        background-color: #FF6F61;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 14px;
+        margin-left: 15px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s ease;
+      }
+
+      .translate-btn:hover {
+        background-color: #FF9A8B;
+      }
+      
+      .story-title-container {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+    </style>
   </head>
   <body>
     <div id="storyContent">
@@ -24,6 +51,9 @@
         </a>
         <div class="story-title-container">
           <h1 id="story-title">Story Title</h1>
+          <button id="translate-btn" class="translate-btn">
+            <i class="fas fa-language"></i> Translate to Filipino
+          </button>
         </div>
         <p id="story-origin">Origin:</p>
         <img id="story-image" alt="Story Image" />
@@ -107,7 +137,7 @@
         orderBy,
         deleteDoc,
         updateDoc,
-        writeBatch, // Add this import
+        writeBatch,
       } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
       import {
         getAuth,
@@ -133,6 +163,12 @@
       let currentUser = null;
       let currentStoryId = null;
       let currentUserReaction = null;
+      let isTranslated = false;
+      let originalContent = {
+        title: "",
+        origin: "",
+        story: ""
+      };
 
       // Check auth state
       onAuthStateChanged(auth, (user) => {
@@ -162,6 +198,10 @@
 
         if (docSnap.exists()) {
           const data = docSnap.data();
+          originalContent.title = data.title;
+          originalContent.origin = data.origin || "";
+          originalContent.story = data.story || "";
+          
           document.getElementById("story-title").innerText = data.title;
           document.getElementById("story-origin").innerText = data.origin || "";
 
@@ -197,6 +237,79 @@
             )}</p>`;
           })
           .join("");
+      }
+
+      // LibreTranslate function
+      async function translateText(text) {
+        try {
+          const response = await fetch("https://libretranslate.de/translate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              q: text,
+              source: "en",
+              target: "tl", // 'tl' is Filipino
+              format: "text"
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error(`Translation failed: ${response.statusText}`);
+          }
+          
+          const data = await response.json();
+          return data.translatedText || text;
+        } catch (error) {
+          console.error('Translation error:', error);
+          Swal.fire({
+            title: "Translation Error",
+            text: "Could not translate the content. Please try again later.",
+            icon: "error",
+            confirmButtonText: "Okay",
+            background: "#FF6F61",
+            color: "#20462f",
+            confirmButtonColor: "#FF9A8B",
+            showClass: {
+              popup: "animate__animated animate__shakeX",
+            },
+          });
+          return text; // Return original text if translation fails
+        }
+      }
+
+      async function toggleTranslation() {
+        const translateBtn = document.getElementById('translate-btn');
+        
+        if (isTranslated) {
+          // Revert to original English
+          document.getElementById("story-title").innerText = originalContent.title;
+          document.getElementById("story-origin").innerText = originalContent.origin;
+          document.getElementById("story-content").innerHTML = formatStoryContent(originalContent.story);
+          translateBtn.innerHTML = '<i class="fas fa-language"></i> Translate to Filipino';
+          isTranslated = false;
+        } else {
+          // Translate to Filipino
+          translateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Translating...';
+          
+          try {
+            // Translate each part separately
+            const [translatedTitle, translatedOrigin, translatedContent] = await Promise.all([
+              translateText(originalContent.title),
+              originalContent.origin ? translateText(originalContent.origin) : Promise.resolve(""),
+              translateText(originalContent.story)
+            ]);
+            
+            document.getElementById("story-title").innerText = translatedTitle;
+            document.getElementById("story-origin").innerText = translatedOrigin;
+            document.getElementById("story-content").innerHTML = formatStoryContent(translatedContent);
+            
+            translateBtn.innerHTML = '<i class="fas fa-language"></i> Show Original';
+            isTranslated = true;
+          } catch (error) {
+            console.error('Translation error:', error);
+            translateBtn.innerHTML = '<i class="fas fa-language"></i> Translate to Filipino';
+          }
+        }
       }
 
       async function loadReactions() {
@@ -238,53 +351,76 @@
           (a, b) => a + b,
           0
         );
+        const reactionStatsElement = document.querySelector(".reaction-stats");
         const likeCountElement = document.getElementById("like-count");
-        const reactionIcon = likeCountElement.previousElementSibling; // Get the icon element
+
+        // Clear all existing reaction elements except the count
+        while (reactionStatsElement.firstChild) {
+          if (reactionStatsElement.firstChild === likeCountElement) {
+            break;
+          }
+          reactionStatsElement.removeChild(reactionStatsElement.firstChild);
+        }
 
         if (totalReactions === 0) {
           likeCountElement.textContent = "0 reactions";
-          // Reset to default like icon if no reactions
-          reactionIcon.className = "fas fa-thumbs-up";
-          reactionIcon.style.color = "";
         } else {
-          // Get the top 1-3 reactions sorted by count
-          const sortedReactions = Object.entries(reactions)
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 3);
+          const reactionEntries = Object.entries(reactions);
+          const sortedReactions = reactionEntries.sort((a, b) => b[1] - a[1]);
 
-          // Update the icon to show the top reaction
-          const topReaction = sortedReactions[0][0];
-          switch (topReaction) {
-            case "like":
-              reactionIcon.className = "fas fa-thumbs-up";
-              reactionIcon.style.color = "#216fdb";
-              break;
-            case "love":
-              reactionIcon.className = "fas fa-heart";
-              reactionIcon.style.color = "#f33e58";
-              break;
-            case "wow":
-              reactionIcon.className = "fas fa-surprise";
-              reactionIcon.style.color = "#f7b125";
-              break;
-            case "angry":
-              reactionIcon.className = "fas fa-angry";
-              reactionIcon.style.color = "#e9710f";
-              break;
-          }
-
-          if (sortedReactions.length === 1) {
-            // Only one reaction type
-            const reactionType = sortedReactions[0][0];
-            const count = sortedReactions[0][1];
+          if (reactionEntries.length === 1) {
+            // Single reaction type: "X ReactionName"
+            const [type, count] = reactionEntries[0];
+            const icon = createReactionIcon(type);
+            reactionStatsElement.insertBefore(icon, likeCountElement);
             likeCountElement.textContent = `${count} ${getReactionDisplayName(
-              reactionType
+              type
             )}${count !== 1 ? "s" : ""}`;
           } else {
-            // Multiple reaction types
-            likeCountElement.textContent = `${totalReactions} reactions`;
+            // Multiple reaction types: show all icons with commas (no spacing)
+            sortedReactions.forEach(([type], index) => {
+              const icon = createReactionIcon(type);
+              reactionStatsElement.insertBefore(icon, likeCountElement);
+
+              // Add comma separator without spacing
+              if (index < sortedReactions.length - 1) {
+                const comma = document.createElement("span");
+                comma.textContent = ",";
+                reactionStatsElement.insertBefore(comma, likeCountElement);
+              }
+            });
+
+            likeCountElement.textContent = `${totalReactions}  reactions`;
           }
         }
+      }
+
+      function createReactionIcon(type) {
+        const icon = document.createElement("i");
+        icon.className = "fas";
+
+        switch (type) {
+          case "like":
+            icon.className += " fa-thumbs-up";
+            icon.style.color = "#216fdb";
+            break;
+          case "love":
+            icon.className += " fa-heart";
+            icon.style.color = "#f33e58";
+            break;
+          case "wow":
+            icon.className += " fa-surprise";
+            icon.style.color = "#f7b125";
+            break;
+          case "angry":
+            icon.className += " fa-angry";
+            icon.style.color = "#e9710f";
+            break;
+          default:
+            icon.className += " fa-question";
+        }
+
+        return icon;
       }
 
       function getReactionDisplayName(reactionType) {
@@ -352,8 +488,6 @@
 
         try {
           const reactionsRef = collection(db, "reactions");
-
-          // First check if user already reacted
           const q = query(
             reactionsRef,
             where("storyId", "==", currentStoryId),
@@ -363,15 +497,12 @@
           const querySnapshot = await getDocs(q);
 
           if (!querySnapshot.empty) {
-            // User already reacted - remove or update reaction
             const existingReaction = querySnapshot.docs[0];
             if (existingReaction.data().reactionType === reactionType) {
-              // Same reaction - remove it
               await deleteDoc(existingReaction.ref);
               currentUserReaction = null;
               updateReactionButton(null);
             } else {
-              // Different reaction - update it
               await updateDoc(existingReaction.ref, {
                 reactionType: reactionType,
                 timestamp: serverTimestamp(),
@@ -380,7 +511,6 @@
               updateReactionButton(reactionType);
             }
           } else {
-            // New reaction - use addDoc instead of batch for simplicity
             await addDoc(reactionsRef, {
               storyId: currentStoryId,
               userId: currentUser.uid,
@@ -391,7 +521,6 @@
             updateReactionButton(reactionType);
           }
 
-          // Reload reactions
           loadReactions();
         } catch (error) {
           console.error("Error handling reaction:", error);
@@ -605,95 +734,84 @@
       window.onload = fetchStoryDetails;
 
       document.addEventListener("DOMContentLoaded", () => {
+        // Add translation button event listener
+        document.getElementById('translate-btn').addEventListener('click', toggleTranslation);
+
         // Reaction Handling
         const likeBtn = document.querySelector(".like-btn");
-        const reactionOptions = document.querySelector(".reaction-options");
-        let pressTimer;
-        let isReactionOpen = false;
-        let touchStartTime = 0;
-        let touchMoved = false;
+        const reactionOptions = document.querySelector(".reaction-options");
+        let isReactionOpen = false;
+        let lastClickTime = 0;
+        const doubleClickDelay = 300; // milliseconds between clicks to count as double click
+        let clickTimeout;
 
-        function toggleReactions(show) {
-          if (show) {
-            reactionOptions.classList.add("show");
-            isReactionOpen = true;
-          } else {
-            reactionOptions.classList.remove("show");
-            isReactionOpen = false;
-          }
-        }
-
-        function startPressTimer(e) {
-          e.preventDefault();
-          touchStartTime = Date.now();
-          touchMoved = false;
-          pressTimer = setTimeout(() => {
-            if (!touchMoved) {
-              toggleReactions(true);
-            }
-          }, 500);
-        }
-
-        function cancelPressTimer() {
-          clearTimeout(pressTimer);
-        }
-
-        likeBtn.addEventListener("touchstart", startPressTimer);
-
-        likeBtn.addEventListener("touchmove", () => {
-          touchMoved = true;
-          cancelPressTimer();
-        });
-
-        likeBtn.addEventListener("touchend", (e) => {
-          const touchDuration = Date.now() - touchStartTime;
-          if (!isReactionOpen && !touchMoved && touchDuration < 500) {
-            e.preventDefault();
-            handleReaction("like");
-          }
-          cancelPressTimer();
-          touchStartTime = 0;
-          touchMoved = false;
-        });
-
-        // Click handler for non-touch devices (PC)
-        likeBtn.addEventListener("click", (e) => {
-          if (!isReactionOpen) {
-            handleReaction("like");
-          }
-        });
-
-        // Mouse event listeners for PC
-        likeBtn.addEventListener("mousedown", startPressTimer);
-        likeBtn.addEventListener("mouseup", cancelPressTimer);
-        likeBtn.addEventListener("mouseleave", cancelPressTimer);
-
-        // Close reactions when clicking outside
-        document.addEventListener("click", (e) => {
-          if (
-            !likeBtn.contains(e.target) &&
-            !reactionOptions.contains(e.target)
-          ) {
-            toggleReactions(false);
-          }
-        });
-
-        // Select a reaction from the options
-        const reactionOptionsList = document.querySelectorAll(".reaction-option");
-        reactionOptionsList.forEach((option) => {
-          option.addEventListener("click", (e) => {
-            e.stopPropagation();
-            const reaction = option.dataset.reaction;
-            handleReaction(reaction);
-            toggleReactions(false);
-          });
-        });
-
-        // Simple like button click (only if reactions aren't showing)
-        likeBtn.addEventListener("click", (e) => {
-          if (!isReactionOpen && !isTouchDevice) {
-            handleReaction("like");
+        function toggleReactions(show) {
+          if (show) {
+            reactionOptions.classList.add("show");
+            isReactionOpen = true;
+          } else {
+            reactionOptions.classList.remove("show");
+            isReactionOpen = false;
           }
+        }
+
+        function handleSingleClick() {
+          // Only show reactions if not already open
+          if (!isReactionOpen) {
+            toggleReactions(true);
+          }
+        }
+
+        function handleDoubleClick() {
+          // Clear any pending single click timeout
+          clearTimeout(clickTimeout);
+          // Close reactions if they were opened by the first click
+          if (isReactionOpen) {
+            toggleReactions(false);
+          }
+          // Perform like action
+          handleReaction("like");
+        }
+
+        // Unified click handler for both mobile and desktop
+        likeBtn.addEventListener("click", (e) => {
+          const currentTime = new Date().getTime();
+          const timeSinceLastClick = currentTime - lastClickTime;
+
+          if (timeSinceLastClick < doubleClickDelay && timeSinceLastClick > 0) {
+            // Double click detected
+            handleDoubleClick();
+            lastClickTime = 0;
+          } else {
+            // First click - wait to see if it becomes a double click
+            lastClickTime = currentTime;
+            clickTimeout = setTimeout(() => {
+              // Only execute single click if no second click came
+              handleSingleClick();
+            }, doubleClickDelay);
+          }
+        });
+
+        // Close reactions when clicking outside
+        document.addEventListener("click", (e) => {
+          if (
+            !likeBtn.contains(e.target) &&
+            !reactionOptions.contains(e.target)
+          ) {
+            toggleReactions(false);
+          }
+        });
+
+        // Select a reaction from the options
+        const reactionOptionsList =
+          document.querySelectorAll(".reaction-option");
+        reactionOptionsList.forEach((option) => {
+          option.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const reaction = option.dataset.reaction;
+            handleReaction(reaction);
+            toggleReactions(false);
+          });
         });
 
         // Comment button
@@ -819,8 +937,7 @@
                 });
               });
           });
-
-        // Comment handling
+        // Comment handling (keep existing implementation)
         const postBtn = document.getElementById("post-comment");
         const commentInput = document.getElementById("comment-input");
 
