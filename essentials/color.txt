@@ -4,4 +4,3 @@ Hover	               #FFB84D	  Warm amber
 Background (Primary)	 #FF6F61	  Coral red
 Accent / Soft Shade	 #FF9A8B	  Light coral pink
 Primary Text Color	   #20462F	  Deep forest green
-Secondary Background	 #FFF1ED	  Pale peach / light background contrast
