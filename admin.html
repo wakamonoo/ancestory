@@ -1,95 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AnceStory Admin</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://kit.fontawesome.com/c15538e89d.js" crossorigin="anonymous"></script>
-  <link rel="icon" href="images/logo.png" type="image/png">
-</head>
-<body>
-  <header class="admin-header">
-    <div class="admin-nav-container">
-      <nav class="admin-nav">
-        <a href="index.html" title="ancestory">
-          <img src="images/logo.png" alt="ancestory logo" class="admin-logo">
-        </a>
-        <button id="admin-logout-btn" class="admin-logout-btn">
-          <span class="logout-icon"><i class="fas fa-sign-out-alt"></i></span>
-          <span class="logout-text">Logout</span>
-        </button>
-      </nav>
-    </div>
-    <div class="admin-welcome-container">
-      <h1 class="admin-welcome">AnceStory Admin Dashboard</h1>
-    </div>
-  </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AnceStory Admin</title>
+    <link rel="stylesheet" href="style.css" />
+    <script
+      src="https://kit.fontawesome.com/c15538e89d.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="icon" href="images/logo.png" type="image/png" />
+  </head>
+  <body>
+    <header class="admin-header">
+      <div class="admin-nav-container">
+        <nav class="admin-nav">
+          <a href="index.html" title="ancestory">
+            <img
+              src="images/logo.png"
+              alt="ancestory logo"
+              class="admin-logo"
+            />
+          </a>
+          <button id="admin-logout-btn" class="admin-logout-btn">
+            <span class="logout-icon"><i class="fas fa-sign-out-alt"></i></span>
+            <span class="logout-text">Logout</span>
+          </button>
+        </nav>
+      </div>
+      <div class="admin-welcome-container">
+        <h1 class="admin-welcome">AnceStory Admin Dashboard</h1>
+      </div>
+    </header>
 
-  <main class="admin-main-container">
-    <div class="admin-content-wrapper">
-      <section class="admin-form-container">
-        <h2 class="admin-form-title">Add New Story</h2>
-        <form id="admin-story-form">
+    <main class="admin-main-container">
+      <div class="admin-content-wrapper">
+        <section class="admin-form-container">
+          <h2 class="admin-form-title">Add New Story</h2>
+          <form id="admin-story-form">
+            <div class="admin-form-group">
+              <label for="admin-title">Title:</label>
+              <input type="text" id="admin-title" required />
+            </div>
+            <div class="admin-form-group">
+              <label for="admin-origin">Origin:</label>
+              <input type="text" id="admin-origin" required />
+            </div>
+            <div class="admin-form-group">
+              <label for="admin-story">Story:</label>
+              <textarea id="admin-story" required></textarea>
+            </div>
+            <div class="admin-form-group">
+              <label for="admin-filipino"
+                >Filipino Translation (Optional)</label
+              >
+              <textarea
+                id="admin-filipino"
+                class="admin-form-control"
+              ></textarea>
+            </div>
+            <div class="admin-form-group">
+              <label for="admin-image">Image (URL):</label>
+              <input
+                type="url"
+                id="admin-image"
+                placeholder="https://example.com/image.jpg"
+              />
+            </div>
+            <button type="submit" class="admin-submit-btn">
+              <i class="fas fa-plus-circle"></i> Add Story
+            </button>
+          </form>
+        </section>
+
+        <section class="admin-stories-container">
+          <h2 class="admin-form-title">Existing Stories</h2>
+          <div id="admin-stories-list" class="admin-stories-grid"></div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Edit Story Modal -->
+    <div id="admin-edit-modal" class="admin-edit-modal">
+      <div class="admin-edit-modal-content">
+        <span class="admin-edit-modal-close">&times;</span>
+        <h2>Edit Story</h2>
+        <form id="admin-edit-form">
+          <input type="hidden" id="admin-edit-id" />
           <div class="admin-form-group">
-            <label for="admin-title">Title:</label>
-            <input type="text" id="admin-title" required>
+            <label for="admin-edit-title">Title:</label>
+            <input type="text" id="admin-edit-title" required />
           </div>
           <div class="admin-form-group">
-            <label for="admin-origin">Origin:</label>
-            <input type="text" id="admin-origin" required>
+            <label for="admin-edit-origin">Origin:</label>
+            <input type="text" id="admin-edit-origin" required />
           </div>
           <div class="admin-form-group">
-            <label for="admin-story">Story:</label>
-            <textarea id="admin-story" required></textarea>
+            <label for="admin-edit-story">Story:</label>
+            <textarea id="admin-edit-story" required></textarea>
           </div>
           <div class="admin-form-group">
-            <label for="admin-image">Image (URL):</label>
-            <input type="url" id="admin-image" placeholder="https://example.com/image.jpg">
+            <label for="admin-edit-filipino">Filipino Translation</label>
+            <textarea
+              id="admin-edit-filipino"
+              class="admin-form-control"
+            ></textarea>
+          </div>
+          <div class="admin-form-group">
+            <label for="admin-edit-image">Image (URL):</label>
+            <input type="url" id="admin-edit-image" />
           </div>
           <button type="submit" class="admin-submit-btn">
-            <i class="fas fa-plus-circle"></i> Add Story
+            <i class="fas fa-save"></i> Save Changes
           </button>
         </form>
-      </section>
-
-      <section class="admin-stories-container">
-        <h2 class="admin-form-title">Existing Stories</h2>
-        <div id="admin-stories-list" class="admin-stories-grid"></div>
-      </section>
+      </div>
     </div>
-  </main>
 
-  <!-- Edit Story Modal -->
-  <div id="admin-edit-modal" class="admin-edit-modal">
-    <div class="admin-edit-modal-content">
-      <span class="admin-edit-modal-close">&times;</span>
-      <h2>Edit Story</h2>
-      <form id="admin-edit-form">
-        <input type="hidden" id="admin-edit-id">
-        <div class="admin-form-group">
-          <label for="admin-edit-title">Title:</label>
-          <input type="text" id="admin-edit-title" required>
-        </div>
-        <div class="admin-form-group">
-          <label for="admin-edit-origin">Origin:</label>
-          <input type="text" id="admin-edit-origin" required>
-        </div>
-        <div class="admin-form-group">
-          <label for="admin-edit-story">Story:</label>
-          <textarea id="admin-edit-story" required></textarea>
-        </div>
-        <div class="admin-form-group">
-          <label for="admin-edit-image">Image (URL):</label>
-          <input type="url" id="admin-edit-image">
-        </div>
-        <button type="submit" class="admin-submit-btn">
-          <i class="fas fa-save"></i> Save Changes
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <script type="module" src="admin.js"></script>
-</body>
+    <script type="module" src="admin.js"></script>
+  </body>
 </html>

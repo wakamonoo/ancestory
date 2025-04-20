@@ -214,71 +214,80 @@
       }
 
       async function toggleTranslation() {
-  const translateBtn = document.getElementById("translate-btn");
+        const translateBtn = document.getElementById("translate-btn");
 
-  if (isTranslated) {
-    // Revert to original English content for story
-    document.getElementById("story-title").innerText = originalContent.title;
-    document.getElementById("story-origin").innerText = originalContent.origin;
-    document.getElementById("story-content").innerHTML = formatStoryContent(originalContent.story);
+        if (isTranslated) {
+          // Revert to original English content for story
+          document.getElementById("story-title").innerText =
+            originalContent.title;
+          document.getElementById("story-origin").innerText =
+            originalContent.origin;
+          document.getElementById("story-content").innerHTML =
+            formatStoryContent(originalContent.story);
 
-    // Change button to show the Filipino flag
-    translateBtn.innerHTML = '<img src="https://flagcdn.com/ph.svg" width="25">';
-    isTranslated = false;
-  } else {
-    // Show loading spinner while fetching the Filipino translation
-    translateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-
-    try {
-      // Fetch the story document from Firestore using currentStoryId
-      const docRef = doc(db, "Stories", currentStoryId);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-
-        // If the Filipino translation exists for the story, update only the story
-        if (data.filipino) {
-          document.getElementById("story-title").innerText = originalContent.title; // Keep title as is
-          document.getElementById("story-origin").innerText = originalContent.origin; // Keep origin as is
-          document.getElementById("story-content").innerHTML = formatStoryContent(data.filipino); // Use Filipino translated story
-
-          // Change button to show the US flag (English)
-          translateBtn.innerHTML = '<img src="https://flagcdn.com/us.svg" width="25">';
-          isTranslated = true;
-        } else {
-          // No Filipino translation available
-          Swal.fire({
-            title: "Translation Not Available",
-            text: "Filipino translation is not available for this story yet.",
-            icon: "info",
-            confirmButtonText: "Okay",
-            background: "#FF6F61",
-            color: "#20462f",
-            confirmButtonColor: "#FF9A8B",
-          });
-
-          translateBtn.innerHTML = '<img src="https://flagcdn.com/ph.svg" width="25">';
+          // Change button to show the Filipino flag
+          translateBtn.innerHTML =
+            '<img src="https://flagcdn.com/ph.svg" width="25">';
           isTranslated = false;
+        } else {
+          // Show loading spinner while fetching the Filipino translation
+          translateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+          try {
+            // Fetch the story document from Firestore using currentStoryId
+            const docRef = doc(db, "Stories", currentStoryId);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+              const data = docSnap.data();
+
+              // If the Filipino translation exists for the story, update only the story
+              if (data.filipino) {
+                document.getElementById("story-title").innerText =
+                  originalContent.title; // Keep title as is
+                document.getElementById("story-origin").innerText =
+                  originalContent.origin; // Keep origin as is
+                document.getElementById("story-content").innerHTML =
+                  formatStoryContent(data.filipino); // Use Filipino translated story
+
+                // Change button to show the US flag (English)
+                translateBtn.innerHTML =
+                  '<img src="https://flagcdn.com/us.svg" width="25">';
+                isTranslated = true;
+              } else {
+                // No Filipino translation available
+                Swal.fire({
+                  title: "Translation Not Available",
+                  text: "Filipino translation is not available for this story yet.",
+                  icon: "info",
+                  confirmButtonText: "Okay",
+                  background: "#FF6F61",
+                  color: "#20462f",
+                  confirmButtonColor: "#FF9A8B",
+                });
+
+                translateBtn.innerHTML =
+                  '<img src="https://flagcdn.com/ph.svg" width="25">';
+                isTranslated = false;
+              }
+            }
+          } catch (error) {
+            console.error("Error fetching translation:", error);
+            translateBtn.innerHTML =
+              '<img src="https://flagcdn.com/ph.svg" width="25">';
+
+            Swal.fire({
+              title: "Error",
+              text: "Could not fetch the translation. Please try again later.",
+              icon: "error",
+              confirmButtonText: "Okay",
+              background: "#FF6F61",
+              color: "#20462f",
+              confirmButtonColor: "#FF9A8B",
+            });
+          }
         }
       }
-    } catch (error) {
-      console.error("Error fetching translation:", error);
-      translateBtn.innerHTML = '<img src="https://flagcdn.com/ph.svg" width="25">';
-
-      Swal.fire({
-        title: "Error",
-        text: "Could not fetch the translation. Please try again later.",
-        icon: "error",
-        confirmButtonText: "Okay",
-        background: "#FF6F61",
-        color: "#20462f",
-        confirmButtonColor: "#FF9A8B",
-      });
-    }
-  }
-}
-
 
       async function loadReactions() {
         const reactionsRef = collection(db, "reactions");
