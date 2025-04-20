@@ -726,6 +726,30 @@ nav ul li a:hover {
   overflow-wrap: normal;
 }
 
+.translate-btn {
+  position: absolute;
+  top: 15%;
+  right: 28%;
+  background-color: #ffb84d;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 25%;
+  cursor: pointer;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  transition: all 0.3s ease;
+  width: 50px;
+  height: 50px;
+  z-index: 10;
+}
+
+.translate-btn:hover {
+  background-color: #ff9a8b;
+}
 .backStory img {
   width: 6vw;
   height: auto;
@@ -1704,13 +1728,23 @@ footer {
     font-size: 12px;
     color: #f1d1b5;
   }
+
+  .translate-btn {
+    position: absolute;
+    top: 15%;
+    right: 10%;
+    background-color: #ffb84d;
+    width: 40px;
+    height: 40px;
+    z-index: 10;
+  }
   /*---------------AboutSection---------------*/
 
   #about {
     width: 90%;
     margin: 0 auto;
   }
-  
+
   .About {
     margin-left: 0;
   }
@@ -1792,25 +1826,24 @@ footer {
   .foorterRight {
     max-width: 100%;
   }
-  
+
   .footerclass {
     display: flex;
-    justify-content: center; 
+    justify-content: center;
     align-items: flex-start;
     flex-wrap: wrap;
-    gap: 40px; 
+    gap: 40px;
     padding: 40px 20px;
-    max-width: 100%; 
+    max-width: 100%;
     box-sizing: border-box;
-    margin: 0 auto; 
+    margin: 0 auto;
   }
 
   .footerclass > div {
     flex: 1 1 220px;
     max-width: 260px;
   }
-  
-  
+
   .footerCTA {
     font-size: 14px;
   }
@@ -2200,6 +2233,16 @@ footer {
   .comment-time {
     font-size: 12px;
     color: #f1d1b5;
+  }
+
+  .translate-btn {
+    position: absolute;
+    top: 10%;
+    right: 10%;
+    background-color: #ffb84d;
+    width: 35px;
+    height: 35px;
+    z-index: 10;
   }
   /*---------------AboutSection---------------*/
   .About {

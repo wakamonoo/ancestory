@@ -1,45 +1,64 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Public read access to all documents
+    // Public read access to all documents (be careful with this in production!)
     match /{document=**} {
       allow read: if true;
     }
 
-    // Specific rules for Stories collection
+    // Rules for Stories collection (admin only)
     match /Stories/{storyId} {
-      // Allow admin (specific email) to create, update, and delete stories
-      allow create, update, delete: if request.auth != null 
-                                    && request.auth.token.email == "joven.serdanbataller21@gmail.com";
-      
+      // Allow admin to create, update, and delete stories
+      allow create, update, delete: if request.auth != null
+                                      && request.auth.token.email == "joven.serdanbataller21@gmail.com";
+
       // Allow all users to read stories
       allow read: if true;
     }
 
-    // Keep your existing rules for reactions and comments
+    // Rules for UserStories collection (for user-submitted stories)
+    match /UserStories/{storyId} {
+      // Allow any authenticated user to create a story
+      allow create: if request.auth != null;
+
+      // Allow read access (adjust as needed)
+      allow read: if true;
+
+      // Allow update/delete only by the creator
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.userID;
+    }
+
+    // Updated rules for reactions
     match /reactions/{reactionId} {
-      allow create: if request.auth != null 
+      // Allow creation of reactions with valid data
+      allow create: if request.auth != null
                     && request.resource.data.storyId is string
                     && request.resource.data.userId == request.auth.uid
                     && request.resource.data.reactionType in ["like", "love", "wow", "angry"];
-      
-      allow delete: if request.auth != null 
+
+      // Allow users to delete their own reactions
+      allow delete: if request.auth != null
                     && resource.data.userId == request.auth.uid;
-      
-      allow update: if false;
+
+      // Allow users to update their own reactions (for changing reaction type)
+      allow update: if request.auth != null
+                    && resource.data.userId == request.auth.uid
+                    && request.resource.data.reactionType in ["like", "love", "wow", "angry"]
+                    && request.resource.data.storyId == resource.data.storyId
+                    && request.resource.data.userId == resource.data.userId;
     }
 
     match /comments/{commentId} {
-      allow create: if request.auth != null 
+      allow create: if request.auth != null
                     && request.resource.data.storyId is string
                     && request.resource.data.userId == request.auth.uid
                     && request.resource.data.text is string
                     && request.resource.data.text.size() > 0
                     && request.resource.data.text.size() < 1000;
-      
-      allow delete: if request.auth != null 
+
+      allow delete: if request.auth != null
                     && resource.data.userId == request.auth.uid;
-      
+
       allow update: if false;
     }
 

@@ -15,33 +15,6 @@
       href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"
     />
     <link rel="stylesheet" href="style.css" />
-    <style>
-      .translate-btn {
-        background-color: #FF6F61;
-        color: white;
-        border: none;
-        padding: 8px 15px;
-        border-radius: 20px;
-        cursor: pointer;
-        font-size: 14px;
-        margin-left: 15px;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        transition: all 0.3s ease;
-      }
-
-      .translate-btn:hover {
-        background-color: #FF9A8B;
-      }
-      
-      .story-title-container {
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-    </style>
   </head>
   <body>
     <div id="storyContent">
@@ -49,12 +22,10 @@
         <a href="index.html#stories" class="backStory">
           <img src="images/back.png" alt="Back" />
         </a>
-        <div class="story-title-container">
-          <h1 id="story-title">Story Title</h1>
-          <button id="translate-btn" class="translate-btn">
-            <i class="fas fa-language"></i> Translate to Filipino
-          </button>
-        </div>
+        <button id="translate-btn" class="translate-btn">
+          <img src="https://flagcdn.com/ph.svg" width="25" />
+        </button>
+        <h1 id="story-title">Story Title</h1>
         <p id="story-origin">Origin:</p>
         <img id="story-image" alt="Story Image" />
         <div id="story-content"></div>
@@ -167,7 +138,7 @@
       let originalContent = {
         title: "",
         origin: "",
-        story: ""
+        story: "",
       };
 
       // Check auth state
@@ -201,7 +172,7 @@
           originalContent.title = data.title;
           originalContent.origin = data.origin || "";
           originalContent.story = data.story || "";
-          
+
           document.getElementById("story-title").innerText = data.title;
           document.getElementById("story-origin").innerText = data.origin || "";
 
@@ -239,75 +210,96 @@
           .join("");
       }
 
-      // LibreTranslate function
       async function translateText(text) {
-        try {
-          const response = await fetch("https://libretranslate.de/translate", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              q: text,
-              source: "en",
-              target: "tl", // 'tl' is Filipino
-              format: "text"
-            })
-          });
-          
-          if (!response.ok) {
-            throw new Error(`Translation failed: ${response.statusText}`);
-          }
-          
-          const data = await response.json();
-          return data.translatedText || text;
-        } catch (error) {
-          console.error('Translation error:', error);
-          Swal.fire({
-            title: "Translation Error",
-            text: "Could not translate the content. Please try again later.",
-            icon: "error",
-            confirmButtonText: "Okay",
-            background: "#FF6F61",
-            color: "#20462f",
-            confirmButtonColor: "#FF9A8B",
-            showClass: {
-              popup: "animate__animated animate__shakeX",
-            },
-          });
-          return text; // Return original text if translation fails
-        }
-      }
+  if (!text.trim()) return text;
 
+  const targetLang = isTranslated ? "en" : "fil"; // 'fil' for Filipino
+
+  try {
+    const response = await fetch("https://libretranslate.de/translate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        q: text,
+        source: "en",
+        target: targetLang,
+        format: "text"
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.translatedText) {
+      throw new Error("Translation failed or malformed response.");
+    }
+
+    return data.translatedText;
+  } catch (error) {
+    console.error("Translation error:", error);
+
+    Swal.fire({
+      title: "Translation Error",
+      text: `Could not translate the content. Error: ${error.message}`,
+      icon: "error",
+      confirmButtonText: "Okay",
+      background: "#FF6F61",
+      color: "#20462f",
+      confirmButtonColor: "#FF9A8B",
+      showClass: {
+        popup: "animate__animated animate__shakeX",
+      },
+    });
+
+    return text;
+  }
+}
+
+
+      // Keep the existing toggleTranslation function but update the language logic
       async function toggleTranslation() {
-        const translateBtn = document.getElementById('translate-btn');
-        
+        const translateBtn = document.getElementById("translate-btn");
+
         if (isTranslated) {
           // Revert to original English
-          document.getElementById("story-title").innerText = originalContent.title;
-          document.getElementById("story-origin").innerText = originalContent.origin;
-          document.getElementById("story-content").innerHTML = formatStoryContent(originalContent.story);
-          translateBtn.innerHTML = '<i class="fas fa-language"></i> Translate to Filipino';
+          document.getElementById("story-title").innerText =
+            originalContent.title;
+          document.getElementById("story-origin").innerText =
+            originalContent.origin;
+          document.getElementById("story-content").innerHTML =
+            formatStoryContent(originalContent.story);
+          translateBtn.innerHTML =
+            '<img src="https://flagcdn.com/ph.svg" width="25">';
           isTranslated = false;
         } else {
           // Translate to Filipino
-          translateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Translating...';
-          
+          translateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
           try {
             // Translate each part separately
-            const [translatedTitle, translatedOrigin, translatedContent] = await Promise.all([
-              translateText(originalContent.title),
-              originalContent.origin ? translateText(originalContent.origin) : Promise.resolve(""),
-              translateText(originalContent.story)
-            ]);
-            
+            const [translatedTitle, translatedOrigin, translatedContent] =
+              await Promise.all([
+                translateText(originalContent.title),
+                originalContent.origin
+                  ? translateText(originalContent.origin)
+                  : Promise.resolve(""),
+                translateText(originalContent.story),
+              ]);
+
             document.getElementById("story-title").innerText = translatedTitle;
-            document.getElementById("story-origin").innerText = translatedOrigin;
-            document.getElementById("story-content").innerHTML = formatStoryContent(translatedContent);
-            
-            translateBtn.innerHTML = '<i class="fas fa-language"></i> Show Original';
+            document.getElementById("story-origin").innerText =
+              translatedOrigin;
+            document.getElementById("story-content").innerHTML =
+              formatStoryContent(translatedContent);
+
+            translateBtn.innerHTML =
+              '<img src="https://flagcdn.com/us.svg" width="25">';
             isTranslated = true;
           } catch (error) {
-            console.error('Translation error:', error);
-            translateBtn.innerHTML = '<i class="fas fa-language"></i> Translate to Filipino';
+            console.error("Translation error:", error);
+            translateBtn.innerHTML =
+              '<img src="https://flagcdn.com/ph.svg" width="25">';
           }
         }
       }
@@ -735,7 +727,9 @@
 
       document.addEventListener("DOMContentLoaded", () => {
         // Add translation button event listener
-        document.getElementById('translate-btn').addEventListener('click', toggleTranslation);
+        document
+          .getElementById("translate-btn")
+          .addEventListener("click", toggleTranslation);
 
         // Reaction Handling
         const likeBtn = document.querySelector(".like-btn");
