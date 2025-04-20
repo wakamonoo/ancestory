@@ -356,19 +356,19 @@ nav ul li a:hover {
   width: 100%;
   visibility: hidden;
 }
-.row{
-  width:100%;
+.row {
+  width: 100%;
   height: 0;
-  padding:0;
-  margin:0;
+  padding: 0;
+  margin: 0;
   display: flex;
   justify-content: center;
   flex-direction: column;
-  position:relative;
+  position: relative;
   margin-top: 3vh;
 }
 
-.svg-separator{
+.svg-separator {
   display: block;
   background: 0 0;
   position: absolute;
@@ -381,14 +381,16 @@ nav ul li a:hover {
   width: 100%;
   padding-top: 10%;
 }
-.svg-separator.bottom{
+.svg-separator.bottom {
   top: auto;
   bottom: 0;
 }
 
-.stupid-blue{background-color:#FF6F61;}
+.stupid-blue {
+  background-color: #ff6f61;
+}
 /*-------------------------SectionDivider-------------------------*/
-@import url('https://fonts.googleapis.com/css?family=Share+Tech+Mono');
+@import url("https://fonts.googleapis.com/css?family=Share+Tech+Mono");
 
 .secDivide {
   display: flex;
@@ -396,28 +398,28 @@ nav ul li a:hover {
   align-items: center;
   font-family: "Dancing Script", cursive;
   font-size: 3rem;
-  color: #F1D1B5;
+  color: #f1d1b5;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.45);
-  opacity: 0.1; 
+  opacity: 0.1;
   margin-bottom: -5vh;
   margin-top: -5vh;
 }
 
 .secDivide::before,
 .secDivide::after {
-  content: '';
+  content: "";
   display: block;
   height: 0.09em;
   min-width: 30vw;
 }
 
 .secDivide::before {
-  background: linear-gradient(to right, rgba(240, 240, 240, 0), #F1D1B5);
+  background: linear-gradient(to right, rgba(240, 240, 240, 0), #f1d1b5);
   margin-right: 2rem;
 }
 
 .secDivide::after {
-  background: linear-gradient(to left, rgba(240, 240, 240, 0), #F1D1B5);
+  background: linear-gradient(to left, rgba(240, 240, 240, 0), #f1d1b5);
   margin-left: 2rem;
 }
 
@@ -1905,8 +1907,8 @@ footer {
     font-size: 24px;
     padding: 2px;
   }
-  .row{
-    margin-top: .5vh;
+  .row {
+    margin-top: 0.5vh;
   }
 }
 @media only screen and (max-width: 600px) {
@@ -2363,7 +2365,7 @@ footer {
     font-size: 24px;
     padding: 2px;
   }
-  .row{
-    margin-top: .5vh;
+  .row {
+    margin-top: 0.5vh;
   }
 }
