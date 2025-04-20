@@ -238,76 +238,53 @@
           (a, b) => a + b,
           0
         );
-        const reactionStatsElement = document.querySelector(".reaction-stats");
         const likeCountElement = document.getElementById("like-count");
-
-        // Clear all existing reaction elements except the count
-        while (reactionStatsElement.firstChild) {
-          if (reactionStatsElement.firstChild === likeCountElement) {
-            break;
-          }
-          reactionStatsElement.removeChild(reactionStatsElement.firstChild);
-        }
+        const reactionIcon = likeCountElement.previousElementSibling; // Get the icon element
 
         if (totalReactions === 0) {
           likeCountElement.textContent = "0 reactions";
+          // Reset to default like icon if no reactions
+          reactionIcon.className = "fas fa-thumbs-up";
+          reactionIcon.style.color = "";
         } else {
-          const reactionEntries = Object.entries(reactions);
-          const sortedReactions = reactionEntries.sort((a, b) => b[1] - a[1]);
+          // Get the top 1-3 reactions sorted by count
+          const sortedReactions = Object.entries(reactions)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3);
 
-          if (reactionEntries.length === 1) {
-            // Single reaction type: "X ReactionName"
-            const [type, count] = reactionEntries[0];
-            const icon = createReactionIcon(type);
-            reactionStatsElement.insertBefore(icon, likeCountElement);
+          // Update the icon to show the top reaction
+          const topReaction = sortedReactions[0][0];
+          switch (topReaction) {
+            case "like":
+              reactionIcon.className = "fas fa-thumbs-up";
+              reactionIcon.style.color = "#216fdb";
+              break;
+            case "love":
+              reactionIcon.className = "fas fa-heart";
+              reactionIcon.style.color = "#f33e58";
+              break;
+            case "wow":
+              reactionIcon.className = "fas fa-surprise";
+              reactionIcon.style.color = "#f7b125";
+              break;
+            case "angry":
+              reactionIcon.className = "fas fa-angry";
+              reactionIcon.style.color = "#e9710f";
+              break;
+          }
+
+          if (sortedReactions.length === 1) {
+            // Only one reaction type
+            const reactionType = sortedReactions[0][0];
+            const count = sortedReactions[0][1];
             likeCountElement.textContent = `${count} ${getReactionDisplayName(
-              type
+              reactionType
             )}${count !== 1 ? "s" : ""}`;
           } else {
-            // Multiple reaction types: show all icons with commas (no spacing)
-            sortedReactions.forEach(([type], index) => {
-              const icon = createReactionIcon(type);
-              reactionStatsElement.insertBefore(icon, likeCountElement);
-
-              // Add comma separator without spacing
-              if (index < sortedReactions.length - 1) {
-                const comma = document.createElement("span");
-                comma.textContent = ",";
-                reactionStatsElement.insertBefore(comma, likeCountElement);
-              }
-            });
-
-            likeCountElement.textContent = `${totalReactions}  reactions`;
+            // Multiple reaction types
+            likeCountElement.textContent = `${totalReactions} reactions`;
           }
         }
-      }
-
-      function createReactionIcon(type) {
-        const icon = document.createElement("i");
-        icon.className = "fas";
-
-        switch (type) {
-          case "like":
-            icon.className += " fa-thumbs-up";
-            icon.style.color = "#216fdb";
-            break;
-          case "love":
-            icon.className += " fa-heart";
-            icon.style.color = "#f33e58";
-            break;
-          case "wow":
-            icon.className += " fa-surprise";
-            icon.style.color = "#f7b125";
-            break;
-          case "angry":
-            icon.className += " fa-angry";
-            icon.style.color = "#e9710f";
-            break;
-          default:
-            icon.className += " fa-question";
-        }
-
-        return icon;
       }
 
       function getReactionDisplayName(reactionType) {
@@ -375,6 +352,8 @@
 
         try {
           const reactionsRef = collection(db, "reactions");
+
+          // First check if user already reacted
           const q = query(
             reactionsRef,
             where("storyId", "==", currentStoryId),
@@ -384,12 +363,15 @@
           const querySnapshot = await getDocs(q);
 
           if (!querySnapshot.empty) {
+            // User already reacted - remove or update reaction
             const existingReaction = querySnapshot.docs[0];
             if (existingReaction.data().reactionType === reactionType) {
+              // Same reaction - remove it
               await deleteDoc(existingReaction.ref);
               currentUserReaction = null;
               updateReactionButton(null);
             } else {
+              // Different reaction - update it
               await updateDoc(existingReaction.ref, {
                 reactionType: reactionType,
                 timestamp: serverTimestamp(),
@@ -398,6 +380,7 @@
               updateReactionButton(reactionType);
             }
           } else {
+            // New reaction - use addDoc instead of batch for simplicity
             await addDoc(reactionsRef, {
               storyId: currentStoryId,
               userId: currentUser.uid,
@@ -408,6 +391,7 @@
             updateReactionButton(reactionType);
           }
 
+          // Reload reactions
           loadReactions();
         } catch (error) {
           console.error("Error handling reaction:", error);
@@ -623,79 +607,93 @@
       document.addEventListener("DOMContentLoaded", () => {
         // Reaction Handling
         const likeBtn = document.querySelector(".like-btn");
-        const reactionOptions = document.querySelector(".reaction-options");
-        let isReactionOpen = false;
-        let lastClickTime = 0;
-        const doubleClickDelay = 300; // milliseconds between clicks to count as double click
-        let clickTimeout;
+        const reactionOptions = document.querySelector(".reaction-options");
+        let pressTimer;
+        let isReactionOpen = false;
+        let touchStartTime = 0;
+        let touchMoved = false;
 
-        function toggleReactions(show) {
-          if (show) {
-            reactionOptions.classList.add("show");
-            isReactionOpen = true;
-          } else {
-            reactionOptions.classList.remove("show");
-            isReactionOpen = false;
-          }
-        }
+        function toggleReactions(show) {
+          if (show) {
+            reactionOptions.classList.add("show");
+            isReactionOpen = true;
+          } else {
+            reactionOptions.classList.remove("show");
+            isReactionOpen = false;
+          }
+        }
 
-        function handleSingleClick() {
-          // Only show reactions if not already open
-          if (!isReactionOpen) {
-            toggleReactions(true);
-          }
-        }
+        function startPressTimer(e) {
+          e.preventDefault();
+          touchStartTime = Date.now();
+          touchMoved = false;
+          pressTimer = setTimeout(() => {
+            if (!touchMoved) {
+              toggleReactions(true);
+            }
+          }, 500);
+        }
 
-        function handleDoubleClick() {
-          // Clear any pending single click timeout
-          clearTimeout(clickTimeout);
-          // Close reactions if they were opened by the first click
-          if (isReactionOpen) {
-            toggleReactions(false);
-          }
-          // Perform like action
-          handleReaction("like");
-        }
+        function cancelPressTimer() {
+          clearTimeout(pressTimer);
+        }
 
-        // Unified click handler for both mobile and desktop
+        likeBtn.addEventListener("touchstart", startPressTimer);
+
+        likeBtn.addEventListener("touchmove", () => {
+          touchMoved = true;
+          cancelPressTimer();
+        });
+
+        likeBtn.addEventListener("touchend", (e) => {
+          const touchDuration = Date.now() - touchStartTime;
+          if (!isReactionOpen && !touchMoved && touchDuration < 500) {
+            e.preventDefault();
+            handleReaction("like");
+          }
+          cancelPressTimer();
+          touchStartTime = 0;
+          touchMoved = false;
+        });
+
+        // Click handler for non-touch devices (PC)
+        likeBtn.addEventListener("click", (e) => {
+          if (!isReactionOpen) {
+            handleReaction("like");
+          }
+        });
+
+        // Mouse event listeners for PC
+        likeBtn.addEventListener("mousedown", startPressTimer);
+        likeBtn.addEventListener("mouseup", cancelPressTimer);
+        likeBtn.addEventListener("mouseleave", cancelPressTimer);
+
+        // Close reactions when clicking outside
+        document.addEventListener("click", (e) => {
+          if (
+            !likeBtn.contains(e.target) &&
+            !reactionOptions.contains(e.target)
+          ) {
+            toggleReactions(false);
+          }
+        });
+
+        // Select a reaction from the options
+        const reactionOptionsList = document.querySelectorAll(".reaction-option");
+        reactionOptionsList.forEach((option) => {
+          option.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const reaction = option.dataset.reaction;
+            handleReaction(reaction);
+            toggleReactions(false);
+          });
+        });
+
+        // Simple like button click (only if reactions aren't showing)
         likeBtn.addEventListener("click", (e) => {
-          const currentTime = new Date().getTime();
-          const timeSinceLastClick = currentTime - lastClickTime;
-
-          if (timeSinceLastClick < doubleClickDelay && timeSinceLastClick > 0) {
-            // Double click detected
-            handleDoubleClick();
-            lastClickTime = 0;
-          } else {
-            // First click - wait to see if it becomes a double click
-            lastClickTime = currentTime;
-            clickTimeout = setTimeout(() => {
-              // Only execute single click if no second click came
-              handleSingleClick();
-            }, doubleClickDelay);
+          if (!isReactionOpen && !isTouchDevice) {
+            handleReaction("like");
           }
-        });
-
-        // Close reactions when clicking outside
-        document.addEventListener("click", (e) => {
-          if (
-            !likeBtn.contains(e.target) &&
-            !reactionOptions.contains(e.target)
-          ) {
-            toggleReactions(false);
-          }
-        });
-
-        // Select a reaction from the options
-        const reactionOptionsList =
-          document.querySelectorAll(".reaction-option");
-        reactionOptionsList.forEach((option) => {
-          option.addEventListener("click", (e) => {
-            e.stopPropagation();
-            const reaction = option.dataset.reaction;
-            handleReaction(reaction);
-            toggleReactions(false);
-          });
         });
 
         // Comment button
@@ -703,10 +701,11 @@
           document.getElementById("comment-input").focus();
         });
 
-        // Share button (keep existing implementation)
+        // Share button
         document
           .querySelector(".share-btn")
           .addEventListener("click", async () => {
+            // First try to use the Web Share API if available (mobile devices)
             if (navigator.share) {
               try {
                 await navigator.share({
@@ -720,13 +719,108 @@
                   "Web Share API not supported or share was cancelled",
                   err
                 );
+                // Fall through to custom share dialog
               }
             }
 
-            // Rest of your share implementation...
+            // Custom share dialog for browsers without Web Share API
+            Swal.fire({
+              title: "Share this story",
+              html: `
+      <div class="social-share-buttons">
+        <button class="share-facebook" title="Share on Facebook">
+          <i class="fab fa-facebook"></i>
+        </button>
+        <button class="share-twitter" title="Share on Twitter">
+          <i class="fab fa-twitter"></i>
+        </button>
+        <button class="share-whatsapp" title="Share on WhatsApp">
+          <i class="fab fa-whatsapp"></i>
+        </button>
+        <button class="share-linkedin" title="Share on LinkedIn">
+          <i class="fab fa-linkedin"></i>
+        </button>
+        <button class="share-copy" title="Copy link">
+          <i class="fas fa-link"></i>
+        </button>
+      </div>
+    `,
+              showConfirmButton: false,
+              background: "#FF6F61",
+              color: "#20462f",
+              showClass: {
+                popup: "animate__animated animate__fadeIn",
+              },
+            });
+
+            // Add event listeners for each share button
+            document
+              .querySelector(".share-facebook")
+              .addEventListener("click", () => {
+                const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                  window.location.href
+                )}`;
+                window.open(url, "_blank", "width=600,height=400");
+                Swal.close();
+              });
+
+            document
+              .querySelector(".share-twitter")
+              .addEventListener("click", () => {
+                const text = `Check out this story: ${
+                  document.getElementById("story-title").textContent
+                }`;
+                const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                  text
+                )}&url=${encodeURIComponent(window.location.href)}`;
+                window.open(url, "_blank", "width=600,height=400");
+                Swal.close();
+              });
+
+            document
+              .querySelector(".share-whatsapp")
+              .addEventListener("click", () => {
+                const text = `Check out this story: ${
+                  document.getElementById("story-title").textContent
+                } - ${window.location.href}`;
+                const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+                window.open(url, "_blank");
+                Swal.close();
+              });
+
+            document
+              .querySelector(".share-linkedin")
+              .addEventListener("click", () => {
+                const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+                  window.location.href
+                )}`;
+                window.open(url, "_blank", "width=600,height=400");
+                Swal.close();
+              });
+
+            document
+              .querySelector(".share-copy")
+              .addEventListener("click", () => {
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                  Swal.fire({
+                    title: "Link copied to clipboard!",
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 1500,
+                    background: "#FF6F61",
+                    color: "#20462f",
+                    showClass: {
+                      popup: "animate__animated animate__fadeIn",
+                    },
+                    hideClass: {
+                      popup: "animate__animated animate__fadeOut",
+                    },
+                  });
+                });
+              });
           });
 
-        // Comment handling (keep existing implementation)
+        // Comment handling
         const postBtn = document.getElementById("post-comment");
         const commentInput = document.getElementById("comment-input");
 
