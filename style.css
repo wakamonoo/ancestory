@@ -907,7 +907,7 @@ nav ul li a:hover {
 }
 .comment-time {
   font-size: 14px;
-  color: #f1d1b5;
+  color: #c09779;
 }
 .comment-box {
   display: flex;
@@ -958,7 +958,7 @@ nav ul li a:hover {
 
 .comment-content {
   width: 80%;
-  background-color: #c09779;
+  background-color: #f7f7f7;
   border-radius: 18px;
   padding: 8px 12px;
   flex-grow: 1;
