@@ -1,6 +1,7 @@
-Purpose	                Hex Code	 Description
-Header  	             #F1D1B5	  Soft beige
-Hover	               #C09779	  Warm amber
-Background (Primary)	 #D29F80	  Coral red
-Accent / Soft Shade	 #D5C7A3	  Light coral pink
-Primary Text Color	   #20462F	  Deep forest green
+Purpose	                       Hex Code	    Updated Description
+Header                  |	  #F1D1B5	     Warm sand beige — soft and elegant
+Text-Hover	            |    #F7F7F7	     Clean off-white — subtle and bright
+Background (Primary)	  |    #D29F80	     Muted coral — soft red-orange warmth
+Accent / Soft Shade	    |    #D5C7A3	     Dusty peach — understated and gentle
+Primary Text Color	    |    #20462F	     Deep forest green — grounded and bold
+Modal Background Color	|    #C09779	     Warm bronze — earthy and refined

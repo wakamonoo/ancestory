@@ -7,7 +7,7 @@
 
 html,
 body {
-  background-color: #D29F80;
+  background-color: #d29f80;
   overscroll-behavior-x: none;
   overscroll-behavior-y: auto;
   overflow-x: hidden;
@@ -15,7 +15,7 @@ body {
 }
 
 body {
-  color: #f1f3f1;
+  color: #20462f;
   margin: 0;
 }
 
@@ -41,14 +41,14 @@ body {
 }
 
 .search:hover {
-  color: #C09779;
+  color: #f7f7f7;
   cursor: pointer;
 }
 
 .ancestory-search-modal {
   display: none;
   position: fixed;
-  z-index: 1;
+  z-index: 20;
   left: 0;
   top: 0;
   width: 100%;
@@ -61,7 +61,7 @@ body {
   background-color: #f1d1b5;
   margin: 15% auto;
   padding: 20px;
-  border: 1px solid #FFDBB5;
+  border: 1px solid #ffdbb5;
   width: 50%;
   border-radius: 8px;
   position: relative;
@@ -76,7 +76,7 @@ body {
 
 .ancestory-search-close-button:hover,
 .ancestory-search-close-button:focus {
-  color: #C09779;
+  color: #f7f7f7;
   text-decoration: none;
   cursor: pointer;
 }
@@ -97,7 +97,7 @@ body {
 }
 
 .ancestory-modal-search-button {
-  background-color: #C09779;
+  background-color: #d29f80;
   color: #20462f;
   border: none;
   border-radius: 5px;
@@ -107,7 +107,7 @@ body {
 }
 
 .ancestory-modal-search-button:hover {
-  background-color: #D29F80;
+  background-color: #d5c7a3;
 }
 
 .ancestory-modal-search-button i {
@@ -121,9 +121,9 @@ body {
   color: #20462f;
 }
 .span-ancest {
-  color: #C09779;
+  color: #f7f7f7;
   font-weight: bold;
-  text-shadow: 2px 2px 4px #20462f;
+  text-shadow: 1px 1px 0 #20462f, 2px 2px 0 #20462f, 3px 3px 0 #20462f;
 }
 
 .carousel-container {
@@ -165,19 +165,19 @@ body {
   margin: 5px;
   border: none;
   border-radius: 50%;
-  background-color: #D29F80;
+  background-color: #d29f80;
   cursor: pointer;
   transition: background 0.3s ease;
 }
 
 .buttons button.active {
-  background-color: #20462F;
+  background-color: #20462f;
 }
 
 nav {
   position: fixed;
   width: 100%;
-  background-color: #D29F80;
+  background-color: #d29f80;
   padding: 10px;
   padding-right: 2%;
   z-index: 15;
@@ -220,7 +220,7 @@ nav ul li a {
   padding: 10px 15px;
 }
 nav ul li a:hover {
-  color: #C09779;
+  color: #f7f7f7;
 }
 
 /*-------------------------UserProfile-------------------------*/
@@ -231,7 +231,7 @@ nav ul li a:hover {
   width: 80%;
   border-top: 2px solid #20462f;
   border-bottom: 2px solid #20462f;
-  background-color: #D29F80;
+  background-color: #d29f80;
   margin: 0 auto;
   color: #20462f;
   margin-bottom: 10vh;
@@ -241,7 +241,7 @@ nav ul li a:hover {
 .profile-photo {
   width: 80px;
   border-radius: 50%;
-  border: 2px solid #D5C7A3;
+  border: 2px solid #d5c7a3;
   padding: 4px;
   margin-bottom: 10px;
   display: block;
@@ -289,7 +289,7 @@ nav ul li a:hover {
 }
 
 .story-card {
-  background-color:  #C09779;
+  background-color: #d29f80;
   background-image: url(images/cartographer.png);
   border-radius: 10px;
   padding: 15px;
@@ -308,11 +308,8 @@ nav ul li a:hover {
   color: #20462f;
   font-size: 32px;
   margin-bottom: 10px;
-  text-shadow:
-    1px 1px 0 #D5C7A3,
-    2px 2px 0 #D5C7A3;
+  text-shadow: 1px 1px 0 #d5c7a3, 2px 2px 0 #d5c7a3;
 }
-
 
 .story-card p {
   color: #20462f;
@@ -399,7 +396,7 @@ nav ul li a:hover {
 }
 
 .stupid-blue {
-  background-color: #D29F80;
+  background-color: #d29f80;
 }
 /*-------------------------SectionDivider-------------------------*/
 .secDivide {
@@ -623,12 +620,12 @@ nav ul li a:hover {
 }
 
 #submitStoryModal .close {
-  color: #D29F80;
+  color: #d29f80;
 }
 
 #submitStoryModal .close:hover,
 #submitStoryModal .close:focus {
-  color: #D5C7A3;
+  color: #d5c7a3;
 }
 /*-------------------------LoginForm-------------------------*/
 .modal {
@@ -644,7 +641,7 @@ nav ul li a:hover {
 }
 
 .modal-content {
-  background-color: #C09779;
+  background-color: #c09779;
   padding: 2rem;
   border-radius: 12px;
   width: 90%;
@@ -678,7 +675,7 @@ nav ul li a:hover {
 .login-btn {
   width: 100%;
   margin-top: 16px;
-  background-color: #D29F80;
+  background-color: #d29f80;
   color: #20462f;
   border: none;
   padding: 10px;
@@ -688,7 +685,7 @@ nav ul li a:hover {
 }
 
 .login-btn:hover {
-  background-color: #D5C7A3;
+  background-color: #d5c7a3;
 }
 
 .or-separator {
@@ -711,13 +708,13 @@ nav ul li a:hover {
 }
 
 .google-btn {
-  background-color: #D29F80;
+  background-color: #d29f80;
   color: #20462f;
-  border: 2px solid #D29F80;
+  border: 2px solid #d29f80;
 }
 
 .google-btn:hover {
-  background-color: #D5C7A3;
+  background-color: #d5c7a3;
   color: #20462f;
 }
 .social-buttons i {
@@ -740,7 +737,7 @@ nav ul li a:hover {
   position: absolute;
   top: 15%;
   right: 28%;
-  background-color: #C09779;
+  background-color: #c09779;
   color: white;
   border: none;
   padding: 8px 15px;
@@ -820,7 +817,7 @@ nav ul li a:hover {
 }
 
 .reaction-stats i {
-  color: #C09779;
+  color: #c09779;
 }
 
 .reaction-actions {
@@ -961,7 +958,7 @@ nav ul li a:hover {
 
 .comment-content {
   width: 80%;
-  background-color: #C09779;
+  background-color: #c09779;
   border-radius: 18px;
   padding: 8px 12px;
   flex-grow: 1;
@@ -1033,7 +1030,6 @@ nav ul li a:hover {
 .share-copy {
   color: #20462f;
 }
-
 
 #containerMenu {
   display: flex;
@@ -1200,20 +1196,17 @@ button:hover .icon-3 {
   width: var(--width);
   height: calc(var(--width) / 2.5);
   border-radius: var(--width);
-  background-color: #F1D1B5; /* Soft beige base */
-  box-shadow:
-    inset 5px 5px 8px #e3c3a9,   /* Slightly deeper beige */
-    inset -5px -5px 8px #fce9d7; /* Slightly lighter beige */
+  background-color: #f1d1b5; /* Soft beige base */
+  box-shadow: inset 5px 5px 8px #e3c3a9,
+    /* Slightly deeper beige */ inset -5px -5px 8px #fce9d7; /* Slightly lighter beige */
 }
-
 
 .indicator {
   position: absolute;
   width: 40%;
   height: 60%;
   transition: all var(--duration) var(--easing);
-  box-shadow:
-    inset 0 0 1px hsl(var(--hue) 20% 15% / 60%),
+  box-shadow: inset 0 0 1px hsl(var(--hue) 20% 15% / 60%),
     inset 0 0 2px 1px hsl(var(--hue) 20% 15% / 60%),
     inset 0 0 3px 1px hsl(var(--hue) 20% 45% / 60%);
   display: flex;
@@ -1270,8 +1263,7 @@ button:hover .icon-3 {
     hsl(var(--hue) 20% 65%) 70%
   );
   transition: all var(--duration) var(--easing);
-  box-shadow:
-    1px 1px 2px hsl(var(--hue) 18% 50% / 80%),
+  box-shadow: 1px 1px 2px hsl(var(--hue) 18% 50% / 80%),
     1px 1px 4px hsl(var(--hue) 18% 50% / 40%),
     5px 10px 5px hsl(var(--hue) 18% 50% / 40%),
     10px 15px 15px hsl(var(--hue) 18% 50% / 60%);
@@ -1313,8 +1305,7 @@ button:hover .icon-3 {
 
 .togglesw:not(:checked) ~ .indicator.left,
 .togglesw:checked ~ .indicator.right {
-  box-shadow:
-    inset 0 0 3px hsl(var(--hue) 20% 15% / 100%),
+  box-shadow: inset 0 0 3px hsl(var(--hue) 20% 15% / 100%),
     inset 10px 10px 5px hsl(var(--hue) 20% 15% / 100%),
     inset 10px 10px 7px hsl(var(--hue) 20% 45% / 100%);
 }
@@ -1330,7 +1321,7 @@ button:hover .icon-3 {
 .admin-nav-container {
   width: 100%;
   background-color: #f1d1b5;
-  border-bottom: 1px solid #C09779;
+  border-bottom: 1px solid #c09779;
 }
 
 .admin-nav {
@@ -1369,7 +1360,7 @@ button:hover .icon-3 {
 }
 
 .admin-logout-btn:hover {
-  background-color: #C09779;
+  background-color: #c09779;
   color: #20462f;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
@@ -1475,7 +1466,7 @@ button:hover .icon-3 {
   color: #20462f;
   margin-top: 0;
   font-size: 24px;
-  border-bottom: 2px solid #C09779;
+  border-bottom: 2px solid #c09779;
   padding-bottom: 0.5rem;
   margin-bottom: 2%;
 }
@@ -1522,7 +1513,7 @@ button:hover .icon-3 {
 }
 
 .admin-submit-btn:hover {
-  background-color: #C09779;
+  background-color: #c09779;
   color: #20462f;
 }
 
@@ -1593,21 +1584,21 @@ button:hover .icon-3 {
 }
 
 .admin-edit-btn {
-  background-color: #C09779;
+  background-color: #c09779;
   color: #20462f;
 }
 
 .admin-edit-btn:hover {
-  background-color: #D5C7A3;
+  background-color: #d5c7a3;
 }
 
 .admin-delete-btn {
-  background-color: #D29F80;
+  background-color: #d29f80;
   color: white;
 }
 
 .admin-delete-btn:hover {
-  background-color: #D5C7A3;
+  background-color: #d5c7a3;
 }
 
 /* Edit Modal */
@@ -1653,12 +1644,12 @@ button:hover .icon-3 {
 }
 
 .admin-error {
-  color: #D29F80;
+  color: #d29f80;
   padding: 1rem;
   background: #ffe5e0;
   border-radius: 4px;
   margin: 1rem 0;
-  border-left: 4px solid #D29F80;
+  border-left: 4px solid #d29f80;
 }
 
 /*-------------------------Footer-------------------------*/
@@ -1711,7 +1702,7 @@ footer {
 }
 
 .footerclass ul li a:hover {
-  color: #C09779;
+  color: #f7f7f7;
 }
 
 .footerSupport,
@@ -1730,7 +1721,7 @@ footer {
 }
 
 .footerclass .social-icons a:hover {
-  color: #C09779;
+  color: #f7f7f7;
 }
 
 .Gcash {
@@ -1813,13 +1804,13 @@ footer {
     margin: 5px;
     border: none;
     border-radius: 50%;
-    background-color: #D29F80;
+    background-color: #d29f80;
     cursor: pointer;
     transition: background 0.3s ease;
   }
 
   .buttons button.active {
-    background-color: #C09779;
+    background-color: #c09779;
   }
 
   .nav-icons {
@@ -1838,7 +1829,7 @@ footer {
     right: 0;
     width: 100%;
     z-index: 15;
-    background-color: #D29F80;
+    background-color: #d29f80;
     padding: 10px;
   }
 
@@ -1849,7 +1840,7 @@ footer {
     right: -200px;
     width: 200px;
     height: 120vh;
-    background: #C09779;
+    background: #c09779;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -1876,7 +1867,7 @@ footer {
   }
 
   nav ul li a:hover {
-    color: #D29F80;
+    color: #f7f7f7;
   }
 
   .nav-icons {
@@ -2011,7 +2002,7 @@ footer {
     position: absolute;
     top: 15%;
     right: 10%;
-    background-color: #C09779;
+    background-color: #c09779;
     width: 40px;
     height: 40px;
     z-index: 10;
@@ -2251,7 +2242,7 @@ footer {
     left: 50%;
     transform: translate(-50%, -50%);
     padding: 20px;
-    border: 1px solid #D29F80;
+    border: 1px solid #d29f80;
     border-radius: 8px;
     max-width: 500px;
     width: 90%;
@@ -2323,13 +2314,13 @@ footer {
     margin: 5px;
     border: none;
     border-radius: 50%;
-    background-color: #D29F80;
+    background-color: #d29f80;
     cursor: pointer;
     transition: background 0.3s ease;
   }
 
   .buttons button.active {
-    background-color: #C09779;
+    background-color: #c09779;
   }
 
   .nav-icons {
@@ -2348,7 +2339,7 @@ footer {
     right: 0;
     width: 100%;
     z-index: 15;
-    background-color: #D29F80;
+    background-color: #d29f80;
     padding: 10px;
   }
 
@@ -2359,7 +2350,7 @@ footer {
     right: -200px;
     width: 200px;
     height: 120vh;
-    background: #C09779;
+    background: #c09779;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -2386,7 +2377,7 @@ footer {
   }
 
   nav ul li a:hover {
-    color: #D29F80;
+    color: #f7f7f7;
   }
   .nav-icons {
     padding-right: 5%;
@@ -2520,7 +2511,7 @@ footer {
     position: absolute;
     top: 10%;
     right: 10%;
-    background-color: #C09779;
+    background-color: #c09779;
     width: 35px;
     height: 35px;
     z-index: 10;
@@ -2736,7 +2727,7 @@ footer {
     left: 50%;
     transform: translate(-50%, -50%);
     padding: 20px;
-    border: 1px solid #D29F80;
+    border: 1px solid #d29f80;
     border-radius: 8px;
     max-width: 500px;
     width: 90%;
@@ -2751,11 +2742,10 @@ footer {
     width: 100%;
   }
 
-
   .toggleContainer {
-    --width: 5rem; 
+    --width: 5rem;
   }
-  
+
   .backButton {
     position: relative;
     padding: 8px 30px;
