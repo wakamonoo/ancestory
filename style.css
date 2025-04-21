@@ -1419,7 +1419,7 @@ button:hover .icon-3 {
 .admin-logout-btn:focus {
   outline: none;
   animation: pulse 0.5s ease;
-  box-shadow: 0 0 0 3px #F7F7F7;
+  box-shadow: 0 0 0 3px #f7f7f7;
 }
 
 .admin-welcome-container {
@@ -1585,7 +1585,7 @@ button:hover .icon-3 {
 
 .admin-edit-btn {
   background-color: #c09779;
-  color: #F7F7F7;
+  color: #f7f7f7;
 }
 
 .admin-edit-btn:hover {
@@ -1594,7 +1594,7 @@ button:hover .icon-3 {
 
 .admin-delete-btn {
   background-color: #d29f80;
-  color: #F7F7F7;
+  color: #f7f7f7;
 }
 
 .admin-delete-btn:hover {
