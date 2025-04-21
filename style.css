@@ -1809,10 +1809,6 @@ footer {
     transition: background 0.3s ease;
   }
 
-  .buttons button.active {
-    background-color: #c09779;
-  }
-
   .nav-icons {
     position: absolute;
     padding-top: 10%;
@@ -2317,10 +2313,6 @@ footer {
     background-color: #d29f80;
     cursor: pointer;
     transition: background 0.3s ease;
-  }
-
-  .buttons button.active {
-    background-color: #c09779;
   }
 
   .nav-icons {
