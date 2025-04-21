@@ -7,7 +7,7 @@
 
 html,
 body {
-  background-color: #ff6f61;
+  background-color: #D29F80;
   overscroll-behavior-x: none;
   overscroll-behavior-y: auto;
   overflow-x: hidden;
@@ -41,7 +41,7 @@ body {
 }
 
 .search:hover {
-  color: #ffb84d;
+  color: #C09779;
   cursor: pointer;
 }
 
@@ -61,7 +61,7 @@ body {
   background-color: #f1d1b5;
   margin: 15% auto;
   padding: 20px;
-  border: 1px solid #ff6f61;
+  border: 1px solid #FFDBB5;
   width: 50%;
   border-radius: 8px;
   position: relative;
@@ -76,7 +76,7 @@ body {
 
 .ancestory-search-close-button:hover,
 .ancestory-search-close-button:focus {
-  color: #ffb84d;
+  color: #C09779;
   text-decoration: none;
   cursor: pointer;
 }
@@ -89,7 +89,7 @@ body {
 
 .ancestory-modal-search-input {
   padding: 10px;
-  border: 1px solid #ff9a8b;
+  border: 1px solid #db8855;
   border-radius: 5px;
   font-size: 16px;
   flex-grow: 1;
@@ -97,7 +97,7 @@ body {
 }
 
 .ancestory-modal-search-button {
-  background-color: #ffb84d;
+  background-color: #C09779;
   color: #20462f;
   border: none;
   border-radius: 5px;
@@ -107,7 +107,7 @@ body {
 }
 
 .ancestory-modal-search-button:hover {
-  background-color: #ff6f61;
+  background-color: #D29F80;
 }
 
 .ancestory-modal-search-button i {
@@ -121,7 +121,7 @@ body {
   color: #20462f;
 }
 .span-ancest {
-  color: #ffb84d;
+  color: #C09779;
   font-weight: bold;
   text-shadow: 2px 2px 4px #20462f;
 }
@@ -165,19 +165,19 @@ body {
   margin: 5px;
   border: none;
   border-radius: 50%;
-  background-color: #ff6f61;
+  background-color: #D29F80;
   cursor: pointer;
   transition: background 0.3s ease;
 }
 
 .buttons button.active {
-  background-color: #ffb84d;
+  background-color: #C09779;
 }
 
 nav {
   position: fixed;
   width: 100%;
-  background-color: #ff6f61;
+  background-color: #D29F80;
   padding: 10px;
   padding-right: 2%;
   z-index: 15;
@@ -220,7 +220,7 @@ nav ul li a {
   padding: 10px 15px;
 }
 nav ul li a:hover {
-  color: #ffb84d;
+  color: #C09779;
 }
 
 /*-------------------------UserProfile-------------------------*/
@@ -231,7 +231,7 @@ nav ul li a:hover {
   width: 80%;
   border-top: 2px solid #20462f;
   border-bottom: 2px solid #20462f;
-  background-color: #ff6f61;
+  background-color: #D29F80;
   margin: 0 auto;
   color: #20462f;
   margin-bottom: 10vh;
@@ -241,7 +241,7 @@ nav ul li a:hover {
 .profile-photo {
   width: 80px;
   border-radius: 50%;
-  border: 2px solid #ff9a8b;
+  border: 2px solid #c58b67;
   padding: 4px;
   margin-bottom: 10px;
   display: block;
@@ -289,15 +289,21 @@ nav ul li a:hover {
 }
 
 .story-card {
-  background-color: #ffb84d;
-  border: 1px solid #20462f;
+  background-color: #fec195;
+  background-image: url(images/cartographer.png);
   border-radius: 10px;
   padding: 15px;
   width: 300px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 10;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Smooth transitions */
 }
 
+.story-card:hover {
+  transform: translateY(-5px); /* Slight upward movement */
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+  cursor: pointer; /* Indicate it's interactive */
+}
 .story-card h2 {
   color: #20462f;
   font-size: 32px;
@@ -389,7 +395,7 @@ nav ul li a:hover {
 }
 
 .stupid-blue {
-  background-color: #ff6f61;
+  background-color: #D29F80;
 }
 /*-------------------------SectionDivider-------------------------*/
 .secDivide {
@@ -613,12 +619,12 @@ nav ul li a:hover {
 }
 
 #submitStoryModal .close {
-  color: #ff6f61;
+  color: #D29F80;
 }
 
 #submitStoryModal .close:hover,
 #submitStoryModal .close:focus {
-  color: #ff9a8b;
+  color: #cf8e66;
 }
 /*-------------------------LoginForm-------------------------*/
 .modal {
@@ -634,7 +640,7 @@ nav ul li a:hover {
 }
 
 .modal-content {
-  background-color: #ffb84d;
+  background-color: #C09779;
   padding: 2rem;
   border-radius: 12px;
   width: 90%;
@@ -668,7 +674,7 @@ nav ul li a:hover {
 .login-btn {
   width: 100%;
   margin-top: 16px;
-  background-color: #ff9a8b;
+  background-color: #D29F80;
   color: #20462f;
   border: none;
   padding: 10px;
@@ -678,7 +684,7 @@ nav ul li a:hover {
 }
 
 .login-btn:hover {
-  background-color: #ff6f61;
+  background-color: #dd8a57;
 }
 
 .or-separator {
@@ -701,13 +707,13 @@ nav ul li a:hover {
 }
 
 .google-btn {
-  background-color: #ff9a8b;
+  background-color: #D29F80;
   color: #20462f;
-  border: 2px solid #ff9a8b;
+  border: 2px solid #D29F80;
 }
 
 .google-btn:hover {
-  background-color: #ff6f61;
+  background-color: #cc7c4a;
   color: #20462f;
 }
 .social-buttons i {
@@ -730,7 +736,7 @@ nav ul li a:hover {
   position: absolute;
   top: 15%;
   right: 28%;
-  background-color: #ffb84d;
+  background-color: #C09779;
   color: white;
   border: none;
   padding: 8px 15px;
@@ -749,28 +755,6 @@ nav ul li a:hover {
 
 .translate-btn:hover {
   background-color: #ff9a8b;
-}
-.backStory img {
-  width: 6vw;
-  height: auto;
-  z-index: 10;
-  position: absolute;
-  top: 10%;
-  left: 25%;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-  transform-origin: center;
-}
-
-.backStory img:hover {
-  transform: scale(1.15);
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
-  cursor: pointer;
-}
-
-.backStory img:active {
-  transform: scale(0.95);
-  transition-duration: 0.1s;
 }
 
 #storyContainer {
@@ -832,7 +816,7 @@ nav ul li a:hover {
 }
 
 .reaction-stats i {
-  color: #ffb84d;
+  color: #C09779;
 }
 
 .reaction-actions {
@@ -973,7 +957,7 @@ nav ul li a:hover {
 
 .comment-content {
   width: 80%;
-  background-color: #ffb84d;
+  background-color: #C09779;
   border-radius: 18px;
   padding: 8px 12px;
   flex-grow: 1;
@@ -1045,6 +1029,292 @@ nav ul li a:hover {
 .share-copy {
   color: #20462f;
 }
+
+
+#containerMenu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 5%;
+}
+
+#backButtonContainer {
+  display: flex;
+  align-items: center;
+}
+
+/* Back Button */
+.backButton {
+  position: relative;
+  padding: 15px 45px;
+  background: #fec195;
+  font-size: 17px;
+  font-weight: 500;
+  color: #181818;
+  cursor: pointer;
+  border: 1px solid #fec195;
+  border-radius: 8px;
+  filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.2));
+}
+
+.backButton:hover {
+  border: 1px solid #f3b182;
+  background: linear-gradient(
+    85deg,
+    #fec195,
+    #fcc196,
+    #fabd92,
+    #fac097,
+    #fac39c
+  );
+  animation: wind 2s ease-in-out infinite;
+}
+
+@keyframes wind {
+  0% {
+    background-position: 0% 50%;
+  }
+  0% {
+    background-position: 50% 100%;
+  }
+  0% {
+    background-position: 0% 50%;
+  }
+}
+
+.icon-1 {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 25px;
+  transform-origin: 0 0;
+  transform: rotate(10deg);
+  transition: all 0.5s ease-in-out;
+  filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.3));
+}
+
+button:hover .icon-1 {
+  animation: slay-1 3s cubic-bezier(0.52, 0, 0.58, 1) infinite;
+  transform: rotate(10deg);
+}
+
+@keyframes slay-1 {
+  0% {
+    transform: rotate(10deg);
+  }
+  50% {
+    transform: rotate(-5deg);
+  }
+  100% {
+    transform: rotate(10deg);
+  }
+}
+
+.icon-2 {
+  position: absolute;
+  top: 0;
+  left: 25px;
+  width: 12px;
+  transform-origin: 50% 0;
+  transform: rotate(10deg);
+  transition: all 1s ease-in-out;
+  filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.5));
+}
+
+button:hover .icon-2 {
+  animation: slay-2 3s cubic-bezier(0.52, 0, 0.58, 1) 1s infinite;
+  transform: rotate(0);
+}
+
+@keyframes slay-2 {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  50% {
+    transform: rotate(15deg);
+  }
+
+  100% {
+    transform: rotate(0);
+  }
+}
+
+.icon-3 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 18px;
+  transform-origin: 50% 0;
+  transform: rotate(-5deg);
+  transition: all 1s ease-in-out;
+  filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.5));
+}
+
+button:hover .icon-3 {
+  animation: slay-3 2s cubic-bezier(0.52, 0, 0.58, 1) 1s infinite;
+  transform: rotate(0);
+}
+
+@keyframes slay-3 {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  50% {
+    transform: rotate(-5deg);
+  }
+
+  100% {
+    transform: rotate(0);
+  }
+}
+
+.toggleContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  --hue: 220deg;
+  --width: 7rem; /* Smaller toggle */
+  --accent-hue: 22deg;
+  --duration: 0.6s;
+  --easing: cubic-bezier(0, 0, 0, 1);
+}
+
+.togglesw {
+  display: none;
+}
+
+.switch {
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  width: var(--width);
+  height: calc(var(--width) / 2.5);
+  border-radius: var(--width);
+  background-color: #F1D1B5; /* Soft beige base */
+  box-shadow:
+    inset 5px 5px 8px #e3c3a9,   /* Slightly deeper beige */
+    inset -5px -5px 8px #fce9d7; /* Slightly lighter beige */
+}
+
+
+.indicator {
+  position: absolute;
+  width: 40%;
+  height: 60%;
+  transition: all var(--duration) var(--easing);
+  box-shadow:
+    inset 0 0 1px hsl(var(--hue) 20% 15% / 60%),
+    inset 0 0 2px 1px hsl(var(--hue) 20% 15% / 60%),
+    inset 0 0 3px 1px hsl(var(--hue) 20% 45% / 60%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.6em;
+}
+
+.indicator.left {
+  --hue: var(--accent-hue);
+  overflow: hidden;
+  left: 10%;
+  border-radius: 100px 0 0 100px;
+  background: linear-gradient(
+    180deg,
+    hsl(calc(var(--accent-hue) + 20deg) 95% 80%) 10%,
+    hsl(calc(var(--accent-hue) + 20deg) 100% 60%) 30%,
+    hsl(var(--accent-hue) 90% 50%) 60%,
+    hsl(var(--accent-hue) 90% 60%) 75%,
+    hsl(var(--accent-hue) 90% 50%)
+  );
+}
+
+.indicator.left::after {
+  content: "";
+  position: absolute;
+  opacity: 0.6;
+  width: 100%;
+  height: 100%;
+}
+
+.indicator.right {
+  right: 10%;
+  border-radius: 0 100px 100px 0;
+  background-image: linear-gradient(
+    180deg,
+    hsl(var(--hue) 20% 95%),
+    hsl(var(--hue) 20% 65%) 60%,
+    hsl(var(--hue) 20% 70%) 70%,
+    hsl(var(--hue) 20% 65%)
+  );
+}
+
+.button {
+  position: absolute;
+  z-index: 1;
+  width: 55%;
+  height: 80%;
+  left: 5%;
+  border-radius: 100px;
+  background-image: linear-gradient(
+    160deg,
+    hsl(var(--hue) 20% 95%) 40%,
+    hsl(var(--hue) 20% 65%) 70%
+  );
+  transition: all var(--duration) var(--easing);
+  box-shadow:
+    1px 1px 2px hsl(var(--hue) 18% 50% / 80%),
+    1px 1px 4px hsl(var(--hue) 18% 50% / 40%),
+    5px 10px 5px hsl(var(--hue) 18% 50% / 40%),
+    10px 15px 15px hsl(var(--hue) 18% 50% / 60%);
+}
+
+.button::before,
+.button::after {
+  content: "";
+  position: absolute;
+  top: 10%;
+  width: 41%;
+  height: 80%;
+  border-radius: 100%;
+}
+
+.button::before {
+  left: 5%;
+  box-shadow: inset 1px 1px 1px hsl(var(--hue) 20% 85%);
+  background-image: linear-gradient(
+    -50deg,
+    hsl(var(--hue) 20% 95%) 20%,
+    hsl(var(--hue) 20% 85%) 80%
+  );
+}
+
+.button::after {
+  right: 5%;
+  box-shadow: inset 1px 1px 2px hsl(var(--hue) 20% 70%);
+  background-image: linear-gradient(
+    -50deg,
+    hsl(var(--hue) 20% 95%) 20%,
+    hsl(var(--hue) 20% 75%) 80%
+  );
+}
+
+.togglesw:checked ~ .button {
+  left: 40%;
+}
+
+.togglesw:not(:checked) ~ .indicator.left,
+.togglesw:checked ~ .indicator.right {
+  box-shadow:
+    inset 0 0 3px hsl(var(--hue) 20% 15% / 100%),
+    inset 10px 10px 5px hsl(var(--hue) 20% 15% / 100%),
+    inset 10px 10px 7px hsl(var(--hue) 20% 45% / 100%);
+}
+
 /* ===== ADMIN STYLES ===== */
 /* Layout Structure */
 .admin-header {
@@ -1056,7 +1326,7 @@ nav ul li a:hover {
 .admin-nav-container {
   width: 100%;
   background-color: #f1d1b5;
-  border-bottom: 1px solid #ffb84d;
+  border-bottom: 1px solid #C09779;
 }
 
 .admin-nav {
@@ -1095,7 +1365,7 @@ nav ul li a:hover {
 }
 
 .admin-logout-btn:hover {
-  background-color: #ffb84d;
+  background-color: #C09779;
   color: #20462f;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
@@ -1201,7 +1471,7 @@ nav ul li a:hover {
   color: #20462f;
   margin-top: 0;
   font-size: 24px;
-  border-bottom: 2px solid #ffb84d;
+  border-bottom: 2px solid #C09779;
   padding-bottom: 0.5rem;
   margin-bottom: 2%;
 }
@@ -1248,7 +1518,7 @@ nav ul li a:hover {
 }
 
 .admin-submit-btn:hover {
-  background-color: #ffb84d;
+  background-color: #C09779;
   color: #20462f;
 }
 
@@ -1319,21 +1589,21 @@ nav ul li a:hover {
 }
 
 .admin-edit-btn {
-  background-color: #ffb84d;
+  background-color: #C09779;
   color: #20462f;
 }
 
 .admin-edit-btn:hover {
-  background-color: #ff9a8b;
+  background-color: #e98d4b;
 }
 
 .admin-delete-btn {
-  background-color: #ff6f61;
+  background-color: #D29F80;
   color: white;
 }
 
 .admin-delete-btn:hover {
-  background-color: #ff9a8b;
+  background-color: #de8954;
 }
 
 /* Edit Modal */
@@ -1379,12 +1649,12 @@ nav ul li a:hover {
 }
 
 .admin-error {
-  color: #ff6f61;
+  color: #D29F80;
   padding: 1rem;
   background: #ffe5e0;
   border-radius: 4px;
   margin: 1rem 0;
-  border-left: 4px solid #ff6f61;
+  border-left: 4px solid #D29F80;
 }
 
 /*-------------------------Footer-------------------------*/
@@ -1437,7 +1707,7 @@ footer {
 }
 
 .footerclass ul li a:hover {
-  color: #ffb84d;
+  color: #C09779;
 }
 
 .footerSupport,
@@ -1456,7 +1726,7 @@ footer {
 }
 
 .footerclass .social-icons a:hover {
-  color: #ffb84d;
+  color: #C09779;
 }
 
 .Gcash {
@@ -1539,13 +1809,13 @@ footer {
     margin: 5px;
     border: none;
     border-radius: 50%;
-    background-color: #ff6f61;
+    background-color: #D29F80;
     cursor: pointer;
     transition: background 0.3s ease;
   }
 
   .buttons button.active {
-    background-color: #ffb84d;
+    background-color: #C09779;
   }
 
   .nav-icons {
@@ -1564,7 +1834,7 @@ footer {
     right: 0;
     width: 100%;
     z-index: 15;
-    background-color: #ff6f61;
+    background-color: #D29F80;
     padding: 10px;
   }
 
@@ -1575,7 +1845,7 @@ footer {
     right: -200px;
     width: 200px;
     height: 120vh;
-    background: #ffb84d;
+    background: #C09779;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -1733,7 +2003,7 @@ footer {
     position: absolute;
     top: 15%;
     right: 10%;
-    background-color: #ffb84d;
+    background-color: #C09779;
     width: 40px;
     height: 40px;
     z-index: 10;
@@ -1973,7 +2243,7 @@ footer {
     left: 50%;
     transform: translate(-50%, -50%);
     padding: 20px;
-    border: 1px solid #ff6f61;
+    border: 1px solid #D29F80;
     border-radius: 8px;
     max-width: 500px;
     width: 90%;
@@ -2045,13 +2315,13 @@ footer {
     margin: 5px;
     border: none;
     border-radius: 50%;
-    background-color: #ff6f61;
+    background-color: #D29F80;
     cursor: pointer;
     transition: background 0.3s ease;
   }
 
   .buttons button.active {
-    background-color: #ffb84d;
+    background-color: #C09779;
   }
 
   .nav-icons {
@@ -2070,7 +2340,7 @@ footer {
     right: 0;
     width: 100%;
     z-index: 15;
-    background-color: #ff6f61;
+    background-color: #D29F80;
     padding: 10px;
   }
 
@@ -2081,7 +2351,7 @@ footer {
     right: -200px;
     width: 200px;
     height: 120vh;
-    background: #ffb84d;
+    background: #C09779;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -2239,7 +2509,7 @@ footer {
     position: absolute;
     top: 10%;
     right: 10%;
-    background-color: #ffb84d;
+    background-color: #C09779;
     width: 35px;
     height: 35px;
     z-index: 10;
@@ -2455,7 +2725,7 @@ footer {
     left: 50%;
     transform: translate(-50%, -50%);
     padding: 20px;
-    border: 1px solid #ff6f61;
+    border: 1px solid #D29F80;
     border-radius: 8px;
     max-width: 500px;
     width: 90%;
@@ -2468,5 +2738,44 @@ footer {
 
   .ancestory-modal-search-button {
     width: 100%;
+  }
+
+
+  .toggleContainer {
+    --width: 5rem; 
+  }
+  
+  .backButton {
+    position: relative;
+    padding: 8px 30px;
+    background: #fec195;
+    font-size: 14px;
+    font-weight: 200;
+    color: #181818;
+    cursor: pointer;
+    border: 1px solid #fec195;
+    border-radius: 8px;
+    filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.2));
+  }
+
+  .icon-1 {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20px;
+    transform-origin: 0 0;
+    transform: rotate(10deg);
+    transition: all 0.5s ease-in-out;
+    filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.3));
+  }
+  .icon-2 {
+    position: absolute;
+    top: 0;
+    left: 15px;
+    width: 10px;
+    transform-origin: 50% 0;
+    transform: rotate(10deg);
+    transition: all 1s ease-in-out;
+    filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.5));
   }
 }

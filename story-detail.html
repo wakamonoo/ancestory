@@ -19,12 +19,19 @@
   <body>
     <div id="storyContent">
       <div id="storyContainer">
-        <a href="index.html#stories" class="backStory">
-          <img src="images/back.png" alt="Back" />
-        </a>
-        <button id="translate-btn" class="translate-btn">
-          <img src="https://flagcdn.com/ph.svg" width="25" />
-        </button>
+        <div id="containerMenu">
+          <div id="backButtonContainer">
+            <button class="backButton">Back</button>
+          </div>
+          <div class="toggleContainer">
+            <label class="switch">
+              <input id="translate-toggle" class="togglesw" type="checkbox" />
+              <div class="indicator left">ENG</div>
+              <div class="indicator right">FIL</div>
+              <div class="button"></div>
+            </label>
+          </div>
+        </div>        
         <h1 id="story-title">Story Title</h1>
         <p id="story-origin">Origin:</p>
         <img id="story-image" alt="Story Image" />
@@ -92,7 +99,16 @@
         </div>
       </div>
     </div>
-
+    <script>
+      fetch("backButton.html")
+        .then((response) => response.text())
+        .then((html) => {
+          document.getElementById("backButtonContainer").innerHTML = html;
+        })
+        .catch((error) => {
+          console.error("Error loading back button:", error);
+        });
+    </script>
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
       import {
@@ -214,7 +230,7 @@
       }
 
       async function toggleTranslation() {
-        const translateBtn = document.getElementById("translate-btn");
+        const translateToggle = document.getElementById("translate-toggle");
 
         if (isTranslated) {
           // Revert to original English content for story
@@ -224,14 +240,10 @@
             originalContent.origin;
           document.getElementById("story-content").innerHTML =
             formatStoryContent(originalContent.story);
-
-          // Change button to show the Filipino flag
-          translateBtn.innerHTML =
-            '<img src="https://flagcdn.com/ph.svg" width="25">';
           isTranslated = false;
         } else {
-          // Show loading spinner while fetching the Filipino translation
-          translateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+          // Show loading state on the toggle
+          translateToggle.disabled = true;
 
           try {
             // Fetch the story document from Firestore using currentStoryId
@@ -244,18 +256,15 @@
               // If the Filipino translation exists for the story, update only the story
               if (data.filipino) {
                 document.getElementById("story-title").innerText =
-                  originalContent.title; // Keep title as is
+                  originalContent.title;
                 document.getElementById("story-origin").innerText =
-                  originalContent.origin; // Keep origin as is
+                  originalContent.origin;
                 document.getElementById("story-content").innerHTML =
-                  formatStoryContent(data.filipino); // Use Filipino translated story
-
-                // Change button to show the US flag (English)
-                translateBtn.innerHTML =
-                  '<img src="https://flagcdn.com/us.svg" width="25">';
+                  formatStoryContent(data.filipino);
                 isTranslated = true;
               } else {
                 // No Filipino translation available
+                translateToggle.checked = false;
                 Swal.fire({
                   title: "Translation Not Available",
                   text: "Filipino translation is not available for this story yet.",
@@ -265,17 +274,11 @@
                   color: "#20462f",
                   confirmButtonColor: "#FF9A8B",
                 });
-
-                translateBtn.innerHTML =
-                  '<img src="https://flagcdn.com/ph.svg" width="25">';
-                isTranslated = false;
               }
             }
           } catch (error) {
             console.error("Error fetching translation:", error);
-            translateBtn.innerHTML =
-              '<img src="https://flagcdn.com/ph.svg" width="25">';
-
+            translateToggle.checked = false;
             Swal.fire({
               title: "Error",
               text: "Could not fetch the translation. Please try again later.",
@@ -285,6 +288,8 @@
               color: "#20462f",
               confirmButtonColor: "#FF9A8B",
             });
+          } finally {
+            translateToggle.disabled = false;
           }
         }
       }
@@ -712,9 +717,10 @@
 
       document.addEventListener("DOMContentLoaded", () => {
         // Add translation button event listener
+        // Replace the existing translation button event listener with this:
         document
-          .getElementById("translate-btn")
-          .addEventListener("click", toggleTranslation);
+          .getElementById("translate-toggle")
+          .addEventListener("change", toggleTranslation);
 
         // Reaction Handling
         const likeBtn = document.querySelector(".like-btn");
