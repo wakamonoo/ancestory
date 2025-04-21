@@ -5,7 +5,7 @@ window.addEventListener("scroll", function () {
   if (window.scrollY >= window.innerHeight) {
     nav.style.backgroundColor = "#F1D1B5";
   } else {
-    nav.style.backgroundColor = "D29F80";
+    nav.style.backgroundColor = "#D29F80";
   }
 });
 
