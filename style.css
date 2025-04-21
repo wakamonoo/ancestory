@@ -1585,7 +1585,7 @@ button:hover .icon-3 {
 
 .admin-edit-btn {
   background-color: #c09779;
-  color: #20462f;
+  color: #F7F7F7;
 }
 
 .admin-edit-btn:hover {
@@ -1594,7 +1594,7 @@ button:hover .icon-3 {
 
 .admin-delete-btn {
   background-color: #d29f80;
-  color: white;
+  color: #F7F7F7;
 }
 
 .admin-delete-btn:hover {
