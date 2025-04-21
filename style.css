@@ -241,7 +241,7 @@ nav ul li a:hover {
 .profile-photo {
   width: 80px;
   border-radius: 50%;
-  border: 2px solid #c58b67;
+  border: 2px solid #D5C7A3;
   padding: 4px;
   margin-bottom: 10px;
   display: block;
@@ -289,7 +289,7 @@ nav ul li a:hover {
 }
 
 .story-card {
-  background-color: #fec195;
+  background-color:  #C09779;
   background-image: url(images/cartographer.png);
   border-radius: 10px;
   padding: 15px;
@@ -308,7 +308,11 @@ nav ul li a:hover {
   color: #20462f;
   font-size: 32px;
   margin-bottom: 10px;
+  text-shadow:
+    1px 1px 0 #D5C7A3,
+    2px 2px 0 #D5C7A3;
 }
+
 
 .story-card p {
   color: #20462f;
@@ -624,7 +628,7 @@ nav ul li a:hover {
 
 #submitStoryModal .close:hover,
 #submitStoryModal .close:focus {
-  color: #cf8e66;
+  color: #D5C7A3;
 }
 /*-------------------------LoginForm-------------------------*/
 .modal {
@@ -684,7 +688,7 @@ nav ul li a:hover {
 }
 
 .login-btn:hover {
-  background-color: #dd8a57;
+  background-color: #D5C7A3;
 }
 
 .or-separator {
@@ -713,7 +717,7 @@ nav ul li a:hover {
 }
 
 .google-btn:hover {
-  background-color: #cc7c4a;
+  background-color: #D5C7A3;
   color: #20462f;
 }
 .social-buttons i {
@@ -1594,7 +1598,7 @@ button:hover .icon-3 {
 }
 
 .admin-edit-btn:hover {
-  background-color: #e98d4b;
+  background-color: #D5C7A3;
 }
 
 .admin-delete-btn {
@@ -1603,7 +1607,7 @@ button:hover .icon-3 {
 }
 
 .admin-delete-btn:hover {
-  background-color: #de8954;
+  background-color: #D5C7A3;
 }
 
 /* Edit Modal */
@@ -1869,6 +1873,10 @@ footer {
     display: block;
     padding: 0px 15px;
     margin-left: 10%;
+  }
+
+  nav ul li a:hover {
+    color: #D29F80;
   }
 
   .nav-icons {
@@ -2377,6 +2385,9 @@ footer {
     margin-left: 10%;
   }
 
+  nav ul li a:hover {
+    color: #D29F80;
+  }
   .nav-icons {
     padding-right: 5%;
     position: absolute;

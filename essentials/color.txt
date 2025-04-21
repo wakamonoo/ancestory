@@ -2,5 +2,5 @@ Purpose	                Hex Code	 Description
 Header  	             #F1D1B5	  Soft beige
 Hover	               #C09779	  Warm amber
 Background (Primary)	 #D29F80	  Coral red
-Accent / Soft Shade	 #FF9A8B	  Light coral pink
+Accent / Soft Shade	 #D5C7A3	  Light coral pink
 Primary Text Color	   #20462F	  Deep forest green
