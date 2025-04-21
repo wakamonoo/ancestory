@@ -8,7 +8,7 @@ import {
 
 //--------------Firebase Config--------------//
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
   authDomain: "ancestory-c068e.firebaseapp.com",
   databaseURL:
     "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
