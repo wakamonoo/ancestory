@@ -1419,7 +1419,7 @@ button:hover .icon-3 {
 .admin-logout-btn:focus {
   outline: none;
   animation: pulse 0.5s ease;
-  box-shadow: 0 0 0 3px rgba(255, 184, 77, 0.5);
+  box-shadow: 0 0 0 3px #F7F7F7;
 }
 
 .admin-welcome-container {
