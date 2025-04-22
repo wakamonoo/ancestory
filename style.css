@@ -1882,6 +1882,10 @@ footer {
 .delete-btn:hover {
   background: #d11a2d;
 }
+.storyImageuser {
+  width: 50vw;
+  height: auto;
+}
 
 @media (max-width: 1200px) {
   .comment-content {

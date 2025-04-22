@@ -152,7 +152,7 @@ async function loadUserComments() {
 
       let storyImageHtml = "";
       if (story.images) {
-        storyImageHtml = `<img src="${story.images}" alt="${story.title}" class="story-image">`;
+        storyImageHtml = `<img src="${story.images}" alt="${story.title}" class="storyImageuser">`;
       }
 
       const commentsHtml = commentsByStory[storyId]
@@ -229,7 +229,7 @@ async function loadUserReactions() {
 
       let storyImageHtml = "";
       if (story.images) {
-        storyImageHtml = `<img src="${story.images}" alt="${story.title}" class="story-image">`;
+        storyImageHtml = `<img src="${story.images}" alt="${story.title}" class="storyImageuser">`;
       }
 
       const reactionsHtml = reactionsByStory[storyId]
