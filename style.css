@@ -1807,7 +1807,6 @@ footer {
 
 .comment-card,
 .reaction-card {
-  padding: 10px;
   border-radius: 5px;
   display: flex;
   flex-direction: column;
