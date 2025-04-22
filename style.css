@@ -1664,6 +1664,252 @@ footer {
   margin-top: 10px;
 }
 
+
+/*-------------------------CommonUser-------------------------*/
+.account-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  color: #20462f;
+}
+
+.account-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.profile-picture-container {
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 15px;
+}
+
+.profile-picture {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #C09779;
+}
+
+.activity-section {
+  background: #f1d1b5;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.activity-tabs {
+  display: flex;
+  border-bottom: 1px solid #C09779;
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #20462f;
+  position: relative;
+}
+
+.tab-btn.active {
+  color: #F7F7F7;
+  font-weight: bold;
+}
+
+.tab-btn.active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #C09779;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #20462F;
+}
+
+.empty-state i {
+  font-size: 50px;
+  margin-bottom: 15px;
+  color: #F7F7F7;
+}
+
+.userCard {
+  background: #D5C7A3;
+  width: 90%;
+  padding: 15px;
+  border-radius: 5px;
+  margin: 0 auto 20px auto;
+  transition: all 0.3s ease;
+}
+
+.userCard:hover {
+  background: #c8b88e;
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+
+.story-header {
+  margin-bottom: 15px;
+}
+
+.story-header h3 {
+  margin: 0;
+}
+
+.story-header h3 a {
+  color: #20462f;
+  font-size: 24px;
+  text-decoration: none;
+}
+
+.story-header h3 a:hover {
+  color: #F7F7F7;
+}
+
+.story-origin {
+  margin: 5px 0 0 0;
+  font-size: 18px;
+  color: #20462F;
+}
+
+
+.story-comments,
+.story-reactions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.comment-card,
+.reaction-card {
+  padding: 10px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.comment-content {
+  width: 100%;
+  font-size: 18px;
+  color: #20462f;
+}
+
+.comment-time {
+  font-size: 14px;
+  color: #C09779;
+  margin-top: 10px;
+  text-align: right;
+}
+
+.reaction-like {
+  color: #216fdb;
+}
+.reaction-love {
+  color: #f33e58;
+}
+.reaction-wow {
+  color: #f7b125;
+}
+.reaction-angry {
+  color: #e9710f;
+}
+
+.delete-account-section {
+  background: #F1D1B5;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.delete-account-section h2 {
+  color: #f33e58;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 24px;
+}
+
+.delete-account-section p {
+  margin-bottom: 20px;
+  color: #20462f;
+  font-size: 18px;
+}
+
+.delete-btn {
+  background: #f33e58;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 auto;
+}
+
+.delete-btn:hover {
+  background: #d11a2d;
+}
+
+@media (max-width: 1200px) {
+  .comment-content {
+    font-size: 18px;
+  }
+
+  .comment-time {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .comment-content {
+    font-size: 14px;
+  }
+
+  .comment-time {
+    font-size: 12px;
+  }
+  .delete-account-section h2 {
+  font-size: 18px;
+}
+
+.delete-account-section p {
+  font-size: 14px;
+}
+}
+
 /*-------------------------Responsive Design-------------------------*/
 /*------------------------------1200px------------------------------*/
 @media (min-width: 601px) and (max-width: 1200px) {

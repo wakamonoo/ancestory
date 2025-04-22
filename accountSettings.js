@@ -51,9 +51,12 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Back button
-  document.getElementById("backButton").addEventListener("click", () => {
-    window.history.back();
-  });
+  const backButton = document.querySelector(".back-button");
+  if (backButton) {
+    backButton.addEventListener("click", () => {
+      window.history.back();
+    });
+  }
 
   // Tab switching
   const tabs = document.querySelectorAll(".tab-btn");
@@ -66,31 +69,46 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".tab-content").forEach((content) => {
         content.classList.remove("active");
       });
-      document.getElementById(`${tabId}Tab`).classList.add("active");
+      const targetTab = document.getElementById(`${tabId}Tab`);
+      if (targetTab) {
+        targetTab.classList.add("active");
+      }
     });
   });
 
   // Account deletion
-  document.getElementById("deleteAccountBtn").addEventListener("click", scheduleAccountDeletion);
+  const deleteAccountBtn = document.getElementById("deleteAccountBtn");
+  if (deleteAccountBtn) {
+    deleteAccountBtn.addEventListener("click", scheduleAccountDeletion);
+  }
 });
 
 async function loadUserProfile() {
+  if (!currentUser) return;
   const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-  
+
   // Set display name
-  const displayName = currentUser.displayName || userDoc.data()?.displayName || "User";
-  document.getElementById("userNameDisplay").textContent = displayName;
+  const displayName =
+    currentUser.displayName || userDoc.data()?.displayName || "User";
+  const userNameDisplay = document.getElementById("userNameDisplay");
+  if (userNameDisplay) {
+    userNameDisplay.textContent = displayName;
+  }
 
   // Set profile picture
   const photoURL = currentUser.photoURL || userDoc.data()?.photoURL;
-  if (photoURL) {
-    document.getElementById("profilePicture").src = photoURL;
-  } else {
-    document.getElementById("profilePicture").src = "https://via.placeholder.com/150";
+  const profilePicture = document.getElementById("profilePicture");
+  if (profilePicture) {
+    if (photoURL) {
+      profilePicture.src = photoURL;
+    } else {
+      profilePicture.src = "https://via.placeholder.com/150";
+    }
   }
 }
 
 async function loadUserComments() {
+  if (!currentUser) return;
   const commentsRef = collection(db, "comments");
   const q = query(
     commentsRef,
@@ -100,6 +118,7 @@ async function loadUserComments() {
 
   const querySnapshot = await getDocs(q);
   const commentsContainer = document.getElementById("userComments");
+  if (!commentsContainer) return;
   commentsContainer.innerHTML = "";
 
   if (querySnapshot.empty) {
@@ -127,31 +146,46 @@ async function loadUserComments() {
     const storyDoc = await getDoc(doc(db, "Stories", storyId));
     if (storyDoc.exists()) {
       const story = storyDoc.data();
-      
+
       const storyEl = document.createElement("div");
-      storyEl.className = "story-card";
-      
-      const commentsHtml = commentsByStory[storyId].map(comment => `
+      storyEl.className = "userCard";
+
+      let storyImageHtml = "";
+      if (story.images) {
+        storyImageHtml = `<img src="${story.images}" alt="${story.title}" class="story-image">`;
+      }
+
+      const commentsHtml = commentsByStory[storyId]
+        .map(
+          (comment) => `
         <div class="comment-card">
           <div class="comment-content">${comment.text}</div>
-          <div class="comment-time">${formatTime(comment.timestamp?.toDate())}</div>
+          <div class="comment-time">${formatTime(
+            comment.timestamp?.toDate()
+          )}</div>
         </div>
-      `).join("");
-      
+      `
+        )
+        .join("");
+
       storyEl.innerHTML = `
         <div class="story-header">
-          <h3><a href="storyDetail.html?storyId=${storyId}">${story.title}</a></h3>
+          <h3><a href="storyDetail.html?storyId=${storyId}">${
+        story.title
+      }</a></h3>
           <p class="story-origin">${story.origin || "Unknown origin"}</p>
+          ${storyImageHtml}
         </div>
         <div class="story-comments">${commentsHtml}</div>
       `;
-      
+
       commentsContainer.appendChild(storyEl);
     }
   }
 }
 
 async function loadUserReactions() {
+  if (!currentUser) return;
   const reactionsRef = collection(db, "reactions");
   const q = query(
     reactionsRef,
@@ -161,6 +195,7 @@ async function loadUserReactions() {
 
   const querySnapshot = await getDocs(q);
   const reactionsContainer = document.getElementById("userReactions");
+  if (!reactionsContainer) return;
   reactionsContainer.innerHTML = "";
 
   if (querySnapshot.empty) {
@@ -188,25 +223,39 @@ async function loadUserReactions() {
     const storyDoc = await getDoc(doc(db, "Stories", storyId));
     if (storyDoc.exists()) {
       const story = storyDoc.data();
-      
+
       const storyEl = document.createElement("div");
-      storyEl.className = "story-card";
-      
-      const reactionsHtml = reactionsByStory[storyId].map(reaction => `
+      storyEl.className = "userCard";
+
+      let storyImageHtml = "";
+      if (story.images) {
+        storyImageHtml = `<img src="${story.images}" alt="${story.title}" class="story-image">`;
+      }
+
+      const reactionsHtml = reactionsByStory[storyId]
+        .map(
+          (reaction) => `
         <div class="reaction-card">
           <i class="${getReactionIconClass(reaction.reactionType)}"></i>
-          <div class="reaction-time">${formatTime(reaction.timestamp?.toDate())}</div>
+          <div class="reaction-time">${formatTime(
+            reaction.timestamp?.toDate()
+          )}</div>
         </div>
-      `).join("");
-      
+      `
+        )
+        .join("");
+
       storyEl.innerHTML = `
         <div class="story-header">
-          <h3><a href="storyDetail.html?storyId=${storyId}">${story.title}</a></h3>
+          <h3><a href="storyDetail.html?storyId=${storyId}">${
+        story.title
+      }</a></h3>
           <p class="story-origin">${story.origin || "Unknown origin"}</p>
+          ${storyImageHtml}
         </div>
         <div class="story-reactions">${reactionsHtml}</div>
       `;
-      
+
       reactionsContainer.appendChild(storyEl);
     }
   }
@@ -214,40 +263,45 @@ async function loadUserReactions() {
 
 function getReactionIconClass(reactionType) {
   switch (reactionType) {
-    case "like": return "fas fa-thumbs-up reaction-like";
-    case "love": return "fas fa-heart reaction-love";
-    case "wow": return "fas fa-surprise reaction-wow";
-    case "angry": return "fas fa-angry reaction-angry";
-    default: return "fas fa-question";
+    case "like":
+      return "fas fa-thumbs-up reaction-like";
+    case "love":
+      return "fas fa-heart reaction-love";
+    case "wow":
+      return "fas fa-surprise reaction-wow";
+    case "angry":
+      return "fas fa-angry reaction-angry";
+    default:
+      return "fas fa-question";
   }
 }
 
 function formatTime(date) {
   if (!date) return "";
   return date.toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }
 
 async function scheduleAccountDeletion() {
   try {
     const result = await Swal.fire({
-      title: 'Delete Your Account?',
+      title: "Delete Your Account?",
       html: `
         <p>Your account will be scheduled for deletion in 15 days.</p>
         <p>During this time, you can cancel the deletion by logging in.</p>
         <p>After 15 days, all your data will be permanently removed.</p>
       `,
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#FF6F61',
-      cancelButtonColor: '#20462f',
-      confirmButtonText: 'Yes, delete my account',
-      cancelButtonText: 'Cancel',
+      confirmButtonColor: "#FF6F61",
+      cancelButtonColor: "#20462f",
+      confirmButtonText: "Yes, delete my account",
+      cancelButtonText: "Cancel",
       background: "#FF6F61",
       color: "#20462f",
     });
@@ -258,38 +312,40 @@ async function scheduleAccountDeletion() {
       deletionDate.setDate(deletionDate.getDate() + 15);
 
       // Mark account for deletion
-      await updateDoc(doc(db, "users", currentUser.uid), {
-        scheduledForDeletion: true,
-        deletionDate: deletionDate.toISOString(),
-        lastUpdated: serverTimestamp()
-      });
+      if (currentUser && currentUser.uid) {
+        await updateDoc(doc(db, "users", currentUser.uid), {
+          scheduledForDeletion: true,
+          deletionDate: deletionDate.toISOString(),
+          lastUpdated: serverTimestamp(),
+        });
 
-      // Sign out the user
-      await auth.signOut();
+        // Sign out the user
+        await auth.signOut();
 
-      // Show success message
-      await Swal.fire({
-        title: 'Account Deletion Scheduled',
-        html: `
-          <p>Your account has been scheduled for deletion on ${deletionDate.toLocaleDateString()}.</p>
-          <p>You can cancel this by logging in before that date.</p>
-        `,
-        icon: 'success',
-        confirmButtonText: 'Okay',
-        background: "#FF6F61",
-        color: "#20462f",
-      });
+        // Show success message
+        await Swal.fire({
+          title: "Account Deletion Scheduled",
+          html: `
+            <p>Your account has been scheduled for deletion on ${deletionDate.toLocaleDateString()}.</p>
+            <p>You can cancel this by logging in before that date.</p>
+          `,
+          icon: "success",
+          confirmButtonText: "Okay",
+          background: "#FF6F61",
+          color: "#20462f",
+        });
 
-      // Redirect to home page
-      window.location.href = "index.html";
+        // Redirect to home page
+        window.location.href = "index.html";
+      }
     }
   } catch (error) {
     console.error("Error scheduling account deletion:", error);
     Swal.fire({
-      title: 'Error',
-      text: 'Failed to schedule account deletion. Please try again.',
-      icon: 'error',
-      confirmButtonText: 'Okay',
+      title: "Error",
+      text: "Failed to schedule account deletion. Please try again.",
+      icon: "error",
+      confirmButtonText: "Okay",
       background: "#FF6F61",
       color: "#20462f",
     });
