@@ -1664,7 +1664,6 @@ footer {
   margin-top: 10px;
 }
 
-
 /*-------------------------CommonUser-------------------------*/
 .account-container {
   max-width: 800px;
@@ -1689,7 +1688,7 @@ footer {
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #C09779;
+  border: 3px solid #c09779;
 }
 
 .activity-section {
@@ -1702,7 +1701,7 @@ footer {
 
 .activity-tabs {
   display: flex;
-  border-bottom: 1px solid #C09779;
+  border-bottom: 1px solid #c09779;
   margin-bottom: 20px;
 }
 
@@ -1717,7 +1716,7 @@ footer {
 }
 
 .tab-btn.active {
-  color: #F7F7F7;
+  color: #f7f7f7;
   font-weight: bold;
 }
 
@@ -1728,7 +1727,7 @@ footer {
   left: 0;
   width: 100%;
   height: 2px;
-  background: #C09779;
+  background: #c09779;
 }
 
 .tab-content {
@@ -1748,17 +1747,17 @@ footer {
 .empty-state {
   text-align: center;
   padding: 40px 20px;
-  color: #20462F;
+  color: #20462f;
 }
 
 .empty-state i {
   font-size: 50px;
   margin-bottom: 15px;
-  color: #F7F7F7;
+  color: #f7f7f7;
 }
 
 .userCard {
-  background: #D5C7A3;
+  background: #d5c7a3;
   width: 90%;
   padding: 15px;
   border-radius: 5px;
@@ -1771,7 +1770,6 @@ footer {
   transform: translateY(-5px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
-
 
 .story-header {
   margin-bottom: 15px;
@@ -1788,15 +1786,14 @@ footer {
 }
 
 .story-header h3 a:hover {
-  color: #F7F7F7;
+  color: #f7f7f7;
 }
 
 .story-origin {
   margin: 5px 0 0 0;
   font-size: 18px;
-  color: #20462F;
+  color: #20462f;
 }
-
 
 .story-comments,
 .story-reactions {
@@ -1821,7 +1818,7 @@ footer {
 
 .comment-time {
   font-size: 14px;
-  color: #C09779;
+  color: #c09779;
   margin-top: 10px;
   text-align: right;
 }
@@ -1840,7 +1837,7 @@ footer {
 }
 
 .delete-account-section {
-  background: #F1D1B5;
+  background: #f1d1b5;
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -1910,12 +1907,12 @@ footer {
     font-size: 12px;
   }
   .delete-account-section h2 {
-  font-size: 18px;
-}
+    font-size: 18px;
+  }
 
-.delete-account-section p {
-  font-size: 14px;
-}
+  .delete-account-section p {
+    font-size: 14px;
+  }
 }
 
 /*-------------------------Responsive Design-------------------------*/
@@ -2664,7 +2661,7 @@ footer {
   .toggleContainer {
     --width: 5rem;
   }
-  
+
   .back-button {
     font-size: 18px;
     width: 35px;
