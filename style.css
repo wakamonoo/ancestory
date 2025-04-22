@@ -1886,9 +1886,6 @@ footer {
 .storyImageuser {
   width: 20vw;
   height: auto;
-  display: block; /* Make it a block-level element */
-  margin-left: auto; /* Push it from the left */
-  margin-right: auto; /* Push it from the right */
 }
 
 @media (max-width: 1200px) {
