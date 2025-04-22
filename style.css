@@ -1899,6 +1899,10 @@ footer {
 }
 
 @media (max-width: 600px) {
+  .storyImageuser {
+    width: 30vw;
+    height: auto;
+  }
   .comment-content {
     font-size: 14px;
   }
