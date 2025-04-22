@@ -1883,8 +1883,9 @@ footer {
   background: #d11a2d;
 }
 .storyImageuser {
-  width: 50vw;
-  height: auto;
+  width: 100%; /* Make it responsive within its container */
+  max-width: 150px; /* Set a maximum width to keep it small */
+  height: auto; /* Maintain aspect ratio */
 }
 
 @media (max-width: 1200px) {
