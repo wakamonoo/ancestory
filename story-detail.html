@@ -20,9 +20,9 @@
     <div id="storyContent">
       <div id="storyContainer">
         <div id="containerMenu">
-          <div id="backButtonContainer">
-            <button class="backButton">Back</button>
-          </div>
+          <a href="index.html#stories" class="back-button" aria-label="Go back">
+            <i class="fas fa-arrow-left"></i>
+          </a>
           <div class="toggleContainer">
             <label class="switch">
               <input id="translate-toggle" class="togglesw" type="checkbox" />
@@ -99,16 +99,6 @@
         </div>
       </div>
     </div>
-    <script>
-      fetch("backButton.html")
-        .then((response) => response.text())
-        .then((html) => {
-          document.getElementById("backButtonContainer").innerHTML = html;
-        })
-        .catch((error) => {
-          console.error("Error loading back button:", error);
-        });
-    </script>
     <script type="module" src="storyDetail.js"></script>
   </body>
 </html>

@@ -413,6 +413,119 @@ async function handleReaction(reactionType) {
   }
 }
 
+// Add this function to your existing code
+async function deleteComment(commentId) {
+  if (!currentUser) return;
+
+  try {
+    // Show confirmation dialog
+    const result = await Swal.fire({
+      title: "Delete Comment?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#FF9A8B",
+      cancelButtonColor: "#20462f",
+      confirmButtonText: "Yes, delete it!",
+      background: "#FF6F61",
+      color: "#20462f",
+    });
+
+    if (result.isConfirmed) {
+      // Delete the comment from Firestore
+      await deleteDoc(doc(db, "comments", commentId));
+
+      // Show success message
+      Swal.fire({
+        title: "Deleted!",
+        text: "Your comment has been deleted.",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+        background: "#FF6F61",
+        color: "#20462f",
+      });
+
+      // Reload comments
+      loadComments();
+    }
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+    Swal.fire({
+      title: "Error",
+      text: "Failed to delete comment. Please try again.",
+      icon: "error",
+      background: "#FF6F61",
+      color: "#20462f",
+      confirmButtonColor: "#FF9A8B",
+    });
+  }
+}
+
+// Modify the addCommentToDOM function to include delete button for user's own comments
+function addCommentToDOM(comment) {
+  const commentEl = document.createElement("div");
+  commentEl.className = "comment";
+  commentEl.dataset.commentId = comment.id;
+
+  // Use the user's photo if available, otherwise use the default icon
+  const avatarContent = comment.userPhoto
+    ? `<img src="${comment.userPhoto}" alt="User Avatar" class="comment-avatar-img">`
+    : `<i class="fas fa-user-circle" style="font-size: 32px; color: #20462f;"></i>`;
+
+  // Add delete button if the comment belongs to the current user
+  const deleteButton =
+    currentUser && comment.userId === currentUser.uid
+      ? `<button class="delete-comment-btn" title="Delete comment"><i class="fas fa-trash-alt"></i></button>`
+      : "";
+
+  commentEl.innerHTML = `
+    <div class="comment-avatar">
+      ${avatarContent}
+    </div>
+    <div class="comment-content">
+      <div class="comment-header">
+        <span class="comment-username">${comment.userName || "Anonymous"}</span>
+        ${deleteButton}
+      </div>
+      ${comment.text}
+      <div class="comment-time">${formatTime(comment.timestamp?.toDate())}</div>
+    </div>
+  `;
+
+  const commentsSection = document.getElementById("comments-section");
+  const firstChild = commentsSection.firstChild;
+
+  if (firstChild && firstChild.textContent.includes("No comments yet")) {
+    commentsSection.innerHTML = "";
+  }
+
+  commentsSection.prepend(commentEl);
+
+  // Add event listener for delete button if it exists
+  if (deleteButton && currentUser && comment.userId === currentUser.uid) {
+    commentEl
+      .querySelector(".delete-comment-btn")
+      .addEventListener("click", (e) => {
+        e.stopPropagation();
+        deleteComment(comment.id);
+      });
+  }
+}
+
+function formatTime(date) {
+  if (!date) return "";
+  const options = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  };
+  return date.toLocaleDateString(undefined, options);
+}
+
+// Update the loadComments function to include comment IDs
 async function loadComments() {
   try {
     const commentsRef = collection(db, "comments");
@@ -440,7 +553,7 @@ async function loadComments() {
 
     // Display comments
     querySnapshot.forEach((doc) => {
-      const comment = doc.data();
+      const comment = { id: doc.id, ...doc.data() };
       addCommentToDOM(comment);
     });
   } catch (error) {
@@ -448,52 +561,6 @@ async function loadComments() {
     document.getElementById("comments-section").innerHTML =
       "<p>Error loading comments. Please refresh the page.</p>";
   }
-}
-
-function addCommentToDOM(comment) {
-  const commentEl = document.createElement("div");
-  commentEl.className = "comment";
-
-  // Use the user's photo if available, otherwise use the default icon
-  const avatarContent = comment.userPhoto
-    ? `<img src="${comment.userPhoto}" alt="User Avatar" class="comment-avatar-img">`
-    : `<i class="fas fa-user-circle" style="font-size: 32px; color: #20462f;"></i>`;
-
-  commentEl.innerHTML = `
-          <div class="comment-avatar">
-            ${avatarContent}
-          </div>
-          <div class="comment-content">
-            <span class="comment-username">${
-              comment.userName || "Anonymous"
-            }</span>
-            ${comment.text}
-            <div class="comment-time">${formatTime(
-              comment.timestamp?.toDate()
-            )}</div>
-          </div>
-        `;
-
-  const commentsSection = document.getElementById("comments-section");
-  const firstChild = commentsSection.firstChild;
-
-  if (firstChild && firstChild.textContent.includes("No comments yet")) {
-    commentsSection.innerHTML = "";
-  }
-
-  commentsSection.prepend(commentEl);
-}
-
-function formatTime(date) {
-  if (!date) return "";
-  const options = {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  };
-  return date.toLocaleDateString(undefined, options);
 }
 
 async function postComment(commentText) {
@@ -548,8 +615,8 @@ async function postComment(commentText) {
     // Get the newly added comment with its ID
     const commentDoc = await getDoc(commentRef);
     if (commentDoc.exists()) {
-      // Add the comment to DOM immediately
-      addCommentToDOM(commentDoc.data());
+      // Add the comment to DOM immediately with the ID
+      addCommentToDOM({ id: commentDoc.id, ...commentDoc.data() });
 
       // Update comment count
       const commentsSection = document.getElementById("comments-section");
