@@ -1882,10 +1882,10 @@ footer {
 .delete-btn:hover {
   background: #d11a2d;
 }
+
 .storyImageuser {
-  width: 100%; /* Make it responsive within its container */
-  max-width: 150px; /* Set a maximum width to keep it small */
-  height: auto; /* Maintain aspect ratio */
+  width: 20vw;
+  height: auto;
 }
 
 @media (max-width: 1200px) {
