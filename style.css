@@ -1891,21 +1891,49 @@ footer {
 }
 
 .delete-commentAcc, .delete-reactionAcc {
+  position: absolute;         /* Position it within a relatively positioned container */
+  top: 10px;                  /* Distance from the top */
+  right: 10px;                /* Distance from the right */
   background: none;
   border: none;
   color: #f33e58;
   cursor: pointer;
-  font-size: 14px;
-  padding: 0 5px;
+  font-size: 20px;            /* Made it larger */
+  padding: 0 8px;
   transition: color 0.2s;
+  z-index: 10;                /* Ensures it’s on top if needed */
 }
 
-.delete-commentAcc, .delete-reactionAcc:hover {
+.delete-commentAcc:hover, .delete-reactionAcc:hover {
   color: #d11a2d;
 }
 
 .delete-commentAcc i {
   pointer-events: none;
+}
+
+
+
+
+
+.deletion-progress {
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.progress-bar {
+  height: 8px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 4px;
+  margin-top: 1rem;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #a5ffa5;
+  width: 0%;
+  transition: width 0.3s ease;
 }
 /*-------------------------Responsive Design-------------------------*/
 /*------------------------------1200px------------------------------*/
