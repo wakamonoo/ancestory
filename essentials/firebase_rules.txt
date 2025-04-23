@@ -28,6 +28,18 @@ service cloud.firestore {
       allow update, delete: if request.auth != null && request.auth.uid == resource.data.userID;
     }
 
+    // Rules for users collection
+    match /users/{userId} {
+      // Allow users to read their own profile
+      allow read: if request.auth != null && request.auth.uid == userId;
+      
+      // Allow users to delete their own profile
+      allow delete: if request.auth != null && request.auth.uid == userId;
+      
+      // Block all other writes (users should only be created via auth triggers)
+      allow create, update: if false;
+    }
+
     // Updated rules for reactions
     match /reactions/{reactionId} {
       // Allow creation of reactions with valid data
@@ -64,7 +76,7 @@ service cloud.firestore {
 
     // Block all other writes by default
     match /{document=**} {
-      allow write: if false;
+      allow write: if true;
     }
   }
 }

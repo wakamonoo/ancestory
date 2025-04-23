@@ -42,19 +42,20 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 let currentUser = null;
+let unsubscribeAuthListener; // To hold the unsubscribe function
 
 // Initialize the page
 document.addEventListener("DOMContentLoaded", () => {
   // Check auth state
-  onAuthStateChanged(auth, (user) => {
+  unsubscribeAuthListener = onAuthStateChanged(auth, (user) => {
     if (user) {
       currentUser = user;
       loadUserProfile();
       loadUserComments();
       loadUserReactions();
     } else {
-      // Redirect to login if not authenticated
-      window.location.href = "login.html";
+      // Redirect to index.html if not authenticated
+      window.location.href = "index.html";
     }
   });
 
@@ -160,16 +161,16 @@ async function loadUserComments() {
 
       let storyImageHtml = "";
       if (story.images) {
-        storyImageHtml = `<img src="${story.images}" alt="${story.title}" class="storyImageuser">`;
+        storyImageHtml = `<img src="<span class="math-inline">\{story\.images\}" alt\="</span>{story.title}" class="storyImageuser">`;
       }
 
       const commentsHtml = commentsByStory[storyId]
         .map(
           (comment) => `
         <div class="comment-card">
-          <div class="comment-contentUser">${comment.text}</div>
-          <div class="comment-actions">
-            <button class="delete-commentAcc" data-comment-id="${comment.id}">
+          <div class="comment-contentUser"><span class="math-inline">\{comment\.text\}</div\>
+<div class\="comment\-actions"\>
+<button class\="delete\-commentAcc" data\-comment\-id\="</span>{comment.id}">
               <i class="fas fa-trash"></i>
             </button>
           </div>
@@ -183,13 +184,13 @@ async function loadUserComments() {
 
       storyEl.innerHTML = `
         <div class="story-header">
-          <h3><a href="storyDetail.html?storyId=${storyId}">${
+          <h3><a href="storyDetail.html?storyId=<span class="math-inline">\{storyId\}"\></span>{
         story.title
       }</a></h3>
           <p class="story-originUser">${story.origin || "Unknown origin"}</p>
-          ${storyImageHtml}
-        </div>
-        <div class="story-comments">${commentsHtml}</div>
+          <span class="math-inline">\{storyImageHtml\}
+</div\>
+<div class\="story\-comments"\></span>{commentsHtml}</div>
       `;
 
       commentsContainer.appendChild(storyEl);
@@ -274,16 +275,16 @@ async function loadUserReactions() {
 
       let storyImageHtml = "";
       if (story.images) {
-        storyImageHtml = `<img src="${story.images}" alt="${story.title}" class="storyImageuser">`;
+        storyImageHtml = `<img src="<span class="math-inline">\{story\.images\}" alt\="</span>{story.title}" class="storyImageuser">`;
       }
 
       const reactionsHtml = reactionsByStory[storyId]
         .map(
           (reaction) => `
         <div class="reaction-card">
-          <i class="${getReactionIconClass(reaction.reactionType)}"></i>
-          <div class="reaction-actions">
-            <button class="delete-reactionAcc" data-reaction-id="${
+          <i class="<span class="math-inline">\{getReactionIconClass\(reaction\.reactionType\)\}"\></i\>
+<div class\="reaction\-actions"\>
+<button class\="delete\-reactionAcc" data\-reaction\-id\="</span>{
               reaction.id
             }">
               <i class="fas fa-trash"></i>
@@ -299,13 +300,13 @@ async function loadUserReactions() {
 
       storyEl.innerHTML = `
         <div class="story-header">
-          <h3><a href="storyDetail.html?storyId=${storyId}">${
+          <h3><a href="storyDetail.html?storyId=<span class="math-inline">\{storyId\}"\></span>{
         story.title
       }</a></h3>
           <p class="story-originUser">${story.origin || "Unknown origin"}</p>
-          ${storyImageHtml}
-        </div>
-        <div class="story-reactions">${reactionsHtml}</div>
+          <span class="math-inline">\{storyImageHtml\}
+</div\>
+<div class\="story\-reactions"\></span>{reactionsHtml}</div>
       `;
 
       reactionsContainer.appendChild(storyEl);
@@ -372,8 +373,9 @@ function formatTime(date) {
 }
 
 async function handleAccountDeletion() {
+  let deletionSwal; // Declare deletionSwal outside the inner try block
   try {
-    // First confirmation - quick dialog
+    // First confirmation
     const firstConfirm = await Swal.fire({
       title: "Delete Your Account?",
       text: "This will permanently erase your account and all data!",
@@ -389,22 +391,15 @@ async function handleAccountDeletion() {
 
     if (!firstConfirm.isConfirmed) return;
 
-    // Check authentication method immediately
+    // Check authentication method
     const isGoogleUser = currentUser.providerData.some(
-      p => p.providerId === "google.com"
+      (p) => p.providerId === "google.com"
     );
 
-    // Skip the "preparing" dialog and go straight to authentication
+    // Reauthenticate
     if (isGoogleUser) {
-      try {
-        // Quick Google reauth
-        await reauthenticateWithPopup(currentUser, new GoogleAuthProvider());
-      } catch (error) {
-        console.error("Google reauth failed:", error);
-        throw new Error("Google authentication failed. Please try again.");
-      }
+      await reauthenticateWithPopup(currentUser, new GoogleAuthProvider());
     } else {
-      // Email/password flow - show password prompt immediately
       const { value: password } = await Swal.fire({
         title: "Verify Password",
         input: "password",
@@ -412,24 +407,21 @@ async function handleAccountDeletion() {
         showCancelButton: true,
         confirmButtonColor: "#ff4757",
         cancelButtonColor: "#20462f",
-        inputValidator: (value) => value ? null : "Password is required",
+        inputValidator: (value) => (value ? null : "Password is required"),
         background: "#FF6F61",
         color: "#20462f",
       });
 
       if (!password) return;
 
-      try {
-        // Quick email/password reauth
-        const credential = EmailAuthProvider.credential(currentUser.email, password);
-        await reauthenticateWithCredential(currentUser, credential);
-      } catch (error) {
-        console.error("Reauth failed:", error);
-        throw new Error("Incorrect password. Please try again.");
-      }
+      const credential = EmailAuthProvider.credential(
+        currentUser.email,
+        password
+      );
+      await reauthenticateWithCredential(currentUser, credential);
     }
 
-    // Final confirmation - show this only after successful auth
+    // Final confirmation
     const finalConfirm = await Swal.fire({
       title: "Confirm Permanent Deletion",
       text: "This cannot be undone! All your data will be erased.",
@@ -445,8 +437,8 @@ async function handleAccountDeletion() {
 
     if (!finalConfirm.isConfirmed) return;
 
-    // Show deletion progress only when actual deletion starts
-    const deletionSwal = Swal.fire({
+    // Show deletion progress
+    deletionSwal = Swal.fire({ // Assign to the declared variable
       title: "Deleting Account...",
       html: `
         <div class="deletion-progress">
@@ -462,17 +454,22 @@ async function handleAccountDeletion() {
       color: "#20462f",
     });
 
-    // Actual deletion process
     try {
-      // Delete auth account first (this is usually fast)
+      // Unsubscribe the auth state listener to prevent the initial redirect
+      if (unsubscribeAuthListener) {
+        unsubscribeAuthListener();
+      }
+
+      // Delete auth account
       await deleteUser(currentUser);
-      document.querySelector('.progress-fill').style.width = '50%';
-      
+      document.querySelector(".progress-fill").style.width = "50%";
+
       // Delete user data
       await deleteUserData(currentUser.uid);
-      document.querySelector('.progress-fill').style.width = '100%';
-      
-      // Success message
+      document.querySelector(".progress-fill").style.width = "100%";
+
+      // Show success and redirect
+      await deletionSwal.close();
       await Swal.fire({
         title: "Account Deleted",
         icon: "success",
@@ -481,10 +478,14 @@ async function handleAccountDeletion() {
         background: "#FF6F61",
         color: "#20462f",
       });
-      
+
+      // Force redirect to index.html
       window.location.href = "index.html";
+      return; // Prevent any further execution
     } catch (error) {
-      await deletionSwal.close();
+      if (deletionSwal) { // Check if deletionSwal was defined
+        await deletionSwal.close();
+      }
       console.error("Deletion failed:", error);
       await Swal.fire({
         title: "Deletion Failed",
@@ -494,8 +495,18 @@ async function handleAccountDeletion() {
         background: "#FF6F61",
         color: "#20462f",
       });
+      // Re-establish the auth state listener in case of failure
+      unsubscribeAuthListener = onAuthStateChanged(auth, (user) => {
+        if (user) {
+          currentUser = user;
+          loadUserProfile();
+          loadUserComments();
+          loadUserReactions();
+        } else {
+          window.location.href = "index.html";
+        }
+      });
     }
-
   } catch (error) {
     console.error("Account deletion error:", error);
     await Swal.fire({
@@ -506,5 +517,48 @@ async function handleAccountDeletion() {
       background: "#FF6F61",
       color: "#20462f",
     });
+    // Re-establish the auth state listener in case of failure
+    unsubscribeAuthListener = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUser = user;
+        loadUserProfile();
+        loadUserComments();
+        loadUserReactions();
+      } else {
+        window.location.href = "index.html";
+      }
+    });
+  }
+}
+
+async function deleteUserData(uid) {
+  const batch = writeBatch(db);
+
+  // Delete user document
+  const userRef = doc(db, "users", uid);
+  batch.delete(userRef);
+
+  // Delete comments
+  const commentsQuery = query(
+    collection(db, "comments"),
+    where("userId", "==", uid)
+  );
+  const commentsSnapshot = await getDocs(commentsQuery);
+  commentsSnapshot.forEach((doc) => batch.delete(doc.ref));
+
+  // Delete reactions
+  const reactionsQuery = query(
+    collection(db, "reactions"),
+    where("userId", "==", uid)
+  );
+  const reactionsSnapshot = await getDocs(reactionsQuery);
+  reactionsSnapshot.forEach((doc) => batch.delete(doc.ref));
+
+  try {
+    await batch.commit();
+    console.log("User data deleted successfully.");
+  } catch (error) {
+    console.error("Error deleting user data:", error);
+    throw error; // Re-throw the error to be caught by the main deletion handler
   }
 }
