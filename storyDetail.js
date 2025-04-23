@@ -80,22 +80,12 @@ async function fetchStoryDetails() {
       story: data.story || "",
     };
 
-    // Update page content
     document.getElementById("story-title").innerText = data.title;
     document.getElementById("story-origin").innerText = data.origin || "";
-    document.getElementById("story-content").innerHTML = formatStoryContent(
-      data.story || ""
-    );
 
-    // Update Open Graph meta tags
-    updateMetaTags({
-      title: data.title,
-      description: data.story
-        ? data.story.substring(0, 160) + "..."
-        : "Read this ancestral story",
-      image: data.images || "https://yourdomain.com/images/logo.png",
-      url: window.location.href,
-    });
+    const content = data.story || "";
+    document.getElementById("story-content").innerHTML =
+      formatStoryContent(content);
 
     if (data.images) {
       document.getElementById("story-image").src = data.images;
@@ -112,36 +102,6 @@ async function fetchStoryDetails() {
   // Load reactions and comments
   loadReactions();
   loadComments();
-}
-
-function updateMetaTags({ title, description, image, url }) {
-  // Update Open Graph tags
-  document
-    .querySelector('meta[property="og:title"]')
-    .setAttribute("content", title);
-  document
-    .querySelector('meta[property="og:description"]')
-    .setAttribute("content", description);
-  document
-    .querySelector('meta[property="og:image"]')
-    .setAttribute("content", image);
-  document
-    .querySelector('meta[property="og:url"]')
-    .setAttribute("content", url);
-
-  // Update Twitter Card tags
-  document
-    .querySelector('meta[name="twitter:title"]')
-    .setAttribute("content", title);
-  document
-    .querySelector('meta[name="twitter:description"]')
-    .setAttribute("content", description);
-  document
-    .querySelector('meta[name="twitter:image"]')
-    .setAttribute("content", image);
-
-  // Update page title
-  document.title = `${title} | AnceStory`;
 }
 
 function formatStoryContent(content) {
@@ -790,21 +750,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Share button
   document.querySelector(".share-btn").addEventListener("click", async () => {
-    // Get current meta tags
-    const ogTitle = document.querySelector('meta[property="og:title"]').content;
-    const ogDescription = document.querySelector(
-      'meta[property="og:description"]'
-    ).content;
-    const ogImage = document.querySelector('meta[property="og:image"]').content;
-    const currentUrl = window.location.href;
-
     // First try to use the Web Share API if available (mobile devices)
     if (navigator.share) {
       try {
         await navigator.share({
-          title: ogTitle,
-          text: ogDescription,
-          url: currentUrl,
+          title: document.getElementById("story-title").textContent,
+          text: "Check out this interesting story!",
+          url: window.location.href,
         });
         return;
       } catch (err) {
