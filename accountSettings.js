@@ -42,20 +42,19 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 let currentUser = null;
-let unsubscribeAuthListener; // To hold the unsubscribe function
 
 // Initialize the page
 document.addEventListener("DOMContentLoaded", () => {
   // Check auth state
-  unsubscribeAuthListener = onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, (user) => {
     if (user) {
       currentUser = user;
       loadUserProfile();
       loadUserComments();
       loadUserReactions();
     } else {
-      // Redirect to index.html if not authenticated
-      window.location.href = "index.html";
+      // Redirect to login if not authenticated
+      window.location.href = "login.html";
     }
   });
 
@@ -161,16 +160,16 @@ async function loadUserComments() {
 
       let storyImageHtml = "";
       if (story.images) {
-        storyImageHtml = `<img src="<span class="math-inline">\{story\.images\}" alt\="</span>{story.title}" class="storyImageuser">`;
+        storyImageHtml = `<img src="${story.images}" alt="${story.title}" class="storyImageuser">`;
       }
 
       const commentsHtml = commentsByStory[storyId]
         .map(
           (comment) => `
         <div class="comment-card">
-          <div class="comment-contentUser"><span class="math-inline">\{comment\.text\}</div\>
-<div class\="comment\-actions"\>
-<button class\="delete\-commentAcc" data\-comment\-id\="</span>{comment.id}">
+          <div class="comment-contentUser">${comment.text}</div>
+          <div class="comment-actions">
+            <button class="delete-commentAcc" data-comment-id="${comment.id}">
               <i class="fas fa-trash"></i>
             </button>
           </div>
@@ -184,13 +183,13 @@ async function loadUserComments() {
 
       storyEl.innerHTML = `
         <div class="story-header">
-          <h3><a href="storyDetail.html?storyId=<span class="math-inline">\{storyId\}"\></span>{
+          <h3><a href="storyDetail.html?storyId=${storyId}">${
         story.title
       }</a></h3>
           <p class="story-originUser">${story.origin || "Unknown origin"}</p>
-          <span class="math-inline">\{storyImageHtml\}
-</div\>
-<div class\="story\-comments"\></span>{commentsHtml}</div>
+          ${storyImageHtml}
+        </div>
+        <div class="story-comments">${commentsHtml}</div>
       `;
 
       commentsContainer.appendChild(storyEl);
@@ -275,16 +274,16 @@ async function loadUserReactions() {
 
       let storyImageHtml = "";
       if (story.images) {
-        storyImageHtml = `<img src="<span class="math-inline">\{story\.images\}" alt\="</span>{story.title}" class="storyImageuser">`;
+        storyImageHtml = `<img src="${story.images}" alt="${story.title}" class="storyImageuser">`;
       }
 
       const reactionsHtml = reactionsByStory[storyId]
         .map(
           (reaction) => `
         <div class="reaction-card">
-          <i class="<span class="math-inline">\{getReactionIconClass\(reaction\.reactionType\)\}"\></i\>
-<div class\="reaction\-actions"\>
-<button class\="delete\-reactionAcc" data\-reaction\-id\="</span>{
+          <i class="${getReactionIconClass(reaction.reactionType)}"></i>
+          <div class="reaction-actions">
+            <button class="delete-reactionAcc" data-reaction-id="${
               reaction.id
             }">
               <i class="fas fa-trash"></i>
@@ -300,13 +299,13 @@ async function loadUserReactions() {
 
       storyEl.innerHTML = `
         <div class="story-header">
-          <h3><a href="storyDetail.html?storyId=<span class="math-inline">\{storyId\}"\></span>{
+          <h3><a href="storyDetail.html?storyId=${storyId}">${
         story.title
       }</a></h3>
           <p class="story-originUser">${story.origin || "Unknown origin"}</p>
-          <span class="math-inline">\{storyImageHtml\}
-</div\>
-<div class\="story\-reactions"\></span>{reactionsHtml}</div>
+          ${storyImageHtml}
+        </div>
+        <div class="story-reactions">${reactionsHtml}</div>
       `;
 
       reactionsContainer.appendChild(storyEl);
@@ -373,7 +372,6 @@ function formatTime(date) {
 }
 
 async function handleAccountDeletion() {
-  let deletionSwal; // Declare deletionSwal outside the inner try block
   try {
     // First confirmation
     const firstConfirm = await Swal.fire({
@@ -393,7 +391,7 @@ async function handleAccountDeletion() {
 
     // Check authentication method
     const isGoogleUser = currentUser.providerData.some(
-      (p) => p.providerId === "google.com"
+      p => p.providerId === "google.com"
     );
 
     // Reauthenticate
@@ -407,17 +405,14 @@ async function handleAccountDeletion() {
         showCancelButton: true,
         confirmButtonColor: "#ff4757",
         cancelButtonColor: "#20462f",
-        inputValidator: (value) => (value ? null : "Password is required"),
+        inputValidator: (value) => value ? null : "Password is required",
         background: "#FF6F61",
         color: "#20462f",
       });
 
       if (!password) return;
 
-      const credential = EmailAuthProvider.credential(
-        currentUser.email,
-        password
-      );
+      const credential = EmailAuthProvider.credential(currentUser.email, password);
       await reauthenticateWithCredential(currentUser, credential);
     }
 
@@ -438,7 +433,7 @@ async function handleAccountDeletion() {
     if (!finalConfirm.isConfirmed) return;
 
     // Show deletion progress
-    deletionSwal = Swal.fire({ // Assign to the declared variable
+    const deletionSwal = Swal.fire({
       title: "Deleting Account...",
       html: `
         <div class="deletion-progress">
@@ -455,19 +450,21 @@ async function handleAccountDeletion() {
     });
 
     try {
-      // Unsubscribe the auth state listener to prevent the initial redirect
-      if (unsubscribeAuthListener) {
-        unsubscribeAuthListener();
-      }
-
+      // Temporarily remove the auth state listener to prevent redirect
+      const auth = getAuth();
+      const unsubscribeAll = onAuthStateChanged(auth, () => {});
+      
       // Delete auth account
       await deleteUser(currentUser);
-      document.querySelector(".progress-fill").style.width = "50%";
-
+      document.querySelector('.progress-fill').style.width = '50%';
+      
       // Delete user data
       await deleteUserData(currentUser.uid);
-      document.querySelector(".progress-fill").style.width = "100%";
-
+      document.querySelector('.progress-fill').style.width = '100%';
+      
+      // Unsubscribe from auth changes
+      unsubscribe();
+      
       // Show success and redirect
       await deletionSwal.close();
       await Swal.fire({
@@ -478,14 +475,13 @@ async function handleAccountDeletion() {
         background: "#FF6F61",
         color: "#20462f",
       });
-
+      
       // Force redirect to index.html
       window.location.href = "index.html";
       return; // Prevent any further execution
+
     } catch (error) {
-      if (deletionSwal) { // Check if deletionSwal was defined
-        await deletionSwal.close();
-      }
+      await deletionSwal.close();
       console.error("Deletion failed:", error);
       await Swal.fire({
         title: "Deletion Failed",
@@ -495,18 +491,8 @@ async function handleAccountDeletion() {
         background: "#FF6F61",
         color: "#20462f",
       });
-      // Re-establish the auth state listener in case of failure
-      unsubscribeAuthListener = onAuthStateChanged(auth, (user) => {
-        if (user) {
-          currentUser = user;
-          loadUserProfile();
-          loadUserComments();
-          loadUserReactions();
-        } else {
-          window.location.href = "index.html";
-        }
-      });
     }
+
   } catch (error) {
     console.error("Account deletion error:", error);
     await Swal.fire({
@@ -517,48 +503,5 @@ async function handleAccountDeletion() {
       background: "#FF6F61",
       color: "#20462f",
     });
-    // Re-establish the auth state listener in case of failure
-    unsubscribeAuthListener = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        currentUser = user;
-        loadUserProfile();
-        loadUserComments();
-        loadUserReactions();
-      } else {
-        window.location.href = "index.html";
-      }
-    });
-  }
-}
-
-async function deleteUserData(uid) {
-  const batch = writeBatch(db);
-
-  // Delete user document
-  const userRef = doc(db, "users", uid);
-  batch.delete(userRef);
-
-  // Delete comments
-  const commentsQuery = query(
-    collection(db, "comments"),
-    where("userId", "==", uid)
-  );
-  const commentsSnapshot = await getDocs(commentsQuery);
-  commentsSnapshot.forEach((doc) => batch.delete(doc.ref));
-
-  // Delete reactions
-  const reactionsQuery = query(
-    collection(db, "reactions"),
-    where("userId", "==", uid)
-  );
-  const reactionsSnapshot = await getDocs(reactionsQuery);
-  reactionsSnapshot.forEach((doc) => batch.delete(doc.ref));
-
-  try {
-    await batch.commit();
-    console.log("User data deleted successfully.");
-  } catch (error) {
-    console.error("Error deleting user data:", error);
-    throw error; // Re-throw the error to be caught by the main deletion handler
   }
 }
