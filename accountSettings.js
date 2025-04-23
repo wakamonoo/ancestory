@@ -372,6 +372,7 @@ function formatTime(date) {
 }
 
 async function handleAccountDeletion() {
+  let deletionSwal; // Declare deletionSwal outside the inner try block
   try {
     // First confirmation
     const firstConfirm = await Swal.fire({
@@ -391,7 +392,7 @@ async function handleAccountDeletion() {
 
     // Check authentication method
     const isGoogleUser = currentUser.providerData.some(
-      p => p.providerId === "google.com"
+      (p) => p.providerId === "google.com"
     );
 
     // Reauthenticate
@@ -405,14 +406,17 @@ async function handleAccountDeletion() {
         showCancelButton: true,
         confirmButtonColor: "#ff4757",
         cancelButtonColor: "#20462f",
-        inputValidator: (value) => value ? null : "Password is required",
+        inputValidator: (value) => (value ? null : "Password is required"),
         background: "#FF6F61",
         color: "#20462f",
       });
 
       if (!password) return;
 
-      const credential = EmailAuthProvider.credential(currentUser.email, password);
+      const credential = EmailAuthProvider.credential(
+        currentUser.email,
+        password
+      );
       await reauthenticateWithCredential(currentUser, credential);
     }
 
@@ -433,7 +437,8 @@ async function handleAccountDeletion() {
     if (!finalConfirm.isConfirmed) return;
 
     // Show deletion progress
-    const deletionSwal = Swal.fire({
+    deletionSwal = Swal.fire({
+      // Assign to the declared variable
       title: "Deleting Account...",
       html: `
         <div class="deletion-progress">
@@ -450,21 +455,19 @@ async function handleAccountDeletion() {
     });
 
     try {
-      // Temporarily remove the auth state listener to prevent redirect
-      const auth = getAuth();
-      const unsubscribeAll = onAuthStateChanged(auth, () => {});
-      
+      // Unsubscribe the auth state listener to prevent the initial redirect
+      if (unsubscribeAuthListener) {
+        unsubscribeAuthListener();
+      }
+
       // Delete auth account
       await deleteUser(currentUser);
-      document.querySelector('.progress-fill').style.width = '50%';
-      
+      document.querySelector(".progress-fill").style.width = "50%";
+
       // Delete user data
       await deleteUserData(currentUser.uid);
-      document.querySelector('.progress-fill').style.width = '100%';
-      
-      // Unsubscribe from auth changes
-      unsubscribe();
-      
+      document.querySelector(".progress-fill").style.width = "100%";
+
       // Show success and redirect
       await deletionSwal.close();
       await Swal.fire({
@@ -475,13 +478,15 @@ async function handleAccountDeletion() {
         background: "#FF6F61",
         color: "#20462f",
       });
-      
+
       // Force redirect to index.html
       window.location.href = "index.html";
       return; // Prevent any further execution
-
     } catch (error) {
-      await deletionSwal.close();
+      if (deletionSwal) {
+        // Check if deletionSwal was defined
+        await deletionSwal.close();
+      }
       console.error("Deletion failed:", error);
       await Swal.fire({
         title: "Deletion Failed",
@@ -491,8 +496,18 @@ async function handleAccountDeletion() {
         background: "#FF6F61",
         color: "#20462f",
       });
+      // Re-establish the auth state listener in case of failure
+      unsubscribeAuthListener = onAuthStateChanged(auth, (user) => {
+        if (user) {
+          currentUser = user;
+          loadUserProfile();
+          loadUserComments();
+          loadUserReactions();
+        } else {
+          window.location.href = "index.html";
+        }
+      });
     }
-
   } catch (error) {
     console.error("Account deletion error:", error);
     await Swal.fire({
@@ -503,5 +518,48 @@ async function handleAccountDeletion() {
       background: "#FF6F61",
       color: "#20462f",
     });
+    // Re-establish the auth state listener in case of failure
+    unsubscribeAuthListener = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUser = user;
+        loadUserProfile();
+        loadUserComments();
+        loadUserReactions();
+      } else {
+        window.location.href = "index.html";
+      }
+    });
+  }
+}
+
+async function deleteUserData(uid) {
+  const batch = writeBatch(db);
+
+  // Delete user document
+  const userRef = doc(db, "users", uid);
+  batch.delete(userRef);
+
+  // Delete comments
+  const commentsQuery = query(
+    collection(db, "comments"),
+    where("userId", "==", uid)
+  );
+  const commentsSnapshot = await getDocs(commentsQuery);
+  commentsSnapshot.forEach((doc) => batch.delete(doc.ref));
+
+  // Delete reactions
+  const reactionsQuery = query(
+    collection(db, "reactions"),
+    where("userId", "==", uid)
+  );
+  const reactionsSnapshot = await getDocs(reactionsQuery);
+  reactionsSnapshot.forEach((doc) => batch.delete(doc.ref));
+
+  try {
+    await batch.commit();
+    console.log("User data deleted successfully.");
+  } catch (error) {
+    console.error("Error deleting user data:", error);
+    throw error; // Re-throw the error to be caught by the main deletion handler
   }
 }
