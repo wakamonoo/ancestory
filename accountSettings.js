@@ -42,19 +42,20 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 let currentUser = null;
+let unsubscribeAuthListener; // To hold the unsubscribe function
 
 // Initialize the page
 document.addEventListener("DOMContentLoaded", () => {
   // Check auth state
-  onAuthStateChanged(auth, (user) => {
+  unsubscribeAuthListener = onAuthStateChanged(auth, (user) => {
     if (user) {
       currentUser = user;
       loadUserProfile();
       loadUserComments();
       loadUserReactions();
     } else {
-      // Redirect to login if not authenticated
-      window.location.href = "login.html";
+      // Redirect to index.html if not authenticated
+      window.location.href = "index.html";
     }
   });
 
