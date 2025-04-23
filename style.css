@@ -472,13 +472,32 @@ nav ul li a:hover {
   margin-bottom: 2%;
 }
 
-.researchImage {
+.researchImageWrapper {
+  position: relative;
+  display: inline-block;
   width: 100%;
   max-width: 700px;
+}
+
+.researchImage {
+  width: 100%;
   height: auto;
   border-radius: 10px;
   object-fit: cover;
+  display: block;
 }
+
+/* Overlay */
+.researchImageWrapper::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border-radius: 10px;
+  background-color: rgba(192, 151, 121, 0.4);
+  pointer-events: none;
+}
+
 
 .downloadButton {
   display: inline-block;
