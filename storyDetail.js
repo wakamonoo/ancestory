@@ -156,10 +156,11 @@ async function toggleTranslation() {
             title: "Translation Not Available",
             text: "Filipino translation is not available for this story yet.",
             icon: "info",
+            iconColor: "#20462f",
             confirmButtonText: "Okay",
-            background: "#FF6F61",
+            background: "#D29F80",
             color: "#20462f",
-            confirmButtonColor: "#FF9A8B",
+            confirmButtonColor: "#C09779",
           });
         }
       }
@@ -170,10 +171,11 @@ async function toggleTranslation() {
         title: "Error",
         text: "Could not fetch the translation. Please try again later.",
         icon: "error",
+        iconColor: "#20462f",
         confirmButtonText: "Okay",
-        background: "#FF6F61",
+        background: "#D29F80",
         color: "#20462f",
-        confirmButtonColor: "#FF9A8B",
+        confirmButtonColor: "#C09779",
       });
     } finally {
       translateToggle.disabled = false;
@@ -339,9 +341,9 @@ async function handleReaction(reactionType) {
       icon: "warning",
       showConfirmButton: true,
       confirmButtonText: "Okay",
-      background: "#FF6F61",
+      background: "#D29F80",
       color: "#20462f",
-      confirmButtonColor: "#FF9A8B",
+      confirmButtonColor: "#C09779",
       showClass: {
         popup: "animate__animated animate__fadeIn",
       },
@@ -402,10 +404,11 @@ async function handleReaction(reactionType) {
       title: "Failed to react",
       text: errorMessage,
       icon: "error",
+      iconColor: "#20462f",
       confirmButtonText: "Okay",
-      background: "#FF6F61",
+      background: "#D29F80",
       color: "#20462f",
-      confirmButtonColor: "#FF9A8B",
+      confirmButtonColor: "#C09779",
       showClass: {
         popup: "animate__animated animate__shakeX",
       },
@@ -423,11 +426,12 @@ async function deleteComment(commentId) {
       title: "Delete Comment?",
       text: "You won't be able to revert this!",
       icon: "warning",
+      iconColor: "#20462f",
       showCancelButton: true,
-      confirmButtonColor: "#FF9A8B",
+      confirmButtonColor: "#C09779",
       cancelButtonColor: "#20462f",
       confirmButtonText: "Yes, delete it!",
-      background: "#FF6F61",
+      background: "#D29F80",
       color: "#20462f",
     });
 
@@ -440,9 +444,10 @@ async function deleteComment(commentId) {
         title: "Deleted!",
         text: "Your comment has been deleted.",
         icon: "success",
+        iconColor: "#20462f",
         timer: 1500,
         showConfirmButton: false,
-        background: "#FF6F61",
+        background: "#D29F80",
         color: "#20462f",
       });
 
@@ -455,9 +460,10 @@ async function deleteComment(commentId) {
       title: "Error",
       text: "Failed to delete comment. Please try again.",
       icon: "error",
-      background: "#FF6F61",
+      iconColor: "#20462f",
+      background: "#D29F80",
       color: "#20462f",
-      confirmButtonColor: "#FF9A8B",
+      confirmButtonColor: "#C09779",
     });
   }
 }
@@ -568,11 +574,12 @@ async function postComment(commentText) {
     Swal.fire({
       title: "Please login to post comments",
       icon: "warning",
+      iconColor: "#20462f",
       showConfirmButton: true,
       confirmButtonText: "Okay",
-      background: "#FF6F61",
+      background: "#D29F80",
       color: "#20462f",
-      confirmButtonColor: "#FF9A8B",
+      confirmButtonColor: "#C09779",
       showClass: {
         popup: "animate__animated animate__fadeIn",
       },
@@ -587,18 +594,19 @@ async function postComment(commentText) {
     Swal.fire({
       title: "Comment cannot be empty",
       icon: "error",
+      iconColor: "#20462f",
       showConfirmButton: true,
       confirmButtonText: "Okay",
-      background: "#FF6F61",
+      background: "#D29F80",
       color: "#20462f",
-      confirmButtonColor: "#FF9A8B",
+      confirmButtonColor: "#C09779",
       showClass: {
         popup: "animate__animated animate__shakeX",
       },
       hideClass: {
         popup: "animate__animated animate__fadeOut",
       },
-    });
+    });    
     return;
   }
 
@@ -633,9 +641,10 @@ async function postComment(commentText) {
     Swal.fire({
       title: "Comment posted successfully!",
       icon: "success",
+      iconColor: "#20462f",
       showConfirmButton: false,
       timer: 1500,
-      background: "#FF6F61",
+      background: "#D29F80",
       color: "#20462f",
       showClass: {
         popup: "animate__animated animate__fadeIn",
@@ -643,21 +652,22 @@ async function postComment(commentText) {
       hideClass: {
         popup: "animate__animated animate__fadeOut",
       },
-    });
+    });    
   } catch (error) {
     console.error("Error posting comment:", error);
     Swal.fire({
       title: "Failed to post comment",
       text: "Please try again later.",
       icon: "error",
+      iconColor: "#20462f",
       confirmButtonText: "Okay",
-      background: "#FF6F61",
+      background: "#D29F80",
       color: "#20462f",
-      confirmButtonColor: "#FF9A8B",
+      confirmButtonColor: "#C09779",
       showClass: {
         popup: "animate__animated animate__shakeX",
       },
-    });
+    });    
   }
 }
 
@@ -769,31 +779,31 @@ document.addEventListener("DOMContentLoaded", () => {
     Swal.fire({
       title: "Share this story",
       html: `
-      <div class="social-share-buttons">
-        <button class="share-facebook" title="Share on Facebook">
-          <i class="fab fa-facebook"></i>
-        </button>
-        <button class="share-twitter" title="Share on Twitter">
-          <i class="fab fa-twitter"></i>
-        </button>
-        <button class="share-whatsapp" title="Share on WhatsApp">
-          <i class="fab fa-whatsapp"></i>
-        </button>
-        <button class="share-linkedin" title="Share on LinkedIn">
-          <i class="fab fa-linkedin"></i>
-        </button>
-        <button class="share-copy" title="Copy link">
-          <i class="fas fa-link"></i>
-        </button>
-      </div>
-    `,
+        <div class="social-share-buttons">
+          <button class="share-facebook" title="Share on Facebook">
+            <i class="fab fa-facebook" style="color: #20462f;"></i>
+          </button>
+          <button class="share-twitter" title="Share on Twitter">
+            <i class="fab fa-twitter" style="color: #20462f;"></i>
+          </button>
+          <button class="share-whatsapp" title="Share on WhatsApp">
+            <i class="fab fa-whatsapp" style="color: #20462f;"></i>
+          </button>
+          <button class="share-linkedin" title="Share on LinkedIn">
+            <i class="fab fa-linkedin" style="color: #20462f;"></i>
+          </button>
+          <button class="share-copy" title="Copy link">
+            <i class="fas fa-link" style="color: #20462f;"></i>
+          </button>
+        </div>
+      `,
       showConfirmButton: false,
       background: "#FF6F61",
       color: "#20462f",
       showClass: {
         popup: "animate__animated animate__fadeIn",
       },
-    });
+    });    
 
     // Add event listeners for each share button
     document.querySelector(".share-facebook").addEventListener("click", () => {
@@ -837,6 +847,7 @@ document.addEventListener("DOMContentLoaded", () => {
         Swal.fire({
           title: "Link copied to clipboard!",
           icon: "success",
+          iconColor: "#20462f",  // Added icon color
           showConfirmButton: false,
           timer: 1500,
           background: "#FF6F61",
@@ -847,7 +858,7 @@ document.addEventListener("DOMContentLoaded", () => {
           hideClass: {
             popup: "animate__animated animate__fadeOut",
           },
-        });
+        });        
       });
     });
   });

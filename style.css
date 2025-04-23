@@ -1779,6 +1779,7 @@ footer {
 }
 
 .userCard {
+  position: relative;
   background: #d5c7a3;
   width: 90%;
   padding: 15px;
@@ -1939,11 +1940,12 @@ footer {
 .deletion-progress {
   margin: 1rem 0;
   text-align: center;
+  color: #20462F; 
 }
 
 .progress-bar {
   height: 8px;
-  background: rgba(255,255,255,0.2);
+  background: #C09779; 
   border-radius: 4px;
   margin-top: 1rem;
   overflow: hidden;
@@ -1951,10 +1953,12 @@ footer {
 
 .progress-fill {
   height: 100%;
-  background: #a5ffa5;
+  background: #F7F7F7; 
   width: 0%;
   transition: width 0.3s ease;
 }
+
+
 /*-------------------------Responsive Design-------------------------*/
 /*------------------------------1200px------------------------------*/
 @media (min-width: 601px) and (max-width: 1200px) {

@@ -71,9 +71,17 @@ storyForm.addEventListener("submit", async (e) => {
   const image = document.getElementById("admin-image").value.trim();
 
   if (!title || !origin || !story) {
-    alert("Please fill in all required fields");
+    await Swal.fire({
+      title: "Missing Information",
+      text: "Please fill in all required fields.",
+      icon: "warning",
+      confirmButtonText: "Okay",
+      background: "#FF6F61",
+      color: "#20462f",
+      confirmButtonColor: "#FF9A8B",
+    });
     return;
-  }
+  }  
 
   try {
     await addDoc(collection(db, "Stories"), {

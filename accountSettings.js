@@ -218,23 +218,43 @@ async function deleteComment(commentId) {
       title: "Delete Comment?",
       text: "This action cannot be undone!",
       icon: "warning",
+      iconColor: "#20462f", // Deep forest green for warning icon
+      background: "#D29F80", // Muted coral for modal background
+      color: "#20462f", // Primary text color
       showCancelButton: true,
-      confirmButtonColor: "#ff4757",
-      cancelButtonColor: "#20462f",
+      confirmButtonColor: "#C09779", // Warm bronze for confirm button
+      cancelButtonColor: "#F1D1B5", // Warm sand beige for cancel button
       confirmButtonText: "Yes, delete it!",
     });
 
     if (result.isConfirmed) {
       await deleteDoc(doc(db, "comments", commentId));
-      Swal.fire("Deleted!", "Your comment has been deleted.", "success");
-      // Refresh comments
-      loadUserComments();
+      await Swal.fire({
+        title: "Deleted!",
+        text: "Your comment has been deleted.",
+        icon: "success",
+        iconColor: "#20462f",
+        background: "#D29F80",
+        color: "#20462f",
+        confirmButtonColor: "#C09779",
+      });
+      loadUserComments(); // Refresh comments
     }
   } catch (error) {
     console.error("Error deleting comment:", error);
-    Swal.fire("Error!", "Failed to delete comment.", "error");
+    await Swal.fire({
+      title: "Error!",
+      text: "Failed to delete comment.",
+      icon: "error",
+      iconColor: "#20462f",
+      background: "#D29F80",
+      color: "#20462f",
+      confirmButtonColor: "#C09779",
+    });
   }
 }
+
+
 
 async function loadUserReactions() {
   if (!currentUser) return;
@@ -334,21 +354,39 @@ async function deleteReaction(reactionId) {
       title: "Remove Reaction?",
       text: "This will remove your reaction from the story.",
       icon: "warning",
+      iconColor: "#20462f",
+      background: "#D29F80",
+      color: "#20462f",
       showCancelButton: true,
-      confirmButtonColor: "#ff4757",
-      cancelButtonColor: "#20462f",
+      confirmButtonColor: "#C09779",
+      cancelButtonColor: "#F1D1B5",
       confirmButtonText: "Yes, remove it!",
     });
-
+  
     if (result.isConfirmed) {
       await deleteDoc(doc(db, "reactions", reactionId));
-      Swal.fire("Removed!", "Your reaction has been removed.", "success");
-      // Refresh reactions
+      Swal.fire({
+        title: "Removed!",
+        text: "Your reaction has been removed.",
+        icon: "success",
+        iconColor: "#20462f",
+        background: "#D29F80",
+        color: "#20462f",
+        confirmButtonColor: "#C09779"
+      });
       loadUserReactions();
     }
   } catch (error) {
     console.error("Error deleting reaction:", error);
-    Swal.fire("Error!", "Failed to remove reaction.", "error");
+    Swal.fire({
+      title: "Error!",
+      text: "Failed to remove reaction.",
+      icon: "error",
+      iconColor: "#20462f",
+      background: "#D29F80",
+      color: "#20462f",
+      confirmButtonColor: "#C09779"
+      });
   }
 }
 
@@ -388,14 +426,16 @@ async function handleAccountDeletion() {
       title: "Delete Your Account?",
       text: "This will permanently erase your account and all data!",
       icon: "warning",
+      iconColor: "#20462f",
       showCancelButton: true,
-      confirmButtonColor: "#ff4757",
-      cancelButtonColor: "#20462f",
+      confirmButtonColor: "#C09779",
+      cancelButtonColor: "#F1D1B5",
       confirmButtonText: "Continue",
       cancelButtonText: "Cancel",
-      background: "#FF6F61",
+      background: "#D29F80",
       color: "#20462f",
     });
+    
 
     if (!firstConfirm.isConfirmed) {
       isAccountBeingDeleted = false;
@@ -416,12 +456,12 @@ async function handleAccountDeletion() {
         input: "password",
         inputLabel: "Enter your password to confirm deletion",
         showCancelButton: true,
-        confirmButtonColor: "#ff4757",
-        cancelButtonColor: "#20462f",
+        confirmButtonColor: "#C09779",
+        cancelButtonColor: "#F1D1B5",
         inputValidator: (value) => (value ? null : "Password is required"),
-        background: "#FF6F61",
+        background: "#D29F80",
         color: "#20462f",
-      });
+      });      
 
       if (!password) {
         isAccountBeingDeleted = false;
@@ -440,14 +480,16 @@ async function handleAccountDeletion() {
       title: "Confirm Permanent Deletion",
       text: "This cannot be undone! All your data will be erased.",
       icon: "error",
+      iconColor: "#20462f",
       showCancelButton: true,
-      confirmButtonColor: "#ff0000",
-      cancelButtonColor: "#20462f",
+      confirmButtonColor: "#C09779",
+      cancelButtonColor: "#F1D1B5",
       confirmButtonText: "DELETE NOW",
       cancelButtonText: "Cancel",
-      background: "#FF6F61",
+      background: "#D29F80",
       color: "#20462f",
     });
+    
 
     if (!finalConfirm.isConfirmed) {
       isAccountBeingDeleted = false;
@@ -467,10 +509,10 @@ async function handleAccountDeletion() {
       `,
       showConfirmButton: false,
       allowOutsideClick: false,
-      background: "#FF6F61",
+      background: "#D29F80",
       color: "#20462f",
     });
-
+    
     try {
       // Delete auth account
       await deleteUser(currentUser);
@@ -487,11 +529,14 @@ async function handleAccountDeletion() {
       await Swal.fire({
         title: "Account Deleted",
         icon: "success",
+        iconColor: "#20462f",
         text: "Your account has been permanently removed.",
         confirmButtonText: "Continue",
-        background: "#FF6F61",
+        background: "#D29F80",
         color: "#20462f",
+        confirmButtonColor: "#C09779"
       });
+      
 
       // Force redirect to index.html
       window.location.href = "index.html";
@@ -503,10 +548,13 @@ async function handleAccountDeletion() {
         title: "Deletion Failed",
         text: error.message || "Could not complete account deletion",
         icon: "error",
+        iconColor: "#20462f",
         confirmButtonText: "OK",
-        background: "#FF6F61",
+        background: "#D29F80",
         color: "#20462f",
+        confirmButtonColor: "#C09779"
       });
+      
     }
   } catch (error) {
     isAccountBeingDeleted = false;
@@ -515,10 +563,12 @@ async function handleAccountDeletion() {
       title: "Error",
       text: error.message || "Something went wrong",
       icon: "error",
+      iconColor: "#20462f",
       confirmButtonText: "OK",
-      background: "#FF6F61",
+      background: "#D29F80",
       color: "#20462f",
-    });
+      confirmButtonColor: "#C09779"
+    });    
   }
 }
 
