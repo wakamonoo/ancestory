@@ -908,6 +908,8 @@ nav ul li a:hover {
 .comment-time {
   font-size: 14px;
   color: #c09779;
+  margin-top: 5px;
+  text-align: right;
 }
 .comment-box {
   display: flex;
@@ -1789,7 +1791,7 @@ footer {
   color: #f7f7f7;
 }
 
-.story-origin {
+.story-originUser {
   margin: 5px 0 0 0;
   font-size: 18px;
   color: #20462f;
@@ -1810,13 +1812,13 @@ footer {
   gap: 10px;
 }
 
-.comment-content {
+.comment-contentUser {
   width: 100%;
   font-size: 18px;
   color: #20462f;
 }
 
-.comment-time {
+.comment-timeUser,.reaction-timeUser {
   font-size: 14px;
   color: #c09779;
   margin-top: 10px;
@@ -1885,25 +1887,28 @@ footer {
 }
 
 @media (max-width: 1200px) {
-  .comment-content {
+  .comment-contentUser {
     font-size: 18px;
   }
 
-  .comment-time {
+  .comment-timeUser,.reaction-timeUser {
     font-size: 14px;
   }
 }
 
 @media (max-width: 600px) {
+  .story-originUser {
+    font-size: 14px;
+  }
   .storyImageuser {
     width: 30vw;
     height: auto;
   }
-  .comment-content {
+  .comment-contentUser {
     font-size: 14px;
   }
 
-  .comment-time {
+  .comment-timeUser,.reaction-timeUser {
     font-size: 12px;
   }
   .delete-account-section h2 {

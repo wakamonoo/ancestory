@@ -159,8 +159,8 @@ async function loadUserComments() {
         .map(
           (comment) => `
         <div class="comment-card">
-          <div class="comment-content">${comment.text}</div>
-          <div class="comment-time">${formatTime(
+          <div class="comment-contentUser">${comment.text}</div>
+          <div class="comment-timeUser">${formatTime(
             comment.timestamp?.toDate()
           )}</div>
         </div>
@@ -173,7 +173,7 @@ async function loadUserComments() {
           <h3><a href="storyDetail.html?storyId=${storyId}">${
         story.title
       }</a></h3>
-          <p class="story-origin">${story.origin || "Unknown origin"}</p>
+          <p class="story-originUser">${story.origin || "Unknown origin"}</p>
           ${storyImageHtml}
         </div>
         <div class="story-comments">${commentsHtml}</div>
@@ -237,7 +237,7 @@ async function loadUserReactions() {
           (reaction) => `
         <div class="reaction-card">
           <i class="${getReactionIconClass(reaction.reactionType)}"></i>
-          <div class="reaction-time">${formatTime(
+          <div class="reaction-timeUser">${formatTime(
             reaction.timestamp?.toDate()
           )}</div>
         </div>
@@ -250,7 +250,7 @@ async function loadUserReactions() {
           <h3><a href="storyDetail.html?storyId=${storyId}">${
         story.title
       }</a></h3>
-          <p class="story-origin">${story.origin || "Unknown origin"}</p>
+          <p class="story-originUser">${story.origin || "Unknown origin"}</p>
           ${storyImageHtml}
         </div>
         <div class="story-reactions">${reactionsHtml}</div>
