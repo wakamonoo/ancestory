@@ -42,22 +42,12 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 let currentUser = null;
-let unsubscribeAuthListener; // To hold the unsubscribe function
+let isAccountBeingDeleted = false; // Flag to track account deletion state
 
 // Initialize the page
 document.addEventListener("DOMContentLoaded", () => {
   // Check auth state
-  unsubscribeAuthListener = onAuthStateChanged(auth, (user) => {
-    if (user) {
-      currentUser = user;
-      loadUserProfile();
-      loadUserComments();
-      loadUserReactions();
-    } else {
-      // Redirect to index.html if not authenticated
-      window.location.href = "index.html";
-    }
-  });
+  onAuthStateChanged(auth, handleAuthStateChange);
 
   // Back button
   const backButton = document.querySelector(".back-button");
@@ -92,6 +82,22 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+function handleAuthStateChange(user) {
+  // Skip auth state changes during account deletion
+  if (isAccountBeingDeleted) return;
+
+  if (user) {
+    currentUser = user;
+    loadUserProfile();
+    loadUserComments();
+    loadUserReactions();
+  } else {
+    // Only redirect if not during account deletion
+    if (!isAccountBeingDeleted) {
+      window.location.href = "index.html";
+    }
+  }
+}
 async function loadUserProfile() {
   if (!currentUser) return;
   const userDoc = await getDoc(doc(db, "users", currentUser.uid));
@@ -373,8 +379,10 @@ function formatTime(date) {
 }
 
 async function handleAccountDeletion() {
-  let deletionSwal; // Declare deletionSwal outside the inner try block
   try {
+    // Set deletion flag
+    isAccountBeingDeleted = true;
+
     // First confirmation
     const firstConfirm = await Swal.fire({
       title: "Delete Your Account?",
@@ -389,7 +397,10 @@ async function handleAccountDeletion() {
       color: "#20462f",
     });
 
-    if (!firstConfirm.isConfirmed) return;
+    if (!firstConfirm.isConfirmed) {
+      isAccountBeingDeleted = false;
+      return;
+    }
 
     // Check authentication method
     const isGoogleUser = currentUser.providerData.some(
@@ -412,7 +423,10 @@ async function handleAccountDeletion() {
         color: "#20462f",
       });
 
-      if (!password) return;
+      if (!password) {
+        isAccountBeingDeleted = false;
+        return;
+      }
 
       const credential = EmailAuthProvider.credential(
         currentUser.email,
@@ -435,11 +449,13 @@ async function handleAccountDeletion() {
       color: "#20462f",
     });
 
-    if (!finalConfirm.isConfirmed) return;
+    if (!finalConfirm.isConfirmed) {
+      isAccountBeingDeleted = false;
+      return;
+    }
 
     // Show deletion progress
-    deletionSwal = Swal.fire({
-      // Assign to the declared variable
+    const deletionSwal = Swal.fire({
       title: "Deleting Account...",
       html: `
         <div class="deletion-progress">
@@ -456,11 +472,6 @@ async function handleAccountDeletion() {
     });
 
     try {
-      // Unsubscribe the auth state listener to prevent the initial redirect
-      if (unsubscribeAuthListener) {
-        unsubscribeAuthListener();
-      }
-
       // Delete auth account
       await deleteUser(currentUser);
       document.querySelector(".progress-fill").style.width = "50%";
@@ -469,8 +480,10 @@ async function handleAccountDeletion() {
       await deleteUserData(currentUser.uid);
       document.querySelector(".progress-fill").style.width = "100%";
 
-      // Show success and redirect
+      // Close the progress dialog
       await deletionSwal.close();
+
+      // Show success message
       await Swal.fire({
         title: "Account Deleted",
         icon: "success",
@@ -482,12 +495,9 @@ async function handleAccountDeletion() {
 
       // Force redirect to index.html
       window.location.href = "index.html";
-      return; // Prevent any further execution
     } catch (error) {
-      if (deletionSwal) {
-        // Check if deletionSwal was defined
-        await deletionSwal.close();
-      }
+      isAccountBeingDeleted = false;
+      await deletionSwal.close();
       console.error("Deletion failed:", error);
       await Swal.fire({
         title: "Deletion Failed",
@@ -497,19 +507,9 @@ async function handleAccountDeletion() {
         background: "#FF6F61",
         color: "#20462f",
       });
-      // Re-establish the auth state listener in case of failure
-      unsubscribeAuthListener = onAuthStateChanged(auth, (user) => {
-        if (user) {
-          currentUser = user;
-          loadUserProfile();
-          loadUserComments();
-          loadUserReactions();
-        } else {
-          window.location.href = "index.html";
-        }
-      });
     }
   } catch (error) {
+    isAccountBeingDeleted = false;
     console.error("Account deletion error:", error);
     await Swal.fire({
       title: "Error",
@@ -518,17 +518,6 @@ async function handleAccountDeletion() {
       confirmButtonText: "OK",
       background: "#FF6F61",
       color: "#20462f",
-    });
-    // Re-establish the auth state listener in case of failure
-    unsubscribeAuthListener = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        currentUser = user;
-        loadUserProfile();
-        loadUserComments();
-        loadUserReactions();
-      } else {
-        window.location.href = "index.html";
-      }
     });
   }
 }
