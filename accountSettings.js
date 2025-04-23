@@ -1,4 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
 import {
   getFirestore,
   doc,
@@ -8,13 +9,18 @@ import {
   where,
   getDocs,
   updateDoc,
+  deleteDoc,
   serverTimestamp,
   orderBy,
+  writeBatch,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
 import {
   getAuth,
   onAuthStateChanged,
   deleteUser,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
@@ -79,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Account deletion
   const deleteAccountBtn = document.getElementById("deleteAccountBtn");
   if (deleteAccountBtn) {
-    deleteAccountBtn.addEventListener("click", scheduleAccountDeletion);
+    deleteAccountBtn.addEventListener("click", handleAccountDeletion);
   }
 });
 
@@ -138,7 +144,7 @@ async function loadUserComments() {
     if (!commentsByStory[comment.storyId]) {
       commentsByStory[comment.storyId] = [];
     }
-    commentsByStory[comment.storyId].push(comment);
+    commentsByStory[comment.storyId].push({ id: doc.id, ...comment });
   });
 
   // Fetch story details for each commented story
@@ -160,6 +166,11 @@ async function loadUserComments() {
           (comment) => `
         <div class="comment-card">
           <div class="comment-contentUser">${comment.text}</div>
+          <div class="comment-actions">
+            <button class="delete-comment-btn" data-comment-id="${comment.id}">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
           <div class="comment-timeUser">${formatTime(
             comment.timestamp?.toDate()
           )}</div>
@@ -181,6 +192,46 @@ async function loadUserComments() {
 
       commentsContainer.appendChild(storyEl);
     }
+  }
+
+  // Add event listeners to delete buttons
+  document.querySelectorAll('.delete-commentAcc').forEach(button => {
+    button.addEventListener('click', async (e) => {
+      const commentId = e.currentTarget.dataset.commentId;
+      await deleteComment(commentId);
+    });
+  });
+}
+
+async function deleteComment(commentId) {
+  try {
+    const result = await Swal.fire({
+      title: 'Delete Comment?',
+      text: "This action cannot be undone!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ff4757',
+      cancelButtonColor: '#20462f',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (result.isConfirmed) {
+      await deleteDoc(doc(db, "comments", commentId));
+      Swal.fire(
+        'Deleted!',
+        'Your comment has been deleted.',
+        'success'
+      );
+      // Refresh comments
+      loadUserComments();
+    }
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+    Swal.fire(
+      'Error!',
+      'Failed to delete comment.',
+      'error'
+    );
   }
 }
 
@@ -215,7 +266,7 @@ async function loadUserReactions() {
     if (!reactionsByStory[reaction.storyId]) {
       reactionsByStory[reaction.storyId] = [];
     }
-    reactionsByStory[reaction.storyId].push(reaction);
+    reactionsByStory[reaction.storyId].push({ id: doc.id, ...reaction });
   });
 
   // Fetch story details for each reacted story
@@ -237,6 +288,11 @@ async function loadUserReactions() {
           (reaction) => `
         <div class="reaction-card">
           <i class="${getReactionIconClass(reaction.reactionType)}"></i>
+          <div class="reaction-actions">
+            <button class="delete-reaction-btn" data-reaction-id="${reaction.id}">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
           <div class="reaction-timeUser">${formatTime(
             reaction.timestamp?.toDate()
           )}</div>
@@ -258,6 +314,46 @@ async function loadUserReactions() {
 
       reactionsContainer.appendChild(storyEl);
     }
+  }
+
+  // Add event listeners to delete buttons
+  document.querySelectorAll('.delete-reactionAcc').forEach(button => {
+    button.addEventListener('click', async (e) => {
+      const reactionId = e.currentTarget.dataset.reactionId;
+      await deleteReaction(reactionId);
+    });
+  });
+}
+
+async function deleteReaction(reactionId) {
+  try {
+    const result = await Swal.fire({
+      title: 'Remove Reaction?',
+      text: "This will remove your reaction from the story.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ff4757',
+      cancelButtonColor: '#20462f',
+      confirmButtonText: 'Yes, remove it!'
+    });
+
+    if (result.isConfirmed) {
+      await deleteDoc(doc(db, "reactions", reactionId));
+      Swal.fire(
+        'Removed!',
+        'Your reaction has been removed.',
+        'success'
+      );
+      // Refresh reactions
+      loadUserReactions();
+    }
+  } catch (error) {
+    console.error("Error deleting reaction:", error);
+    Swal.fire(
+      'Error!',
+      'Failed to remove reaction.',
+      'error'
+    );
   }
 }
 
@@ -287,67 +383,227 @@ function formatTime(date) {
   });
 }
 
-async function scheduleAccountDeletion() {
+async function handleAccountDeletion() {
   try {
-    const result = await Swal.fire({
+    // First confirmation
+    const firstConfirm = await Swal.fire({
       title: "Delete Your Account?",
       html: `
-        <p>Your account will be scheduled for deletion in 15 days.</p>
-        <p>During this time, you can cancel the deletion by logging in.</p>
-        <p>After 15 days, all your data will be permanently removed.</p>
+        <div class="animate__animated animate__headShake animate__slow">
+          <i class="fas fa-heart-crack" style="font-size: 3rem; color: #ff4757;"></i>
+          <p>This will permanently erase your account and all associated data!</p>
+        </div>
       `,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#FF6F61",
+      confirmButtonColor: "#ff4757",
       cancelButtonColor: "#20462f",
-      confirmButtonText: "Yes, delete my account",
+      confirmButtonText: "Continue to deletion",
       cancelButtonText: "Cancel",
       background: "#FF6F61",
       color: "#20462f",
     });
 
-    if (result.isConfirmed) {
-      // Calculate deletion date (15 days from now)
-      const deletionDate = new Date();
-      deletionDate.setDate(deletionDate.getDate() + 15);
+    if (!firstConfirm.isConfirmed) return;
 
-      // Mark account for deletion
-      if (currentUser && currentUser.uid) {
-        await updateDoc(doc(db, "users", currentUser.uid), {
-          scheduledForDeletion: true,
-          deletionDate: deletionDate.toISOString(),
-          lastUpdated: serverTimestamp(),
-        });
+    // Check if user is Google-authenticated
+    const isGoogleUser = currentUser.providerData.some(
+      (provider) => provider.providerId === "google.com"
+    );
 
-        // Sign out the user
-        await auth.signOut();
+    if (isGoogleUser) {
+      // Handle Google users differently - no password needed
+      const googleConfirm = await Swal.fire({
+        title: "Google Account Detected",
+        html: `
+          <div class="animate__animated animate__pulse">
+            <i class="fab fa-google" style="font-size: 3rem; color: #4285F4;"></i>
+            <p>You signed in with Google. We'll need you to sign in again to confirm deletion.</p>
+          </div>
+        `,
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonColor: "#ff4757",
+        cancelButtonColor: "#20462f",
+        confirmButtonText: "Continue with Google",
+        cancelButtonText: "Cancel",
+        background: "#FF6F61",
+        color: "#20462f",
+      });
 
-        // Show success message
-        await Swal.fire({
-          title: "Account Deletion Scheduled",
-          html: `
-            <p>Your account has been scheduled for deletion on ${deletionDate.toLocaleDateString()}.</p>
-            <p>You can cancel this by logging in before that date.</p>
-          `,
-          icon: "success",
-          confirmButtonText: "Okay",
-          background: "#FF6F61",
-          color: "#20462f",
-        });
+      if (!googleConfirm.isConfirmed) return;
 
-        // Redirect to home page
-        window.location.href = "index.html";
-      }
+      // Show processing
+      Swal.fire({
+        title: "Preparing Account Deletion",
+        html: `
+          <div class="animate__animated animate__pulse animate__infinite">
+            <i class="fas fa-spinner fa-spin" style="font-size: 2rem;"></i>
+            <p>Preparing to delete your account...</p>
+          </div>
+        `,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        background: "#FF6F61",
+        color: "#20462f"
+      });
+
+      // For Google users, we'll proceed directly to deletion
+      // since they've already confirmed by signing in again
+    } else {
+      // Handle email/password users (original flow)
+      const { value: password } = await Swal.fire({
+        title: "Enter Your Password",
+        input: "password",
+        inputLabel: "For security, please enter your password to confirm deletion",
+        inputPlaceholder: "Enter your password",
+        showCancelButton: true,
+        confirmButtonColor: "#ff4757",
+        cancelButtonColor: "#20462f",
+        inputValidator: (value) => {
+          if (!value) {
+            return "You need to enter your password!";
+          }
+        },
+        background: "#FF6F61",
+        color: "#20462f",
+      });
+
+      if (!password) return;
+
+      // Show processing
+      Swal.fire({
+        title: "Verifying...",
+        html: `
+          <div class="animate__animated animate__pulse animate__infinite">
+            <i class="fas fa-spinner fa-spin" style="font-size: 2rem;"></i>
+            <p>Verifying your credentials...</p>
+          </div>
+        `,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        background: "#FF6F61",
+        color: "#20462f"
+      });
+
+      // Reauthenticate email/password users
+      const credential = EmailAuthProvider.credential(currentUser.email, password);
+      await reauthenticateWithCredential(currentUser, credential);
     }
-  } catch (error) {
-    console.error("Error scheduling account deletion:", error);
-    Swal.fire({
-      title: "Error",
-      text: "Failed to schedule account deletion. Please try again.",
+
+    // Final confirmation for all users
+    const finalConfirm = await Swal.fire({
+      title: "Last Chance to Change Your Mind",
+      html: `
+        <div class="animate__animated animate__wobble animate__slow">
+          <i class="fas fa-skull-crossbones" style="font-size: 3rem;"></i>
+          <p>This will permanently delete all your data!</p>
+        </div>
+        <p class="animate__animated animate__fadeIn">This action cannot be undone.</p>
+      `,
       icon: "error",
-      confirmButtonText: "Okay",
+      showCancelButton: true,
+      confirmButtonColor: "#ff0000",
+      cancelButtonColor: "#20462f",
+      confirmButtonText: "DELETE EVERYTHING NOW",
+      cancelButtonText: "Cancel",
       background: "#FF6F61",
       color: "#20462f",
     });
+
+    if (!finalConfirm.isConfirmed) return;
+
+    // Show deletion in progress
+    Swal.fire({
+      title: "Deleting Your Account",
+      html: `
+        <div class="animate__animated animate__pulse animate__infinite">
+          <i class="fas fa-trash fa-spin" style="font-size: 2rem;"></i>
+          <p>Removing all your data...</p>
+        </div>
+      `,
+      showConfirmButton: false,
+      allowOutsideClick: false,
+      background: "#FF6F61",
+      color: "#20462f"
+    });
+
+    // First delete all user data
+    await deleteUserData(currentUser.uid);
+
+    // Then delete the auth user
+    await deleteUser(currentUser);
+
+    // Show success message
+    await Swal.fire({
+      title: "Account Deleted",
+      html: `
+        <div class="animate__animated animate__fadeOutUp animate__slow">
+          <i class="fas fa-sad-cry" style="font-size: 3rem;"></i>
+          <p>Your account has been permanently deleted.</p>
+        </div>
+      `,
+      confirmButtonText: "Goodbye",
+      background: "#FF6F61",
+      color: "#20462f",
+    });
+
+    // Redirect to home page
+    window.location.href = "index.html";
+
+  } catch (error) {
+    console.error("Error deleting account:", error);
+    Swal.fire({
+      title: "Deletion Failed",
+      html: `
+        <div class="animate__animated animate__shakeX">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>${error.message || "Something went wrong!"}</p>
+        </div>
+        <p>Please try again later.</p>
+      `,
+      icon: "error",
+      confirmButtonText: "Okay",
+      background: "#FF6F61",
+      color: "#20462f"
+    });
+  }
+}
+
+async function deleteUserData(userId) {
+  const batch = writeBatch(db);
+
+  try {
+    // Delete user document
+    const userDocRef = doc(db, "users", userId);
+    batch.delete(userDocRef);
+
+    // Delete all user comments
+    const commentsQuery = query(collection(db, "comments"), where("userId", "==", userId));
+    const commentsSnapshot = await getDocs(commentsQuery);
+    commentsSnapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+
+    // Delete all user reactions
+    const reactionsQuery = query(collection(db, "reactions"), where("userId", "==", userId));
+    const reactionsSnapshot = await getDocs(reactionsQuery);
+    reactionsSnapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+
+    // Delete user stories if you have a UserStories collection
+    const storiesQuery = query(collection(db, "UserStories"), where("userID", "==", userId));
+    const storiesSnapshot = await getDocs(storiesQuery);
+    storiesSnapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+
+    // Commit the batch
+    await batch.commit();
+
+  } catch (error) {
+    console.error("Error deleting user data:", error);
+    throw error;
   }
 }

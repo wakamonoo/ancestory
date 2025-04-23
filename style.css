@@ -909,7 +909,7 @@ nav ul li a:hover {
   font-size: 14px;
   color: #c09779;
   margin-top: 5px;
-  text-align: right;
+  text-align: left;
 }
 .comment-box {
   display: flex;
@@ -998,7 +998,7 @@ nav ul li a:hover {
   margin-bottom: 5px;
 }
 
-.delete-comment-btn {
+.delete-comment-btn, .delete-reaction-btn {
   background: none;
   border: none;
   color: #f33e58;
@@ -1008,7 +1008,7 @@ nav ul li a:hover {
   transition: color 0.2s;
 }
 
-.delete-comment-btn:hover {
+.delete-comment-btn, .delete-reaction-btn:hover {
   color: #d11a2d;
 }
 
@@ -1816,9 +1816,13 @@ footer {
   width: 100%;
   font-size: 18px;
   color: #20462f;
+  background-color: #F7F7F7;
+  border-radius: 10px;
+  padding: 10px;
 }
 
-.comment-timeUser,.reaction-timeUser {
+.comment-timeUser,
+.reaction-timeUser {
   font-size: 14px;
   color: #c09779;
   margin-top: 10px;
@@ -1886,40 +1890,23 @@ footer {
   height: auto;
 }
 
-@media (max-width: 1200px) {
-  .comment-contentUser {
-    font-size: 18px;
-  }
-
-  .comment-timeUser,.reaction-timeUser {
-    font-size: 14px;
-  }
+.delete-commentAcc, .delete-reactionAcc {
+  background: none;
+  border: none;
+  color: #f33e58;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0 5px;
+  transition: color 0.2s;
 }
 
-@media (max-width: 600px) {
-  .story-originUser {
-    font-size: 14px;
-  }
-  .storyImageuser {
-    width: 30vw;
-    height: auto;
-  }
-  .comment-contentUser {
-    font-size: 14px;
-  }
-
-  .comment-timeUser,.reaction-timeUser {
-    font-size: 12px;
-  }
-  .delete-account-section h2 {
-    font-size: 18px;
-  }
-
-  .delete-account-section p {
-    font-size: 14px;
-  }
+.delete-commentAcc, .delete-reactionAcc:hover {
+  color: #d11a2d;
 }
 
+.delete-commentAcc i {
+  pointer-events: none;
+}
 /*-------------------------Responsive Design-------------------------*/
 /*------------------------------1200px------------------------------*/
 @media (min-width: 601px) and (max-width: 1200px) {
@@ -2165,7 +2152,6 @@ footer {
 
   .comment-time {
     font-size: 12px;
-    color: #f1d1b5;
   }
   /*---------------AboutSection---------------*/
 
@@ -2416,8 +2402,17 @@ footer {
   .ancestory-modal-search-button {
     width: 100%;
   }
-}
 
+  /*---------------NormalUser---------------*/
+  .comment-contentUser {
+    font-size: 18px;
+  }
+
+  .comment-timeUser,
+  .reaction-timeUser {
+    font-size: 14px;
+  }
+}
 /*------------------------------600px------------------------------*/
 @media only screen and (max-width: 600px) {
   /*---------------Header---------------*/
@@ -2660,7 +2655,6 @@ footer {
 
   .comment-time {
     font-size: 12px;
-    color: #f1d1b5;
   }
 
   .toggleContainer {
@@ -2897,5 +2891,29 @@ footer {
 
   .ancestory-modal-search-button {
     width: 100%;
+  }
+
+  /*---------------NormalUser---------------*/
+  .story-originUser {
+    font-size: 14px;
+  }
+  .storyImageuser {
+    width: 30vw;
+    height: auto;
+  }
+  .comment-contentUser {
+    font-size: 14px;
+  }
+
+  .comment-timeUser,
+  .reaction-timeUser {
+    font-size: 12px;
+  }
+  .delete-account-section h2 {
+    font-size: 18px;
+  }
+
+  .delete-account-section p {
+    font-size: 14px;
   }
 }
