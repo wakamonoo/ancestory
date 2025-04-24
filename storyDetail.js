@@ -1,3 +1,4 @@
+// storyDetail.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getFirestore,
@@ -12,18 +13,17 @@ import {
   orderBy,
   deleteDoc,
   updateDoc,
-  writeBatch,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import {
   getAuth,
   onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { StorySpeechSynthesis } from './speechSynthesis.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
   authDomain: "ancestory-c068e.firebaseapp.com",
-  databaseURL:
-    "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL: "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "ancestory-c068e",
   storageBucket: "ancestory-c068e.appspot.com",
   messagingSenderId: "579709470015",
@@ -44,21 +44,37 @@ let originalContent = {
   origin: "",
   story: "",
 };
+let speechSynthesizer = null;
+
+// Initialize speech synthesis when DOM is loaded
+document.addEventListener("DOMContentLoaded", () => {
+  if ('speechSynthesis' in window) {
+    speechSynthesizer = new StorySpeechSynthesis();
+    
+    // Set up event handlers
+    speechSynthesizer.onSpeechEnd = onSpeechEnd;
+    speechSynthesizer.onSpeechError = onSpeechError;
+    speechSynthesizer.onWordBoundary = highlightSpokenWord;
+    
+    // Set up UI event listeners
+    setupSpeechUI();
+  } else {
+    document.getElementById('speak-btn').style.display = 'none';
+    console.warn('Speech synthesis not supported');
+  }
+});
 
 // Check auth state
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
   if (user) {
-    // User is signed in
     document.getElementById("comment-form").style.display = "flex";
     checkUserReaction();
   } else {
-    // User is signed out
     document.getElementById("comment-form").style.display = "none";
   }
 });
 
-// Update fetchStoryDetails to store the original content properly
 async function fetchStoryDetails() {
   const urlParams = new URLSearchParams(window.location.search);
   currentStoryId = urlParams.get("storyId");
@@ -68,7 +84,6 @@ async function fetchStoryDetails() {
     return;
   }
 
-  // Fetch story details
   const docRef = doc(db, "Stories", currentStoryId);
   const docSnap = await getDoc(docRef);
 
@@ -99,9 +114,211 @@ async function fetchStoryDetails() {
       "<p>Story not found</p>";
   }
 
-  // Load reactions and comments
   loadReactions();
   loadComments();
+}
+
+// SPEECH FUNCTIONS
+function setupSpeechUI() {
+  const speakBtn = document.getElementById('speak-btn');
+  const stopBtn = document.getElementById('stop-speech-btn');
+  
+  speakBtn.addEventListener('click', toggleSpeech);
+  stopBtn.addEventListener('click', stopSpeech);
+  
+  // Modal controls
+  document.getElementById('voice-select-modal').addEventListener('change', (e) => {
+    speechSynthesizer.changeVoice(e.target.selectedOptions[0].getAttribute('data-name'));
+  });
+  
+  document.getElementById('rate-control-modal').addEventListener('input', (e) => {
+    const rate = parseFloat(e.target.value);
+    speechSynthesizer.changeRate(rate);
+    document.getElementById('rate-value').textContent = `${rate.toFixed(1)}x`;
+  });
+  
+  document.getElementById('apply-speech-options').addEventListener('click', () => {
+    closeModal();
+    startReadingStory();
+  });
+  
+  document.querySelector('.close-modal').addEventListener('click', closeModal);
+}
+
+function toggleSpeech() {
+  if (speechSynthesizer.isSpeaking) {
+    speechSynthesizer.pauseSpeech();
+    updateSpeechUI(false);
+  } else {
+    openModal();
+  }
+}
+
+function startReadingStory() {
+  const title = document.getElementById('story-title').textContent;
+  const origin = document.getElementById('story-origin').textContent.replace('Origin:', '').trim();
+  const contentElement = document.getElementById('story-content');
+  
+  // Clone the content element for manipulation
+  const contentClone = contentElement.cloneNode(true);
+  contentElement.parentNode.replaceChild(contentClone, contentElement);
+  contentClone.id = 'story-content';
+  
+  speechSynthesizer.startSpeech(title, origin, contentClone);
+  updateSpeechUI(true);
+}
+
+function stopSpeech() {
+  speechSynthesizer.stopSpeech();
+  updateSpeechUI(false);
+  removeHighlighting();
+}
+
+function onSpeechEnd() {
+  updateSpeechUI(false);
+  removeHighlighting();
+}
+
+function onSpeechError(event) {
+  // Only show error if it's not a user-initiated stop
+  if (event.error !== 'interrupted') {
+    Swal.fire({
+      title: "Speech Error",
+      text: "An error occurred while reading the story.",
+      icon: "error",
+      iconColor: "#20462f",
+      confirmButtonText: "Okay",
+      background: "#D29F80",
+      color: "#20462f",
+      confirmButtonColor: "#C09779",
+    });
+  }
+  updateSpeechUI(false);
+  removeHighlighting();
+}
+
+// Highlighting functions
+function highlightSpokenWord(event) {
+  if (event.name !== 'word') return;
+  
+  const charIndex = event.charIndex;
+  const charLength = event.charLength;
+  const storyContent = document.getElementById('story-content');
+  
+  removeHighlighting();
+  
+  const { node, position } = findTextNodeAndPosition(storyContent, charIndex);
+  
+  if (node && position !== -1) {
+    try {
+      const range = document.createRange();
+      range.setStart(node, position);
+      range.setEnd(node, position + charLength);
+      
+      const span = document.createElement('span');
+      span.className = 'highlight-word';
+      range.surroundContents(span);
+      
+      scrollToHighlight(span);
+    } catch (e) {
+      console.error('Could not highlight word:', e);
+    }
+  }
+}
+
+function findTextNodeAndPosition(element, charIndex) {
+  const walker = document.createTreeWalker(
+    element,
+    NodeFilter.SHOW_TEXT,
+    null,
+    false
+  );
+  
+  let currentIndex = 0;
+  let node;
+  
+  while (node = walker.nextNode()) {
+    const nodeLength = node.textContent.length;
+    if (currentIndex + nodeLength > charIndex) {
+      return {
+        node: node,
+        position: charIndex - currentIndex
+      };
+    }
+    currentIndex += nodeLength;
+  }
+  
+  return { node: null, position: -1 };
+}
+
+function scrollToHighlight(element) {
+  const storyContainer = document.getElementById('storyContainer');
+  const containerRect = storyContainer.getBoundingClientRect();
+  const elementRect = element.getBoundingClientRect();
+  
+  const elementTop = elementRect.top - containerRect.top;
+  const elementBottom = elementRect.bottom - containerRect.top;
+  const containerHeight = containerRect.height;
+  
+  if (elementTop < storyContainer.scrollTop) {
+    storyContainer.scrollTop = elementTop - 20;
+  } else if (elementBottom > storyContainer.scrollTop + containerHeight) {
+    storyContainer.scrollTop = elementBottom - containerHeight + 20;
+  }
+}
+
+function removeHighlighting() {
+  const highlights = document.querySelectorAll('.highlight-word');
+  highlights.forEach(highlight => {
+    const parent = highlight.parentNode;
+    parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
+    parent.normalize();
+  });
+}
+
+// Modal functions
+function openModal() {
+  const modal = document.getElementById('speech-options-modal');
+  modal.style.display = 'block';
+  
+  // Populate voices
+  const voiceSelect = document.getElementById('voice-select-modal');
+  voiceSelect.innerHTML = '';
+  
+  speechSynthesizer.getVoices().forEach(voice => {
+    const option = document.createElement('option');
+    option.textContent = `${voice.name} (${voice.lang})`;
+    option.setAttribute('data-name', voice.name);
+    voiceSelect.appendChild(option);
+    
+    if (voice === speechSynthesizer.getCurrentVoice()) {
+      option.selected = true;
+    }
+  });
+  
+  // Set rate control
+  const rateControl = document.getElementById('rate-control-modal');
+  rateControl.value = speechSynthesizer.getCurrentRate();
+  document.getElementById('rate-value').textContent = `${speechSynthesizer.getCurrentRate().toFixed(1)}x`;
+}
+
+function closeModal() {
+  document.getElementById('speech-options-modal').style.display = 'none';
+}
+
+function updateSpeechUI(isSpeaking) {
+  const speakBtn = document.getElementById('speak-btn');
+  const stopBtn = document.getElementById('stop-speech-btn');
+  
+  if (isSpeaking) {
+    speakBtn.style.display = 'none';
+    stopBtn.style.display = 'flex';
+    speakBtn.querySelector('span').textContent = 'Pause';
+  } else {
+    speakBtn.style.display = 'flex';
+    stopBtn.style.display = 'none';
+    speakBtn.querySelector('span').textContent = 'Listen';
+  }
 }
 
 function formatStoryContent(content) {
@@ -884,4 +1101,4 @@ document.addEventListener("DOMContentLoaded", () => {
       postComment(commentInput.value.trim());
     }
   });
-});
+});z
