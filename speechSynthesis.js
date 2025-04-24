@@ -26,19 +26,23 @@ class StorySpeechSynthesis {
 
   loadVoices() {
     this.voices = this.speechSynthesis.getVoices();
-
-    // Filter for specific voices only
-    this.voices = this.voices.filter((voice) => {
-      const voiceName = voice.name.toLowerCase();
-      return (
-        voiceName.includes("angelo") ||
-        voiceName.includes("blessica") ||
-        voiceName.includes("andrew") ||
-        voiceName.includes("emma")
-      );
+    
+    // Sort voices - preferred voices first, then others
+    this.voices.sort((a, b) => {
+      const aName = a.name.toLowerCase();
+      const bName = b.name.toLowerCase();
+      
+      const isAPreferred = aName.includes("angelo") || aName.includes("blessica") || 
+                           aName.includes("andrew") || aName.includes("emma");
+      const isBPreferred = bName.includes("angelo") || bName.includes("blessica") || 
+                           bName.includes("andrew") || bName.includes("emma");
+      
+      if (isAPreferred && !isBPreferred) return -1;
+      if (!isAPreferred && isBPreferred) return 1;
+      return 0;
     });
-
-    // Set default voice if available
+  
+    // Set default voice to first available voice
     if (this.voices.length > 0) {
       this.currentVoice = this.voices[0];
     }

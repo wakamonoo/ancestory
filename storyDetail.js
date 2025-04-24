@@ -164,8 +164,24 @@ function startReadingStory() {
   contentElement.parentNode.replaceChild(contentClone, contentElement);
   contentClone.id = 'story-content';
   
-  speechSynthesizer.startSpeech(title, origin, contentClone);
-  updateSpeechUI(true);
+  try {
+    speechSynthesizer.startSpeech(title, origin, contentClone);
+    updateSpeechUI(true);
+  } catch (error) {
+    console.error('Error starting speech:', error);
+    Swal.fire({
+      title: "Voice Not Supported",
+      text: "The selected voice is not supported on your device/browser. Please try a different voice.",
+      icon: "error",
+      iconColor: "#20462f",
+      confirmButtonText: "Okay",
+      background: "#D29F80",
+      color: "#20462f",
+      confirmButtonColor: "#C09779",
+    }).then(() => {
+      openModal(); // Reopen modal to select different voice
+    });
+  }
 }
 
 function stopSpeech() {
@@ -222,26 +238,67 @@ function highlightSpokenWord(event) {
   
   removeHighlighting();
   
-  const { node, position } = findTextNodeAndPosition(element, adjustedIndex);
+  // Fallback for browsers that don't support range highlighting well
+  if (!element || !element.firstChild) return;
   
-  if (node && position !== -1) {
-    try {
+  // Try modern approach first
+  try {
+    const { node, position } = findTextNodeAndPosition(element, adjustedIndex);
+    
+    if (node && position !== -1) {
       const range = document.createRange();
       range.setStart(node, position);
       range.setEnd(node, position + charLength);
       
       const span = document.createElement('span');
       span.className = 'highlight-word';
-      range.surroundContents(span);
       
-      scrollToHighlight(span);
-    } catch (e) {
-      console.error('Could not highlight word:', e);
+      try {
+        range.surroundContents(span);
+        scrollToHighlight(span);
+        return;
+      } catch (e) {
+        console.log('Modern highlighting failed, trying fallback');
+      }
     }
+  } catch (e) {
+    console.log('Modern highlighting error:', e);
+  }
+  
+  // Fallback approach for browsers with limited range support
+  try {
+    const text = element.textContent || element.innerText;
+    if (adjustedIndex + charLength > text.length) return;
+    
+    const before = text.substring(0, adjustedIndex);
+    const highlighted = text.substring(adjustedIndex, adjustedIndex + charLength);
+    const after = text.substring(adjustedIndex + charLength);
+    
+    element.innerHTML = `${escapeHTML(before)}<span class="highlight-word">${escapeHTML(highlighted)}</span>${escapeHTML(after)}`;
+    
+    const highlightedSpan = element.querySelector('.highlight-word');
+    if (highlightedSpan) {
+      scrollToHighlight(highlightedSpan);
+    }
+  } catch (e) {
+    console.error('Fallback highlighting failed:', e);
   }
 }
 
+function escapeHTML(str) {
+  return str.replace(/[&<>'"]/g, 
+    tag => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    }[tag]));
+}
+
 function findTextNodeAndPosition(element, charIndex) {
+  if (!element) return { node: null, position: -1 };
+  
   const walker = document.createTreeWalker(
     element,
     NodeFilter.SHOW_TEXT,
@@ -261,6 +318,16 @@ function findTextNodeAndPosition(element, charIndex) {
       };
     }
     currentIndex += nodeLength;
+  }
+  
+  // Fallback for browsers that might not handle tree walker correctly
+  if (element.nodeType === Node.TEXT_NODE) {
+    if (charIndex <= element.textContent.length) {
+      return {
+        node: element,
+        position: charIndex
+      };
+    }
   }
   
   return { node: null, position: -1 };
@@ -302,8 +369,9 @@ function openModal() {
   
   speechSynthesizer.getVoices().forEach(voice => {
     const option = document.createElement('option');
-    // Format voice name nicely
     let displayName = voice.name;
+    
+    // Format preferred voices nicely
     if (voice.name.toLowerCase().includes('angelo')) displayName = "Angelo (Filipino)";
     else if (voice.name.toLowerCase().includes('blessica')) displayName = "Blessica (Filipino)";
     else if (voice.name.toLowerCase().includes('andrew')) displayName = "Andrew (English)";
@@ -311,6 +379,13 @@ function openModal() {
     
     option.textContent = displayName;
     option.setAttribute('data-name', voice.name);
+    option.setAttribute('data-lang', voice.lang);
+    
+    // Mark preferred voices
+    if (displayName !== voice.name) {
+      option.style.fontWeight = 'bold';
+    }
+    
     voiceSelect.appendChild(option);
     
     if (voice === speechSynthesizer.getCurrentVoice()) {
