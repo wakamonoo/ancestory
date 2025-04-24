@@ -136,7 +136,7 @@ function setupSpeechUI() {
     const voiceName = selectedOption.getAttribute('data-name');
     const voiceLang = selectedOption.getAttribute('data-lang');
     
-    // Find voice by name and lang to ensure exact match
+    // Find the exact voice match
     const voice = speechSynthesizer.getVoices().find(v => 
       v.name === voiceName && v.lang === voiceLang
     );
