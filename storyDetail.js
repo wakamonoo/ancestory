@@ -44,42 +44,20 @@ let originalContent = {
   story: "",
 };
 let speechSynthesizer = null;
+let originalStoryHTML = null;
 
 // Initialize speech synthesis when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
   if ('speechSynthesis' in window) {
     speechSynthesizer = new StorySpeechSynthesis();
     
-    // Mobile detection and setup
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    // Store original HTML before any speech starts
+    originalStoryHTML = document.getElementById('story-content').innerHTML;
     
-    if (isMobile) {
-      // Mobile devices - use polling for word position
-      speechSynthesizer.onSpeechStart = () => {
-        speechSynthesizer.speechStartTime = Date.now();
-        speechSynthesizer.highlightInterval = setInterval(() => {
-          const fakeEvent = speechSynthesizer.getCurrentWordPosition();
-          if (fakeEvent) {
-            highlightSpokenWord(fakeEvent);
-          }
-        }, 300); // Update every 300ms
-      };
-      
-      speechSynthesizer.onSpeechEnd = () => {
-        clearInterval(speechSynthesizer.highlightInterval);
-        onSpeechEnd();
-      };
-      
-      speechSynthesizer.onSpeechError = (event) => {
-        clearInterval(speechSynthesizer.highlightInterval);
-        onSpeechError(event);
-      };
-    } else {
-      // PC - use normal boundary events
-      speechSynthesizer.onWordBoundary = highlightSpokenWord;
-      speechSynthesizer.onSpeechEnd = onSpeechEnd;
-      speechSynthesizer.onSpeechError = onSpeechError;
-    }
+    // Set up event handlers
+    speechSynthesizer.onWordBoundary = highlightSpokenWord;
+    speechSynthesizer.onSpeechEnd = onSpeechEnd;
+    speechSynthesizer.onSpeechError = onSpeechError;
     
     // Set up UI event listeners
     setupSpeechUI();
@@ -126,6 +104,7 @@ async function fetchStoryDetails() {
     const content = data.story || "";
     document.getElementById("story-content").innerHTML =
       formatStoryContent(content);
+    originalStoryHTML = document.getElementById('story-content').innerHTML;
 
     if (data.images) {
       document.getElementById("story-image").src = data.images;
@@ -179,28 +158,19 @@ function toggleSpeech() {
   }
 }
 
-// Replace the startReadingStory function with this:
 function startReadingStory() {
   const title = document.getElementById('story-title').textContent;
   const origin = document.getElementById('story-origin').textContent.replace('Origin:', '').trim();
   const contentElement = document.getElementById('story-content');
   
-  // Store the original HTML to restore later
-  const originalHTML = contentElement.innerHTML;
-  
   try {
+    // Restore original HTML before starting new speech
+    contentElement.innerHTML = originalStoryHTML;
+    
     speechSynthesizer.startSpeech(title, origin, contentElement);
     updateSpeechUI(true);
-    
-    // Restore original HTML when speech ends
-    speechSynthesizer.speechUtterance.onend = () => {
-      contentElement.innerHTML = originalHTML;
-      onSpeechEnd();
-    };
   } catch (error) {
     console.error('Error starting speech:', error);
-    // Restore original HTML if error occurs
-    contentElement.innerHTML = originalHTML;
     Swal.fire({
       title: "Voice Not Supported",
       text: "The selected voice is not supported on your device/browser. Please try a different voice.",
@@ -220,15 +190,18 @@ function stopSpeech() {
   speechSynthesizer.stopSpeech();
   updateSpeechUI(false);
   removeHighlighting();
+  // Restore original HTML
+  document.getElementById('story-content').innerHTML = originalStoryHTML;
 }
 
 function onSpeechEnd() {
   updateSpeechUI(false);
   removeHighlighting();
+  // Restore original HTML
+  document.getElementById('story-content').innerHTML = originalStoryHTML;
 }
 
 function onSpeechError(event) {
-  // Only show error if it's not a user-initiated stop
   if (event.error !== 'interrupted') {
     Swal.fire({
       title: "Speech Error",
@@ -243,9 +216,10 @@ function onSpeechError(event) {
   }
   updateSpeechUI(false);
   removeHighlighting();
+  // Restore original HTML
+  document.getElementById('story-content').innerHTML = originalStoryHTML;
 }
 
-// Replace the highlightSpokenWord function with this:
 function highlightSpokenWord(event) {
   if (event.name !== 'word') return;
   
@@ -270,102 +244,22 @@ function highlightSpokenWord(event) {
   
   if (!element) return;
   
-  // Get the text content once
+  // Get the text content
   const text = element.textContent || element.innerText;
   if (adjustedIndex + charLength > text.length) return;
   
-  // Find the current word boundaries
-  const before = text.substring(0, adjustedIndex);
+  // Get the current word
   const currentWord = text.substring(adjustedIndex, adjustedIndex + charLength);
-  const after = text.substring(adjustedIndex + charLength);
   
-  // Create a temporary span to measure the exact position
-  const tempSpan = document.createElement('span');
-  tempSpan.textContent = before;
-  tempSpan.style.visibility = 'hidden';
-  tempSpan.style.position = 'absolute';
-  document.body.appendChild(tempSpan);
+  // Create a range to find the exact position
+  const range = document.createRange();
+  range.selectNodeContents(element);
   
-  // Get the exact position where the word starts
-  const wordStart = tempSpan.offsetWidth;
-  document.body.removeChild(tempSpan);
+  let pos = 0;
+  let foundNode = null;
+  let foundOffset = 0;
   
-  // Create the highlight span
-  const highlightSpan = document.createElement('span');
-  highlightSpan.className = 'highlight-word';
-  highlightSpan.textContent = currentWord;
-  
-  // Insert the highlight at the exact position
-  element.innerHTML = before + 
-                     highlightSpan.outerHTML + 
-                     after;
-  
-  // Scroll to the highlighted word
-  const highlightedElement = element.querySelector('.highlight-word');
-  if (highlightedElement) {
-    scrollToHighlight(highlightedElement);
-  }
-}
-
-function mobileWordHighlight(event) {
-  const charIndex = event.charIndex;
-  const charLength = event.charLength || 5; // Default to 5 chars if not provided
-  
-  // Determine which section is being spoken
-  let element, adjustedIndex;
-  
-  if (charIndex < speechSynthesizer.titleLength) {
-    element = document.getElementById('story-title');
-    adjustedIndex = charIndex;
-  } else if (charIndex < speechSynthesizer.titleLength + speechSynthesizer.originLength) {
-    element = document.getElementById('story-origin');
-    adjustedIndex = charIndex - speechSynthesizer.titleLength;
-  } else {
-    element = document.getElementById('story-content');
-    adjustedIndex = charIndex - (speechSynthesizer.titleLength + speechSynthesizer.originLength);
-  }
-  
-  removeHighlighting();
-  
-  if (!element) return;
-  
-  try {
-    const text = element.textContent || element.innerText;
-    if (adjustedIndex + charLength > text.length) return;
-    
-    // Find word boundaries more reliably for mobile
-    const fullText = text;
-    const before = fullText.substring(0, adjustedIndex);
-    const word = fullText.substring(adjustedIndex, adjustedIndex + charLength);
-    const after = fullText.substring(adjustedIndex + charLength);
-    
-    // Create a simple highlight span
-    element.innerHTML = `${escapeHTML(before)}<span class="mobile-highlight-word">${escapeHTML(word)}</span>${escapeHTML(after)}`;
-    
-    // Scroll to the highlighted word
-    const highlightedSpan = element.querySelector('.mobile-highlight-word');
-    if (highlightedSpan) {
-      scrollToHighlight(highlightedSpan);
-    }
-  } catch (e) {
-    console.error('Mobile highlighting failed:', e);
-  }
-}
-
-function escapeHTML(str) {
-  return str.replace(/[&<>'"]/g, 
-    tag => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      "'": '&#39;',
-      '"': '&quot;'
-    }[tag]));
-}
-
-function findTextNodeAndPosition(element, charIndex) {
-  if (!element) return { node: null, position: -1 };
-  
+  // Walk through the text nodes to find the exact position
   const walker = document.createTreeWalker(
     element,
     NodeFilter.SHOW_TEXT,
@@ -373,31 +267,36 @@ function findTextNodeAndPosition(element, charIndex) {
     false
   );
   
-  let currentIndex = 0;
   let node;
-  
   while (node = walker.nextNode()) {
     const nodeLength = node.textContent.length;
-    if (currentIndex + nodeLength > charIndex) {
-      return {
-        node: node,
-        position: charIndex - currentIndex
-      };
+    if (pos + nodeLength > adjustedIndex) {
+      foundNode = node;
+      foundOffset = adjustedIndex - pos;
+      break;
     }
-    currentIndex += nodeLength;
+    pos += nodeLength;
   }
   
-  // Fallback for browsers that might not handle tree walker correctly
-  if (element.nodeType === Node.TEXT_NODE) {
-    if (charIndex <= element.textContent.length) {
-      return {
-        node: element,
-        position: charIndex
-      };
-    }
-  }
+  if (!foundNode) return;
   
-  return { node: null, position: -1 };
+  // Set the range to the found position
+  range.setStart(foundNode, foundOffset);
+  range.setEnd(foundNode, foundOffset + charLength);
+  
+  // Create highlight span
+  const highlightSpan = document.createElement('span');
+  highlightSpan.className = 'highlight-word';
+  
+  try {
+    // Surround the range with the highlight span
+    range.surroundContents(highlightSpan);
+    
+    // Scroll to the highlighted word
+    scrollToHighlight(highlightSpan);
+  } catch (e) {
+    console.log('Could not highlight word:', e);
+  }
 }
 
 function scrollToHighlight(element) {

@@ -9,15 +9,12 @@ class StorySpeechSynthesis {
     this.titleLength = 0;
     this.originLength = 0;
     this.contentElement = null;
-    this.speechStartTime = 0;
-    this.highlightInterval = null;
 
     // Event handlers
     this.onWordBoundary = null;
     this.onSpeechEnd = null;
     this.onSpeechError = null;
     this.onSpeechPause = null;
-    this.onSpeechStart = null;
 
     this.init();
   }
@@ -31,7 +28,7 @@ class StorySpeechSynthesis {
   loadVoices() {
     this.voices = this.speechSynthesis.getVoices();
     
-    // Sort voices - preferred voices first, then others
+    // Sort voices - preferred voices first
     this.voices.sort((a, b) => {
       const aName = a.name.toLowerCase();
       const bName = b.name.toLowerCase();
@@ -46,7 +43,7 @@ class StorySpeechSynthesis {
       return 0;
     });
   
-    // Set default voice to first available voice
+    // Set default voice
     if (this.voices.length > 0) {
       this.currentVoice = this.voices[0];
     }
@@ -93,6 +90,7 @@ class StorySpeechSynthesis {
     this.speechSynthesis.speak(this.speechUtterance);
     this.isSpeaking = true;
   }
+
   pauseSpeech() {
     if (this.isSpeaking) {
       this.speechSynthesis.pause();
@@ -112,10 +110,6 @@ class StorySpeechSynthesis {
       this.speechSynthesis.cancel();
     }
     this.isSpeaking = false;
-    if (this.highlightInterval) {
-      clearInterval(this.highlightInterval);
-      this.highlightInterval = null;
-    }
   }
 
   changeVoice(voiceName) {
@@ -140,20 +134,6 @@ class StorySpeechSynthesis {
 
   isSpeechSupported() {
     return "speechSynthesis" in window;
-  }
-
-  getCurrentWordPosition() {
-    if (!this.speechUtterance) return null;
-    
-    // This is a simplified version for mobile that estimates position
-    const elapsedTime = (Date.now() - this.speechStartTime) / 1000;
-    const estimatedChars = Math.floor(elapsedTime * this.speechOptions.rate * 10); // Approx chars per second
-    
-    return {
-      name: 'word',
-      charIndex: estimatedChars,
-      charLength: 5 // Approximate word length
-    };
   }
 }
 
