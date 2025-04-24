@@ -123,45 +123,34 @@ function setupSpeechUI() {
   const speakBtn = document.getElementById('speak-btn');
   const stopBtn = document.getElementById('stop-speech-btn');
   
-  // Check for mobile devices
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  
-  // Different UI for mobile
-  if (isMobile) {
-    document.getElementById('speech-controls').style.margin = '10px auto';
-    document.getElementById('speak-btn').style.padding = '10px 20px';
-    document.getElementById('stop-speech-btn').style.padding = '10px 20px';
-  }
-  
-  speakBtn.addEventListener('click', () => {
-    if (isMobile) {
-      // On mobile, show options immediately without modal
-      startReadingStory();
-    } else {
-      openModal();
-    }
-  });
-  
+  speakBtn.addEventListener('click', toggleSpeech);
   stopBtn.addEventListener('click', stopSpeech);
   
-  // Only show modal on desktop
-  if (!isMobile) {
-    document.getElementById('voice-select-modal').addEventListener('change', (e) => {
-      speechSynthesizer.changeVoice(e.target.selectedOptions[0].getAttribute('data-name'));
-    });
-    
-    document.getElementById('rate-control-modal').addEventListener('input', (e) => {
-      const rate = parseFloat(e.target.value);
-      speechSynthesizer.changeRate(rate);
-      document.getElementById('rate-value').textContent = `${rate.toFixed(1)}x`;
-    });
-    
-    document.getElementById('apply-speech-options').addEventListener('click', () => {
-      closeModal();
-      startReadingStory();
-    });
-    
-    document.querySelector('.close-modal').addEventListener('click', closeModal);
+  // Modal controls
+  document.getElementById('voice-select-modal').addEventListener('change', (e) => {
+    speechSynthesizer.changeVoice(e.target.selectedOptions[0].getAttribute('data-name'));
+  });
+  
+  document.getElementById('rate-control-modal').addEventListener('input', (e) => {
+    const rate = parseFloat(e.target.value);
+    speechSynthesizer.changeRate(rate);
+    document.getElementById('rate-value').textContent = `${rate.toFixed(1)}x`;
+  });
+  
+  document.getElementById('apply-speech-options').addEventListener('click', () => {
+    closeModal();
+    startReadingStory();
+  });
+  
+  document.querySelector('.close-modal').addEventListener('click', closeModal);
+}
+
+function toggleSpeech() {
+  if (speechSynthesizer.isSpeaking) {
+    speechSynthesizer.pauseSpeech();
+    updateSpeechUI(false);
+  } else {
+    openModal();
   }
 }
 
@@ -214,9 +203,6 @@ function highlightSpokenWord(event) {
   const charIndex = event.charIndex;
   const charLength = event.charLength;
   
-  // Remove previous highlights first
-  removeHighlighting();
-  
   // Determine which section is being spoken
   let element, adjustedIndex;
   
@@ -234,17 +220,7 @@ function highlightSpokenWord(event) {
     adjustedIndex = charIndex - (speechSynthesizer.titleLength + speechSynthesizer.originLength);
   }
   
-  // Mobile workaround - sometimes the element isn't ready
-  if (!element) {
-    console.warn('Element not found for highlighting');
-    return;
-  }
-
-  // Clone the node to ensure we can modify it
-  const clone = element.cloneNode(true);
-  element.parentNode.replaceChild(clone, element);
-  element = clone;
-  element.id = element.id; // Maintain the same ID
+  removeHighlighting();
   
   const { node, position } = findTextNodeAndPosition(element, adjustedIndex);
   
@@ -258,10 +234,7 @@ function highlightSpokenWord(event) {
       span.className = 'highlight-word';
       range.surroundContents(span);
       
-      // Mobile-friendly scroll behavior
-      requestAnimationFrame(() => {
-        scrollToHighlight(span);
-      });
+      scrollToHighlight(span);
     } catch (e) {
       console.error('Could not highlight word:', e);
     }
@@ -294,26 +267,18 @@ function findTextNodeAndPosition(element, charIndex) {
 }
 
 function scrollToHighlight(element) {
-  const storyContainer = document.getElementById('storyContainer') || document.documentElement;
-  const elementRect = element.getBoundingClientRect();
+  const storyContainer = document.getElementById('storyContainer');
   const containerRect = storyContainer.getBoundingClientRect();
+  const elementRect = element.getBoundingClientRect();
   
-  // Calculate positions with mobile viewport in mind
   const elementTop = elementRect.top - containerRect.top;
   const elementBottom = elementRect.bottom - containerRect.top;
-  const containerHeight = window.innerHeight || containerRect.height;
+  const containerHeight = containerRect.height;
   
-  // Mobile-optimized scrolling
-  if (elementTop < storyContainer.scrollTop + 50) { // 50px buffer
-    storyContainer.scrollTo({
-      top: elementTop - 20,
-      behavior: 'smooth'
-    });
-  } else if (elementBottom > storyContainer.scrollTop + containerHeight - 50) {
-    storyContainer.scrollTo({
-      top: elementBottom - containerHeight + 20,
-      behavior: 'smooth'
-    });
+  if (elementTop < storyContainer.scrollTop) {
+    storyContainer.scrollTop = elementTop - 20;
+  } else if (elementBottom > storyContainer.scrollTop + containerHeight) {
+    storyContainer.scrollTop = elementBottom - containerHeight + 20;
   }
 }
 
@@ -1158,4 +1123,4 @@ document.addEventListener("DOMContentLoaded", () => {
       postComment(commentInput.value.trim());
     }
   });
-});z
+});
