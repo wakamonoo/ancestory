@@ -8,7 +8,6 @@ class StorySpeechSynthesis {
     this.isSpeaking = false;
     this.titleLength = 0;
     this.originLength = 0;
-    this.contentElement = null;
 
     // Event handlers
     this.onWordBoundary = null;
@@ -28,7 +27,7 @@ class StorySpeechSynthesis {
   loadVoices() {
     this.voices = this.speechSynthesis.getVoices();
     
-    // Sort voices - preferred voices first
+    // Sort voices - preferred voices first, then others
     this.voices.sort((a, b) => {
       const aName = a.name.toLowerCase();
       const bName = b.name.toLowerCase();
@@ -43,7 +42,7 @@ class StorySpeechSynthesis {
       return 0;
     });
   
-    // Set default voice
+    // Set default voice to first available voice
     if (this.voices.length > 0) {
       this.currentVoice = this.voices[0];
     }
@@ -77,6 +76,13 @@ class StorySpeechSynthesis {
       this.isSpeaking = false;
       if (this.onSpeechEnd && typeof this.onSpeechEnd === "function") {
         this.onSpeechEnd();
+      }
+    };
+
+    this.speechUtterance.onpause = () => {
+      this.isSpeaking = false;
+      if (this.onSpeechPause && typeof this.onSpeechPause === "function") {
+        this.onSpeechPause();
       }
     };
 

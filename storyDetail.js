@@ -1,3 +1,4 @@
+// storyDetail.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getFirestore,
@@ -44,20 +45,16 @@ let originalContent = {
   story: "",
 };
 let speechSynthesizer = null;
-let originalStoryHTML = null;
 
 // Initialize speech synthesis when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
   if ('speechSynthesis' in window) {
     speechSynthesizer = new StorySpeechSynthesis();
     
-    // Store original HTML before any speech starts
-    originalStoryHTML = document.getElementById('story-content').innerHTML;
-    
     // Set up event handlers
-    speechSynthesizer.onWordBoundary = highlightSpokenWord;
     speechSynthesizer.onSpeechEnd = onSpeechEnd;
     speechSynthesizer.onSpeechError = onSpeechError;
+    speechSynthesizer.onWordBoundary = highlightSpokenWord;
     
     // Set up UI event listeners
     setupSpeechUI();
@@ -104,7 +101,6 @@ async function fetchStoryDetails() {
     const content = data.story || "";
     document.getElementById("story-content").innerHTML =
       formatStoryContent(content);
-    originalStoryHTML = document.getElementById('story-content').innerHTML;
 
     if (data.images) {
       document.getElementById("story-image").src = data.images;
@@ -163,11 +159,13 @@ function startReadingStory() {
   const origin = document.getElementById('story-origin').textContent.replace('Origin:', '').trim();
   const contentElement = document.getElementById('story-content');
   
+  // Clone the content element for manipulation
+  const contentClone = contentElement.cloneNode(true);
+  contentElement.parentNode.replaceChild(contentClone, contentElement);
+  contentClone.id = 'story-content';
+  
   try {
-    // Restore original HTML before starting new speech
-    contentElement.innerHTML = originalStoryHTML;
-    
-    speechSynthesizer.startSpeech(title, origin, contentElement);
+    speechSynthesizer.startSpeech(title, origin, contentClone);
     updateSpeechUI(true);
   } catch (error) {
     console.error('Error starting speech:', error);
@@ -181,7 +179,7 @@ function startReadingStory() {
       color: "#20462f",
       confirmButtonColor: "#C09779",
     }).then(() => {
-      openModal();
+      openModal(); // Reopen modal to select different voice
     });
   }
 }
@@ -190,18 +188,15 @@ function stopSpeech() {
   speechSynthesizer.stopSpeech();
   updateSpeechUI(false);
   removeHighlighting();
-  // Restore original HTML
-  document.getElementById('story-content').innerHTML = originalStoryHTML;
 }
 
 function onSpeechEnd() {
   updateSpeechUI(false);
   removeHighlighting();
-  // Restore original HTML
-  document.getElementById('story-content').innerHTML = originalStoryHTML;
 }
 
 function onSpeechError(event) {
+  // Only show error if it's not a user-initiated stop
   if (event.error !== 'interrupted') {
     Swal.fire({
       title: "Speech Error",
@@ -216,8 +211,6 @@ function onSpeechError(event) {
   }
   updateSpeechUI(false);
   removeHighlighting();
-  // Restore original HTML
-  document.getElementById('story-content').innerHTML = originalStoryHTML;
 }
 
 function highlightSpokenWord(event) {
@@ -230,36 +223,82 @@ function highlightSpokenWord(event) {
   let element, adjustedIndex;
   
   if (charIndex < speechSynthesizer.titleLength) {
+    // Title section
     element = document.getElementById('story-title');
     adjustedIndex = charIndex;
   } else if (charIndex < speechSynthesizer.titleLength + speechSynthesizer.originLength) {
+    // Origin section
     element = document.getElementById('story-origin');
     adjustedIndex = charIndex - speechSynthesizer.titleLength;
   } else {
+    // Main content section
     element = document.getElementById('story-content');
     adjustedIndex = charIndex - (speechSynthesizer.titleLength + speechSynthesizer.originLength);
   }
   
   removeHighlighting();
   
-  if (!element) return;
+  // Fallback for browsers that don't support range highlighting well
+  if (!element || !element.firstChild) return;
   
-  // Get the text content
-  const text = element.textContent || element.innerText;
-  if (adjustedIndex + charLength > text.length) return;
+  // Try modern approach first
+  try {
+    const { node, position } = findTextNodeAndPosition(element, adjustedIndex);
+    
+    if (node && position !== -1) {
+      const range = document.createRange();
+      range.setStart(node, position);
+      range.setEnd(node, position + charLength);
+      
+      const span = document.createElement('span');
+      span.className = 'highlight-word';
+      
+      try {
+        range.surroundContents(span);
+        scrollToHighlight(span);
+        return;
+      } catch (e) {
+        console.log('Modern highlighting failed, trying fallback');
+      }
+    }
+  } catch (e) {
+    console.log('Modern highlighting error:', e);
+  }
   
-  // Get the current word
-  const currentWord = text.substring(adjustedIndex, adjustedIndex + charLength);
+  // Fallback approach for browsers with limited range support
+  try {
+    const text = element.textContent || element.innerText;
+    if (adjustedIndex + charLength > text.length) return;
+    
+    const before = text.substring(0, adjustedIndex);
+    const highlighted = text.substring(adjustedIndex, adjustedIndex + charLength);
+    const after = text.substring(adjustedIndex + charLength);
+    
+    element.innerHTML = `${escapeHTML(before)}<span class="highlight-word">${escapeHTML(highlighted)}</span>${escapeHTML(after)}`;
+    
+    const highlightedSpan = element.querySelector('.highlight-word');
+    if (highlightedSpan) {
+      scrollToHighlight(highlightedSpan);
+    }
+  } catch (e) {
+    console.error('Fallback highlighting failed:', e);
+  }
+}
+
+function escapeHTML(str) {
+  return str.replace(/[&<>'"]/g, 
+    tag => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    }[tag]));
+}
+
+function findTextNodeAndPosition(element, charIndex) {
+  if (!element) return { node: null, position: -1 };
   
-  // Create a range to find the exact position
-  const range = document.createRange();
-  range.selectNodeContents(element);
-  
-  let pos = 0;
-  let foundNode = null;
-  let foundOffset = 0;
-  
-  // Walk through the text nodes to find the exact position
   const walker = document.createTreeWalker(
     element,
     NodeFilter.SHOW_TEXT,
@@ -267,36 +306,31 @@ function highlightSpokenWord(event) {
     false
   );
   
+  let currentIndex = 0;
   let node;
+  
   while (node = walker.nextNode()) {
     const nodeLength = node.textContent.length;
-    if (pos + nodeLength > adjustedIndex) {
-      foundNode = node;
-      foundOffset = adjustedIndex - pos;
-      break;
+    if (currentIndex + nodeLength > charIndex) {
+      return {
+        node: node,
+        position: charIndex - currentIndex
+      };
     }
-    pos += nodeLength;
+    currentIndex += nodeLength;
   }
   
-  if (!foundNode) return;
-  
-  // Set the range to the found position
-  range.setStart(foundNode, foundOffset);
-  range.setEnd(foundNode, foundOffset + charLength);
-  
-  // Create highlight span
-  const highlightSpan = document.createElement('span');
-  highlightSpan.className = 'highlight-word';
-  
-  try {
-    // Surround the range with the highlight span
-    range.surroundContents(highlightSpan);
-    
-    // Scroll to the highlighted word
-    scrollToHighlight(highlightSpan);
-  } catch (e) {
-    console.log('Could not highlight word:', e);
+  // Fallback for browsers that might not handle tree walker correctly
+  if (element.nodeType === Node.TEXT_NODE) {
+    if (charIndex <= element.textContent.length) {
+      return {
+        node: element,
+        position: charIndex
+      };
+    }
   }
+  
+  return { node: null, position: -1 };
 }
 
 function scrollToHighlight(element) {
@@ -319,12 +353,11 @@ function removeHighlighting() {
   const highlights = document.querySelectorAll('.highlight-word');
   highlights.forEach(highlight => {
     const parent = highlight.parentNode;
-    if (parent) {
-      parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
-      parent.normalize();
-    }
+    parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
+    parent.normalize();
   });
 }
+
 // Modal functions
 function openModal() {
   const modal = document.getElementById('speech-options-modal');
