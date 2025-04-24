@@ -8,8 +8,11 @@ class StorySpeechSynthesis {
     this.isSpeaking = false;
     this.titleLength = 0;
     this.originLength = 0;
-    this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    this.highlightingMethod = this.isMobile ? 'inlineStyle' : 'range'; // Choose highlighting method
+    
+    // Enhanced mobile detection
+    this.isMobile = this.detectMobile();
+    this.lastHighlightTime = 0;
+    this.highlightDebounce = this.isMobile ? 150 : 50;
 
     // Event handlers
     this.onWordBoundary = null;
@@ -20,14 +23,31 @@ class StorySpeechSynthesis {
     this.init();
   }
 
+  detectMobile() {
+    // More comprehensive mobile detection
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(userAgent);
+    const isTablet = /(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/i.test(userAgent);
+    
+    // Also consider viewport size
+    const hasSmallScreen = window.innerWidth < 768;
+    
+    return isMobile || isTablet || hasSmallScreen;
+  }
+
   init() {
-    // Load available voices
-    this.speechSynthesis.onvoiceschanged = () => this.loadVoices();
+    // Load available voices with retry for mobile
     this.loadVoices();
+    this.speechSynthesis.onvoiceschanged = () => {
+      // Some mobile browsers need this
+      if (this.voices.length === 0) {
+        this.loadVoices();
+      }
+    };
   }
 
   loadVoices() {
-    this.voices = this.speechSynthesis.getVoices();
+    this.voices = this.speechSynthesis.getVoices() || [];
 
     // Sort voices - preferred voices first, then others
     this.voices.sort((a, b) => {
@@ -35,9 +55,9 @@ class StorySpeechSynthesis {
       const bName = b.name.toLowerCase();
 
       const isAPreferred = aName.includes("angelo") || aName.includes("blessica") ||
-                           aName.includes("andrew") || aName.includes("emma");
+                          aName.includes("andrew") || aName.includes("emma");
       const isBPreferred = bName.includes("angelo") || bName.includes("blessica") ||
-                           bName.includes("andrew") || bName.includes("emma");
+                          aName.includes("andrew") || aName.includes("emma");
 
       if (isAPreferred && !isBPreferred) return -1;
       if (!isAPreferred && isBPreferred) return 1;
@@ -47,6 +67,9 @@ class StorySpeechSynthesis {
     // Set default voice to first available voice
     if (this.voices.length > 0) {
       this.currentVoice = this.voices[0];
+    } else if (!this.isMobile) {
+      // On desktop, we can try again if voices aren't loaded
+      setTimeout(() => this.loadVoices(), 1000);
     }
   }
 
@@ -70,7 +93,12 @@ class StorySpeechSynthesis {
     // Set up event handlers
     this.speechUtterance.onboundary = (event) => {
       if (this.onWordBoundary && typeof this.onWordBoundary === "function") {
-        this.onWordBoundary(event);
+        // Debounce highlights on mobile
+        const now = Date.now();
+        if (now - this.lastHighlightTime > this.highlightDebounce) {
+          this.onWordBoundary(event);
+          this.lastHighlightTime = now;
+        }
       }
     };
 
@@ -95,9 +123,15 @@ class StorySpeechSynthesis {
       }
     };
 
-    this.speechSynthesis.speak(this.speechUtterance);
-    this.isSpeaking = true;
+    try {
+      this.speechSynthesis.speak(this.speechUtterance);
+      this.isSpeaking = true;
+    } catch (error) {
+      console.error('Speech synthesis error:', error);
+      this.handleSpeechError(error);
+    }
   }
+
 
   pauseSpeech() {
     if (this.isSpeaking) {
@@ -118,7 +152,6 @@ class StorySpeechSynthesis {
       this.speechSynthesis.cancel();
     }
     this.isSpeaking = false;
-    this.removeHighlighting(); // Ensure highlighting is removed on stop
   }
 
   changeVoice(voiceName) {
@@ -143,15 +176,6 @@ class StorySpeechSynthesis {
 
   isSpeechSupported() {
     return "speechSynthesis" in window;
-  }
-
-  setHighlightingMethod(method) {
-    this.highlightingMethod = method;
-    this.removeHighlighting(); // Clear any existing highlighting
-  }
-
-  getHighlightingMethod() {
-    return this.highlightingMethod;
   }
 
   highlightSpokenWord(event) {
@@ -181,230 +205,168 @@ class StorySpeechSynthesis {
 
     if (!element || !element.firstChild) return;
 
-    if (this.highlightingMethod === 'range') {
-      this.highlightSpokenWordDesktop(element, adjustedIndex, charLength);
-    } else if (this.highlightingMethod === 'inlineStyle') {
-      this.highlightWordInlineStyleMobile(element, adjustedIndex, charLength);
-    } else if (this.highlightingMethod === 'markElement') {
-      this.highlightWordMarkElementMobile(element, adjustedIndex, charLength);
+    // Different handling for mobile vs desktop
+    if (this.isMobile) {
+      this.highlightMobile(element, adjustedIndex, charLength);
     } else {
-      this.boldSpokenWordMobile(element, adjustedIndex, charLength); // Default to bold
+      this.highlightDesktop(element, adjustedIndex, charLength);
     }
   }
 
-  highlightSpokenWordDesktop(element, adjustedIndex, charLength) {
+  highlightDesktop(element, adjustedIndex, charLength) {
     try {
-      const { node, position } = this.findTextNodeAndPosition(element, adjustedIndex);
+      const range = document.createRange();
+      const textNodes = this.getTextNodes(element);
+      let currentPos = 0;
+      let startNode, startOffset, endNode, endOffset;
 
-      if (node && position !== -1) {
-        const range = document.createRange();
-        range.setStart(node, position);
-        range.setEnd(node, position + charLength);
+      for (const node of textNodes) {
+        const nodeLength = node.textContent.length;
+        
+        if (currentPos + nodeLength > adjustedIndex) {
+          startNode = node;
+          startOffset = adjustedIndex - currentPos;
+          
+          if (currentPos + nodeLength >= adjustedIndex + charLength) {
+            endNode = node;
+            endOffset = startOffset + charLength;
+            break;
+          } else {
+            endNode = node;
+            endOffset = nodeLength;
+            charLength -= (nodeLength - startOffset);
+            adjustedIndex += (nodeLength - startOffset);
+          }
+        }
+        currentPos += nodeLength;
+      }
+
+      if (startNode && endNode) {
+        range.setStart(startNode, startOffset);
+        range.setEnd(endNode, endOffset);
 
         const span = document.createElement('span');
         span.className = 'highlight-word';
-
+        
         try {
           range.surroundContents(span);
           this.scrollToHighlight(span);
-          return;
         } catch (e) {
-          console.log('Modern highlighting failed, trying fallback');
-          this.fallbackHighlight(element, adjustedIndex, charLength);
+          console.log('Range surround failed, using fallback');
+          this.highlightFallback(element, adjustedIndex, charLength);
         }
       }
     } catch (e) {
-      console.log('Modern highlighting error:', e);
-      this.fallbackHighlight(element, adjustedIndex, charLength);
+      console.error('Desktop highlighting error:', e);
+      this.highlightFallback(element, adjustedIndex, charLength);
     }
   }
 
-  fallbackHighlight(element, adjustedIndex, charLength) {
+  highlightMobile(element, adjustedIndex, charLength) {
     try {
-      const text = element.textContent || element.innerText;
+      const text = element.textContent;
+      if (adjustedIndex + charLength > text.length) return;
+
+      // Save current scroll position
+      const scrollTop = element.scrollTop;
+      const scrollLeft = element.scrollLeft;
+
+      // Create simple highlight with bold
+      const before = text.substring(0, adjustedIndex);
+      const highlight = text.substring(adjustedIndex, adjustedIndex + charLength);
+      const after = text.substring(adjustedIndex + charLength);
+
+      element.innerHTML = `${this.escapeHTML(before)}<strong class="mobile-highlight">${this.escapeHTML(highlight)}</strong>${this.escapeHTML(after)}`;
+
+      // Restore scroll position
+      element.scrollTop = scrollTop;
+      element.scrollLeft = scrollLeft;
+
+      this.scrollToHighlight(element.querySelector('.mobile-highlight'));
+    } catch (e) {
+      console.error('Mobile highlighting error:', e);
+    }
+  }
+
+  highlightFallback(element, adjustedIndex, charLength) {
+    try {
+      const text = element.textContent;
       if (adjustedIndex + charLength > text.length) return;
 
       const before = text.substring(0, adjustedIndex);
-      const highlighted = text.substring(adjustedIndex, adjustedIndex + charLength);
+      const highlight = text.substring(adjustedIndex, adjustedIndex + charLength);
       const after = text.substring(adjustedIndex + charLength);
 
-      element.innerHTML = `${this.escapeHTML(before)}<span class="highlight-word">${this.escapeHTML(highlighted)}</span>${this.escapeHTML(after)}`;
-
-      const highlightedSpan = element.querySelector('.highlight-word');
-      if (highlightedSpan) {
-        this.scrollToHighlight(highlightedSpan);
-      }
+      element.innerHTML = `${this.escapeHTML(before)}<span class="highlight-fallback">${this.escapeHTML(highlight)}</span>${this.escapeHTML(after)}`;
+      
+      this.scrollToHighlight(element.querySelector('.highlight-fallback'));
     } catch (e) {
-      console.error('Fallback highlighting failed:', e);
-      this.boldSpokenWordMobile(element, adjustedIndex, charLength); // Last resort: bold
+      console.error('Fallback highlighting error:', e);
     }
   }
 
-  highlightWordInlineStyleMobile(element, adjustedIndex, charLength) {
-    try {
-      const text = element.textContent || element.innerText;
-      if (adjustedIndex + charLength > text.length) return;
-
-      const before = text.substring(0, adjustedIndex);
-      const highlighted = text.substring(adjustedIndex, adjustedIndex + charLength);
-      const after = text.substring(adjustedIndex + charLength);
-
-      // Remove previous highlight
-      element.innerHTML = element.innerHTML.replace(/<span class="mobile-highlight">([^<]+)<\/span>/g, '$1');
-
-      // Apply new highlight
-      element.innerHTML = `${this.escapeHTML(before)}<span class="mobile-highlight" style="background-color: yellow; color: black;">${this.escapeHTML(highlighted)}</span>${this.escapeHTML(after)}`;
-
-      const highlightedSpan = element.querySelector('.mobile-highlight');
-      if (highlightedSpan) {
-        this.scrollToHighlight(highlightedSpan);
-      }
-    } catch (e) {
-      console.error('Inline style highlighting failed on mobile:', e);
-      this.boldSpokenWordMobile(element, adjustedIndex, charLength);
-    }
-  }
-
-  highlightWordMarkElementMobile(element, adjustedIndex, charLength) {
-    try {
-      const text = element.textContent || element.innerText;
-      if (adjustedIndex + charLength > text.length) return;
-
-      const before = text.substring(0, adjustedIndex);
-      const highlighted = text.substring(adjustedIndex, adjustedIndex + charLength);
-      const after = text.substring(adjustedIndex + charLength);
-
-      // Remove previous highlight
-      element.innerHTML = element.innerHTML.replace(/<mark class="mobile-highlight">([^<]+)<\/mark>/g, '$1');
-
-      // Apply new highlight
-      element.innerHTML = `${this.escapeHTML(before)}<mark class="mobile-highlight" style="background-color: yellow; color: black;">${this.escapeHTML(highlighted)}</mark>${this.escapeHTML(after)}`;
-
-      const highlightedMark = element.querySelector('mark.mobile-highlight');
-      if (highlightedMark) {
-        this.scrollToHighlight(highlightedMark);
-      }
-    } catch (e) {
-      console.error('<mark> element highlighting failed on mobile:', e);
-      this.boldSpokenWordMobile(element, adjustedIndex, charLength);
-    }
-  }
-
-  boldSpokenWordMobile(element, adjustedIndex, charLength) {
-    try {
-      const text = element.textContent || element.innerText;
-      if (adjustedIndex + charLength > text.length) return;
-
-      const before = text.substring(0, adjustedIndex);
-      const highlighted = text.substring(adjustedIndex, adjustedIndex + charLength);
-      const after = text.substring(adjustedIndex + charLength);
-
-      // Save the current scroll position
-      const scrollPosition = element.scrollTop;
-
-      // Use bold instead of highlight for mobile
-      element.innerHTML = `${this.escapeHTML(before)}<strong class="mobile-current-word">${this.escapeHTML(highlighted)}</strong>${this.escapeHTML(after)}`;
-
-      // Restore the scroll position
-      element.scrollTop = scrollPosition;
-
-      const boldedWord = element.querySelector('.mobile-current-word');
-      if (boldedWord) {
-        this.scrollToHighlight(boldedWord);
-      }
-    } catch (e) {
-      console.error('Mobile word bolding failed:', e);
-    }
-  }
-
-  escapeHTML(str) {
-    return str.replace(/[&<>'"]/g,
-      tag => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        "'": '&#39;',
-        '"': '&quot;'
-      }[tag]));
-  }
-
-  findTextNodeAndPosition(element, charIndex) {
-    if (!element) return { node: null, position: -1 };
-
+  getTextNodes(element) {
     const walker = document.createTreeWalker(
       element,
       NodeFilter.SHOW_TEXT,
       null,
       false
     );
-
-    let currentIndex = 0;
+    
+    const textNodes = [];
     let node;
-
     while (node = walker.nextNode()) {
-      const nodeLength = node.textContent.length;
-      if (currentIndex + nodeLength > charIndex) {
-        return {
-          node: node,
-          position: charIndex - currentIndex
-        };
-      }
-      currentIndex += nodeLength;
+      textNodes.push(node);
     }
-
-    // Fallback for browsers that might not handle tree walker correctly
-    if (element.nodeType === Node.TEXT_NODE) {
-      if (charIndex <= element.textContent.length) {
-        return {
-          node: element,
-          position: charIndex
-        };
-      }
-    }
-
-    return { node: null, position: -1 };
+    return textNodes;
   }
 
   scrollToHighlight(element) {
+    if (!element) return;
+    
     const storyContainer = document.getElementById('storyContainer');
     if (!storyContainer) return;
 
-    const containerRect = storyContainer.getBoundingClientRect();
-    const elementRect = element.getBoundingClientRect();
-
-    const elementTop = elementRect.top - containerRect.top;
-    const elementBottom = elementRect.bottom - containerRect.top;
-    const containerHeight = containerRect.height;
-
-    if (elementTop < storyContainer.scrollTop) {
-      storyContainer.scrollTop = elementTop - 20;
-    } else if (elementBottom > storyContainer.scrollTop + containerHeight) {
-      storyContainer.scrollTop = elementBottom - containerHeight + 20;
-    }
+    // Smooth scroll for better mobile experience
+    element.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'nearest'
+    });
   }
 
   removeHighlighting() {
-    const contentElement = document.getElementById('story-content');
-    const titleElement = document.getElementById('story-title');
-    const originElement = document.getElementById('story-origin');
+    // Remove all types of highlights
+    const highlights = [
+      ...document.querySelectorAll('.highlight-word'),
+      ...document.querySelectorAll('.mobile-highlight'),
+      ...document.querySelectorAll('.highlight-fallback')
+    ];
+    
+    highlights.forEach(highlight => {
+      const parent = highlight.parentNode;
+      if (parent) {
+        parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
+        parent.normalize();
+      }
+    });
+  }
 
-    if (contentElement) {
-      contentElement.innerHTML = contentElement.innerHTML.replace(/<span class="highlight-word">([^<]+)<\/span>/g, '$1');
-      contentElement.innerHTML = contentElement.innerHTML.replace(/<strong class="mobile-current-word">([^<]+)<\/strong>/g, '$1');
-      contentElement.innerHTML = contentElement.innerHTML.replace(/<span class="mobile-highlight" style="background-color: yellow; color: black;">([^<]+)<\/span>/g, '$1');
-      contentElement.innerHTML = contentElement.innerHTML.replace(/<mark class="mobile-highlight" style="background-color: yellow; color: black;">([^<]+)<\/mark>/g, '$1');
-    }
-    if (titleElement) {
-      titleElement.innerHTML = titleElement.innerHTML.replace(/<span class="highlight-word">([^<]+)<\/span>/g, '$1');
-      titleElement.innerHTML = titleElement.innerHTML.replace(/<strong class="mobile-current-word">([^<]+)<\/strong>/g, '$1');
-      titleElement.innerHTML = titleElement.innerHTML.replace(/<span class="mobile-highlight" style="background-color: yellow; color: black;">([^<]+)<\/span>/g, '$1');
-      titleElement.innerHTML = titleElement.innerHTML.replace(/<mark class="mobile-highlight" style="background-color: yellow; color: black;">([^<]+)<\/mark>/g, '$1');
-    }
-    if (originElement) {
-      originElement.innerHTML = originElement.innerHTML.replace(/<span class="highlight-word">([^<]+)<\/span>/g, '$1');
-      originElement.innerHTML = originElement.innerHTML.replace(/<strong class="mobile-current-word">([^<]+)<\/strong>/g, '$1');
-      originElement.innerHTML = originElement.innerHTML.replace(/<span class="mobile-highlight" style="background-color: yellow; color: black;">([^<]+)<\/span>/g, '$1');
-      originElement.innerHTML = originElement.innerHTML.replace(/<mark class="mobile-highlight" style="background-color: yellow; color: black;">([^<]+)<\/mark>/g, '$1');
+  escapeHTML(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  handleSpeechError(error) {
+    console.error('Speech Error:', error);
+    this.isSpeaking = false;
+    
+    if (this.onSpeechError) {
+      this.onSpeechError({
+        error: 'speech-error',
+        message: error.message || 'Speech synthesis failed'
+      });
     }
   }
 }
