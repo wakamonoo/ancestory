@@ -8,12 +8,6 @@ class StorySpeechSynthesis {
     this.isSpeaking = false;
     this.titleLength = 0;
     this.originLength = 0;
-    this.preferredVoices = [
-      { name: "Angelo", lang: "fil-PH" },
-      { name: "Blessica", lang: "fil-PH" },
-      { name: "Andrew", lang: "en-US" },
-      { name: "Emma", lang: "en-US" }
-    ];
 
     // Event handlers
     this.onWordBoundary = null;
@@ -33,59 +27,25 @@ class StorySpeechSynthesis {
   loadVoices() {
     this.voices = this.speechSynthesis.getVoices();
     
-    // Filter voices to only include English and Filipino
-    this.voices = this.voices.filter(voice => 
-      voice.lang.startsWith('en-') || voice.lang.startsWith('fil-')
-    );
-    
     // Sort voices - preferred voices first, then others
     this.voices.sort((a, b) => {
       const aName = a.name.toLowerCase();
       const bName = b.name.toLowerCase();
       
-      // Check if voice is in our preferred list
-      const isAPreferred = this.preferredVoices.some(v => 
-        aName.includes(v.name.toLowerCase()) && a.lang === v.lang
-      );
-      const isBPreferred = this.preferredVoices.some(v => 
-        bName.includes(v.name.toLowerCase()) && b.lang === v.lang
-      );
+      const isAPreferred = aName.includes("angelo") || aName.includes("blessica") || 
+                           aName.includes("andrew") || aName.includes("emma");
+      const isBPreferred = bName.includes("angelo") || bName.includes("blessica") || 
+                           bName.includes("andrew") || bName.includes("emma");
       
       if (isAPreferred && !isBPreferred) return -1;
       if (!isAPreferred && isBPreferred) return 1;
-      
-      // Then sort by language preference (Filipino first)
-      if (a.lang.startsWith('fil-') && !b.lang.startsWith('fil-')) return -1;
-      if (!a.lang.startsWith('fil-') && b.lang.startsWith('fil-')) return 1;
-      
       return 0;
     });
   
-    // Set default voice to first available preferred voice or first available
+    // Set default voice to first available voice
     if (this.voices.length > 0) {
-      const preferred = this.voices.find(voice => 
-        this.preferredVoices.some(v => 
-          voice.name.toLowerCase().includes(v.name.toLowerCase()) && 
-          voice.lang === v.lang
-        )
-      );
-      this.currentVoice = preferred || this.voices[0];
+      this.currentVoice = this.voices[0];
     }
-  }
-
-  checkVoiceSupport() {
-    // Check if any preferred voices are available
-    const hasPreferred = this.voices.some(voice => 
-      this.preferredVoices.some(v => 
-        voice.name.toLowerCase().includes(v.name.toLowerCase()) && 
-        voice.lang === v.lang
-      )
-      );
-    
-    return {
-      hasPreferred,
-      supportedVoices: this.voices
-    };
   }
 
   startSpeech(title, origin, contentElement) {
