@@ -238,12 +238,13 @@ function highlightSpokenWord(event) {
   
   removeHighlighting();
   
-  // Fallback for browsers that don't support range highlighting well
   if (!element || !element.firstChild) return;
   
-  // Try modern approach first
+  // Create a temporary clone for manipulation
+  const tempClone = element.cloneNode(true);
+  
   try {
-    const { node, position } = findTextNodeAndPosition(element, adjustedIndex);
+    const { node, position } = findTextNodeAndPosition(tempClone, adjustedIndex);
     
     if (node && position !== -1) {
       const range = document.createRange();
@@ -255,7 +256,14 @@ function highlightSpokenWord(event) {
       
       try {
         range.surroundContents(span);
-        scrollToHighlight(span);
+        
+        // Only update the original element if the manipulation succeeded
+        element.innerHTML = tempClone.innerHTML;
+        
+        const highlightedSpan = element.querySelector('.highlight-word');
+        if (highlightedSpan) {
+          scrollToHighlight(highlightedSpan);
+        }
         return;
       } catch (e) {
         console.log('Modern highlighting failed, trying fallback');
@@ -265,20 +273,50 @@ function highlightSpokenWord(event) {
     console.log('Modern highlighting error:', e);
   }
   
-  // Fallback approach for browsers with limited range support
+  // Fallback approach that preserves formatting
   try {
-    const text = element.textContent || element.innerText;
-    if (adjustedIndex + charLength > text.length) return;
+    const textNodes = [];
+    const walker = document.createTreeWalker(
+      tempClone,
+      NodeFilter.SHOW_TEXT,
+      null,
+      false
+    );
     
-    const before = text.substring(0, adjustedIndex);
-    const highlighted = text.substring(adjustedIndex, adjustedIndex + charLength);
-    const after = text.substring(adjustedIndex + charLength);
+    let node;
+    while (node = walker.nextNode()) {
+      textNodes.push(node);
+    }
     
-    element.innerHTML = `${escapeHTML(before)}<span class="highlight-word">${escapeHTML(highlighted)}</span>${escapeHTML(after)}`;
+    let currentPos = 0;
+    let foundNode = null;
+    let foundPos = 0;
     
-    const highlightedSpan = element.querySelector('.highlight-word');
-    if (highlightedSpan) {
-      scrollToHighlight(highlightedSpan);
+    for (const node of textNodes) {
+      const nodeLength = node.textContent.length;
+      if (currentPos + nodeLength > adjustedIndex) {
+        foundNode = node;
+        foundPos = adjustedIndex - currentPos;
+        break;
+      }
+      currentPos += nodeLength;
+    }
+    
+    if (foundNode) {
+      const range = document.createRange();
+      range.setStart(foundNode, foundPos);
+      range.setEnd(foundNode, foundPos + charLength);
+      
+      const span = document.createElement('span');
+      span.className = 'highlight-word';
+      
+      range.surroundContents(span);
+      element.innerHTML = tempClone.innerHTML;
+      
+      const highlightedSpan = element.querySelector('.highlight-word');
+      if (highlightedSpan) {
+        scrollToHighlight(highlightedSpan);
+      }
     }
   } catch (e) {
     console.error('Fallback highlighting failed:', e);
@@ -352,9 +390,12 @@ function scrollToHighlight(element) {
 function removeHighlighting() {
   const highlights = document.querySelectorAll('.highlight-word');
   highlights.forEach(highlight => {
+    // Replace only the highlight span with its text content
     const parent = highlight.parentNode;
-    parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
-    parent.normalize();
+    if (parent) {
+      parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
+      parent.normalize(); // Merge adjacent text nodes
+    }
   });
 }
 
