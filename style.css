@@ -896,7 +896,6 @@ nav ul li a:hover {
 
 .reaction-options.show {
   display: flex;
-  animation: fadeInUp 0.3s ease-out;
 }
 
 .reaction-option {
@@ -910,16 +909,6 @@ nav ul li a:hover {
   transform: scale(1.3);
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-}
 /* Comment section */
 .comment-section {
   margin-top: 15px;
