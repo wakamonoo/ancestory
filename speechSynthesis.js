@@ -8,6 +8,7 @@ class StorySpeechSynthesis {
     this.isSpeaking = false;
     this.titleLength = 0;
     this.originLength = 0;
+    this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     // Event handlers
     this.onWordBoundary = null;

@@ -1,4 +1,3 @@
-// storyDetail.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getFirestore,
@@ -159,13 +158,8 @@ function startReadingStory() {
   const origin = document.getElementById('story-origin').textContent.replace('Origin:', '').trim();
   const contentElement = document.getElementById('story-content');
   
-  // Clone the content element for manipulation
-  const contentClone = contentElement.cloneNode(true);
-  contentElement.parentNode.replaceChild(contentClone, contentElement);
-  contentClone.id = 'story-content';
-  
   try {
-    speechSynthesizer.startSpeech(title, origin, contentClone);
+    speechSynthesizer.startSpeech(title, origin, contentElement);
     updateSpeechUI(true);
   } catch (error) {
     console.error('Error starting speech:', error);
@@ -238,9 +232,19 @@ function highlightSpokenWord(event) {
   
   removeHighlighting();
   
-  // Fallback for browsers that don't support range highlighting well
   if (!element || !element.firstChild) return;
   
+  // Different handling for mobile vs desktop
+  if (speechSynthesizer.isMobile) {
+    // Mobile: use bolding instead of highlighting
+    boldSpokenWordMobile(element, adjustedIndex, charLength);
+  } else {
+    // Desktop: use highlighting with proper range selection
+    highlightSpokenWordDesktop(element, adjustedIndex, charLength);
+  }
+}
+
+function highlightSpokenWordDesktop(element, adjustedIndex, charLength) {
   // Try modern approach first
   try {
     const { node, position } = findTextNodeAndPosition(element, adjustedIndex);
@@ -282,6 +286,33 @@ function highlightSpokenWord(event) {
     }
   } catch (e) {
     console.error('Fallback highlighting failed:', e);
+  }
+}
+
+function boldSpokenWordMobile(element, adjustedIndex, charLength) {
+  try {
+    const text = element.textContent || element.innerText;
+    if (adjustedIndex + charLength > text.length) return;
+    
+    const before = text.substring(0, adjustedIndex);
+    const highlighted = text.substring(adjustedIndex, adjustedIndex + charLength);
+    const after = text.substring(adjustedIndex + charLength);
+    
+    // Save the current scroll position
+    const scrollPosition = element.scrollTop;
+    
+    // Use bold instead of highlight for mobile
+    element.innerHTML = `${escapeHTML(before)}<strong class="mobile-current-word">${escapeHTML(highlighted)}</strong>${escapeHTML(after)}`;
+    
+    // Restore the scroll position
+    element.scrollTop = scrollPosition;
+    
+    const boldedWord = element.querySelector('.mobile-current-word');
+    if (boldedWord) {
+      scrollToHighlight(boldedWord);
+    }
+  } catch (e) {
+    console.error('Mobile word bolding failed:', e);
   }
 }
 
@@ -335,6 +366,8 @@ function findTextNodeAndPosition(element, charIndex) {
 
 function scrollToHighlight(element) {
   const storyContainer = document.getElementById('storyContainer');
+  if (!storyContainer) return;
+  
   const containerRect = storyContainer.getBoundingClientRect();
   const elementRect = element.getBoundingClientRect();
   
@@ -350,10 +383,19 @@ function scrollToHighlight(element) {
 }
 
 function removeHighlighting() {
+  // Remove highlight spans (desktop)
   const highlights = document.querySelectorAll('.highlight-word');
   highlights.forEach(highlight => {
     const parent = highlight.parentNode;
     parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
+    parent.normalize();
+  });
+  
+  // Remove bold spans (mobile)
+  const boldWords = document.querySelectorAll('.mobile-current-word');
+  boldWords.forEach(boldWord => {
+    const parent = boldWord.parentNode;
+    parent.replaceChild(document.createTextNode(boldWord.textContent), boldWord);
     parent.normalize();
   });
 }
@@ -403,6 +445,20 @@ function closeModal() {
   document.getElementById('speech-options-modal').style.display = 'none';
 }
 
+function updateSpeechUI(isSpeaking) {
+  const speakBtn = document.getElementById('speak-btn');
+  const stopBtn = document.getElementById('stop-speech-btn');
+  
+  if (isSpeaking) {
+    speakBtn.style.display = 'none';
+    stopBtn.style.display = 'flex';
+    speakBtn.querySelector('span').textContent = 'Pause';
+  } else {
+    speakBtn.style.display = 'flex';
+    stopBtn.style.display = 'none';
+    speakBtn.querySelector('span').textContent = 'Listen';
+  }
+}
 function updateSpeechUI(isSpeaking) {
   const speakBtn = document.getElementById('speak-btn');
   const stopBtn = document.getElementById('stop-speech-btn');
