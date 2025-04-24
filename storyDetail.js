@@ -241,9 +241,34 @@ function highlightSpokenWord(event) {
   
   removeHighlighting();
   
+  // Fallback for browsers that don't support range highlighting well
   if (!element || !element.firstChild) return;
   
-  // Mobile-friendly highlighting approach
+  // Try modern approach first
+  try {
+    const { node, position } = findTextNodeAndPosition(element, adjustedIndex);
+    
+    if (node && position !== -1) {
+      const range = document.createRange();
+      range.setStart(node, position);
+      range.setEnd(node, position + charLength);
+      
+      const span = document.createElement('span');
+      span.className = 'highlight-word';
+      
+      try {
+        range.surroundContents(span);
+        scrollToHighlight(span);
+        return;
+      } catch (e) {
+        console.log('Modern highlighting failed, trying fallback');
+      }
+    }
+  } catch (e) {
+    console.log('Modern highlighting error:', e);
+  }
+  
+  // Fallback approach for browsers with limited range support
   try {
     const text = element.textContent || element.innerText;
     if (adjustedIndex + charLength > text.length) return;
@@ -252,20 +277,14 @@ function highlightSpokenWord(event) {
     const highlighted = text.substring(adjustedIndex, adjustedIndex + charLength);
     const after = text.substring(adjustedIndex + charLength);
     
-    // Use innerHTML for mobile compatibility
     element.innerHTML = `${escapeHTML(before)}<span class="highlight-word">${escapeHTML(highlighted)}</span>${escapeHTML(after)}`;
     
-    // Scroll to highlight
     const highlightedSpan = element.querySelector('.highlight-word');
     if (highlightedSpan) {
-      highlightedSpan.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-        inline: 'nearest'
-      });
+      scrollToHighlight(highlightedSpan);
     }
   } catch (e) {
-    console.error('Highlighting failed:', e);
+    console.error('Fallback highlighting failed:', e);
   }
 }
 
@@ -278,36 +297,6 @@ function escapeHTML(str) {
       "'": '&#39;',
       '"': '&quot;'
     }[tag]));
-}
-
-function startReadingStory() {
-  const title = document.getElementById('story-title').textContent;
-  const origin = document.getElementById('story-origin').textContent.replace('Origin:', '').trim();
-  const contentElement = document.getElementById('story-content');
-  
-  // Clone the content element for manipulation
-  const contentClone = contentElement.cloneNode(true);
-  contentElement.parentNode.replaceChild(contentClone, contentElement);
-  contentClone.id = 'story-content';
-  
-  try {
-    speechSynthesizer.startSpeech(title, origin, contentClone);
-    updateSpeechUI(true);
-  } catch (error) {
-    console.error('Error starting speech:', error);
-    Swal.fire({
-      title: "Voice Not Supported",
-      text: "The selected voice is not supported on your device/browser. Please try a different voice.",
-      icon: "error",
-      iconColor: "#20462f",
-      confirmButtonText: "Okay",
-      background: "#D29F80",
-      color: "#20462f",
-      confirmButtonColor: "#C09779",
-    }).then(() => {
-      openModal(); // Reopen modal to select different voice
-    });
-  }
 }
 
 function findTextNodeAndPosition(element, charIndex) {
@@ -377,9 +366,6 @@ function openModal() {
   const modal = document.getElementById('speech-options-modal');
   modal.style.display = 'block';
   
-  // Check voice support
-  const voiceSupport = speechSynthesizer.checkVoiceSupport();
-  
   // Populate voices
   const voiceSelect = document.getElementById('voice-select-modal');
   voiceSelect.innerHTML = '';
@@ -389,35 +375,23 @@ function openModal() {
     let displayName = voice.name;
     
     // Format preferred voices nicely
-    const isPreferred = speechSynthesizer.preferredVoices.some(v => 
-      voice.name.toLowerCase().includes(v.name.toLowerCase()) && 
-      voice.lang === v.lang
-    );
-    
-    if (isPreferred) {
-      // Format preferred voices
-      if (voice.name.toLowerCase().includes('angelo')) displayName = "Angelo (Filipino)";
-      else if (voice.name.toLowerCase().includes('blessica')) displayName = "Blessica (Filipino)";
-      else if (voice.name.toLowerCase().includes('andrew')) displayName = "Andrew (English)";
-      else if (voice.name.toLowerCase().includes('emma')) displayName = "Emma (English)";
-    } else {
-      // Format non-preferred voices
-      if (voice.lang.startsWith('fil-')) displayName = `${voice.name} (Filipino)`;
-      else if (voice.lang.startsWith('en-')) displayName = `${voice.name} (English)`;
-    }
+    if (voice.name.toLowerCase().includes('angelo')) displayName = "Angelo (Filipino)";
+    else if (voice.name.toLowerCase().includes('blessica')) displayName = "Blessica (Filipino)";
+    else if (voice.name.toLowerCase().includes('andrew')) displayName = "Andrew (English)";
+    else if (voice.name.toLowerCase().includes('emma')) displayName = "Emma (English)";
     
     option.textContent = displayName;
     option.setAttribute('data-name', voice.name);
     option.setAttribute('data-lang', voice.lang);
     
     // Mark preferred voices
-    if (isPreferred) {
+    if (displayName !== voice.name) {
       option.style.fontWeight = 'bold';
     }
     
     voiceSelect.appendChild(option);
     
-    if (voice.name === speechSynthesizer.getCurrentVoice()?.name) {
+    if (voice === speechSynthesizer.getCurrentVoice()) {
       option.selected = true;
     }
   });
@@ -426,17 +400,10 @@ function openModal() {
   const rateControl = document.getElementById('rate-control-modal');
   rateControl.value = speechSynthesizer.getCurrentRate();
   document.getElementById('rate-value').textContent = `${speechSynthesizer.getCurrentRate().toFixed(1)}x`;
-  
-  // Show warning if preferred voices not available
-  if (!voiceSupport.hasPreferred) {
-    const warning = document.createElement('div');
-    warning.className = 'voice-warning';
-    warning.innerHTML = `
-      <i class="fas fa-exclamation-triangle"></i>
-      <span>Preferred voices not available on this device. Using alternative voices.</span>
-    `;
-    voiceSelect.parentNode.insertBefore(warning, voiceSelect.nextSibling);
-  }
+}
+
+function closeModal() {
+  document.getElementById('speech-options-modal').style.display = 'none';
 }
 
 function updateSpeechUI(isSpeaking) {
