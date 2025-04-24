@@ -1148,4 +1148,4 @@ document.addEventListener("DOMContentLoaded", () => {
       postComment(commentInput.value.trim());
     }
   });
-});z
+});
