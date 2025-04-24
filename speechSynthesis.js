@@ -79,6 +79,7 @@ class StorySpeechSynthesis {
       this.preferredVoices.some(v => 
         voice.name.toLowerCase().includes(v.name.toLowerCase()) && 
         voice.lang === v.lang
+      )
       );
     
     return {
