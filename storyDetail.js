@@ -123,34 +123,45 @@ function setupSpeechUI() {
   const speakBtn = document.getElementById('speak-btn');
   const stopBtn = document.getElementById('stop-speech-btn');
   
-  speakBtn.addEventListener('click', toggleSpeech);
+  // Check for mobile devices
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
+  // Different UI for mobile
+  if (isMobile) {
+    document.getElementById('speech-controls').style.margin = '10px auto';
+    document.getElementById('speak-btn').style.padding = '10px 20px';
+    document.getElementById('stop-speech-btn').style.padding = '10px 20px';
+  }
+  
+  speakBtn.addEventListener('click', () => {
+    if (isMobile) {
+      // On mobile, show options immediately without modal
+      startReadingStory();
+    } else {
+      openModal();
+    }
+  });
+  
   stopBtn.addEventListener('click', stopSpeech);
   
-  // Modal controls
-  document.getElementById('voice-select-modal').addEventListener('change', (e) => {
-    speechSynthesizer.changeVoice(e.target.selectedOptions[0].getAttribute('data-name'));
-  });
-  
-  document.getElementById('rate-control-modal').addEventListener('input', (e) => {
-    const rate = parseFloat(e.target.value);
-    speechSynthesizer.changeRate(rate);
-    document.getElementById('rate-value').textContent = `${rate.toFixed(1)}x`;
-  });
-  
-  document.getElementById('apply-speech-options').addEventListener('click', () => {
-    closeModal();
-    startReadingStory();
-  });
-  
-  document.querySelector('.close-modal').addEventListener('click', closeModal);
-}
-
-function toggleSpeech() {
-  if (speechSynthesizer.isSpeaking) {
-    speechSynthesizer.pauseSpeech();
-    updateSpeechUI(false);
-  } else {
-    openModal();
+  // Only show modal on desktop
+  if (!isMobile) {
+    document.getElementById('voice-select-modal').addEventListener('change', (e) => {
+      speechSynthesizer.changeVoice(e.target.selectedOptions[0].getAttribute('data-name'));
+    });
+    
+    document.getElementById('rate-control-modal').addEventListener('input', (e) => {
+      const rate = parseFloat(e.target.value);
+      speechSynthesizer.changeRate(rate);
+      document.getElementById('rate-value').textContent = `${rate.toFixed(1)}x`;
+    });
+    
+    document.getElementById('apply-speech-options').addEventListener('click', () => {
+      closeModal();
+      startReadingStory();
+    });
+    
+    document.querySelector('.close-modal').addEventListener('click', closeModal);
   }
 }
 
@@ -256,7 +267,6 @@ function highlightSpokenWord(event) {
     }
   }
 }
-
 
 function findTextNodeAndPosition(element, charIndex) {
   const walker = document.createTreeWalker(
@@ -1148,4 +1158,4 @@ document.addEventListener("DOMContentLoaded", () => {
       postComment(commentInput.value.trim());
     }
   });
-});
+});z
