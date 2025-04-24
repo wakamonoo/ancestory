@@ -238,34 +238,9 @@ function highlightSpokenWord(event) {
   
   removeHighlighting();
   
-  // Fallback for browsers that don't support range highlighting well
   if (!element || !element.firstChild) return;
   
-  // Try modern approach first
-  try {
-    const { node, position } = findTextNodeAndPosition(element, adjustedIndex);
-    
-    if (node && position !== -1) {
-      const range = document.createRange();
-      range.setStart(node, position);
-      range.setEnd(node, position + charLength);
-      
-      const span = document.createElement('span');
-      span.className = 'highlight-word';
-      
-      try {
-        range.surroundContents(span);
-        scrollToHighlight(span);
-        return;
-      } catch (e) {
-        console.log('Modern highlighting failed, trying fallback');
-      }
-    }
-  } catch (e) {
-    console.log('Modern highlighting error:', e);
-  }
-  
-  // Fallback approach for browsers with limited range support
+  // Mobile-friendly highlighting approach
   try {
     const text = element.textContent || element.innerText;
     if (adjustedIndex + charLength > text.length) return;
@@ -274,14 +249,20 @@ function highlightSpokenWord(event) {
     const highlighted = text.substring(adjustedIndex, adjustedIndex + charLength);
     const after = text.substring(adjustedIndex + charLength);
     
+    // Use innerHTML for mobile compatibility
     element.innerHTML = `${escapeHTML(before)}<span class="highlight-word">${escapeHTML(highlighted)}</span>${escapeHTML(after)}`;
     
+    // Scroll to highlight
     const highlightedSpan = element.querySelector('.highlight-word');
     if (highlightedSpan) {
-      scrollToHighlight(highlightedSpan);
+      highlightedSpan.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'nearest'
+      });
     }
   } catch (e) {
-    console.error('Fallback highlighting failed:', e);
+    console.error('Highlighting failed:', e);
   }
 }
 
@@ -294,59 +275,6 @@ function escapeHTML(str) {
       "'": '&#39;',
       '"': '&quot;'
     }[tag]));
-}
-
-function findTextNodeAndPosition(element, charIndex) {
-  if (!element) return { node: null, position: -1 };
-  
-  const walker = document.createTreeWalker(
-    element,
-    NodeFilter.SHOW_TEXT,
-    null,
-    false
-  );
-  
-  let currentIndex = 0;
-  let node;
-  
-  while (node = walker.nextNode()) {
-    const nodeLength = node.textContent.length;
-    if (currentIndex + nodeLength > charIndex) {
-      return {
-        node: node,
-        position: charIndex - currentIndex
-      };
-    }
-    currentIndex += nodeLength;
-  }
-  
-  // Fallback for browsers that might not handle tree walker correctly
-  if (element.nodeType === Node.TEXT_NODE) {
-    if (charIndex <= element.textContent.length) {
-      return {
-        node: element,
-        position: charIndex
-      };
-    }
-  }
-  
-  return { node: null, position: -1 };
-}
-
-function scrollToHighlight(element) {
-  const storyContainer = document.getElementById('storyContainer');
-  const containerRect = storyContainer.getBoundingClientRect();
-  const elementRect = element.getBoundingClientRect();
-  
-  const elementTop = elementRect.top - containerRect.top;
-  const elementBottom = elementRect.bottom - containerRect.top;
-  const containerHeight = containerRect.height;
-  
-  if (elementTop < storyContainer.scrollTop) {
-    storyContainer.scrollTop = elementTop - 20;
-  } else if (elementBottom > storyContainer.scrollTop + containerHeight) {
-    storyContainer.scrollTop = elementBottom - containerHeight + 20;
-  }
 }
 
 function removeHighlighting() {
