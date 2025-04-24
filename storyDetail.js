@@ -121,42 +121,43 @@ async function fetchStoryDetails() {
   loadComments();
 }
 
+// Updated setupSpeechUI function
 function setupSpeechUI() {
   const speakBtn = document.getElementById('speak-btn');
   const stopBtn = document.getElementById('stop-speech-btn');
-
+  
   speakBtn.addEventListener('click', toggleSpeech);
   stopBtn.addEventListener('click', stopSpeech);
-
+  
   // Modal controls
   const voiceSelect = document.getElementById('voice-select-modal');
   voiceSelect.addEventListener('change', (e) => {
     const selectedOption = e.target.selectedOptions[0];
     const voiceName = selectedOption.getAttribute('data-name');
     const voiceLang = selectedOption.getAttribute('data-lang');
-
-    // Find the exact voice match
+    
+    // Find voice by name and lang to ensure exact match
     const voice = speechSynthesizer.getVoices().find(v => 
       v.name === voiceName && v.lang === voiceLang
     );
-
+    
     if (voice) {
       speechSynthesizer.changeVoice(voice.name);
     }
   });
-
+  
   const rateControl = document.getElementById('rate-control-modal');
   rateControl.addEventListener('input', (e) => {
     const rate = parseFloat(e.target.value);
     speechSynthesizer.changeRate(rate);
     document.getElementById('rate-value').textContent = `${rate.toFixed(1)}x`;
   });
-
+  
   document.getElementById('apply-speech-options').addEventListener('click', () => {
     closeModal();
     startReadingStory();
   });
-
+  
   document.querySelector('.close-modal').addEventListener('click', closeModal);
 }
 
