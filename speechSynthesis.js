@@ -1,4 +1,3 @@
-// speechSynthesis.js
 class StorySpeechSynthesis {
   constructor() {
     this.speechSynthesis = window.speechSynthesis;
@@ -7,6 +6,8 @@ class StorySpeechSynthesis {
     this.currentVoice = null;
     this.speechOptions = { rate: 1 };
     this.isSpeaking = false;
+    this.titleLength = 0;
+    this.originLength = 0;
     
     // Event handlers
     this.onWordBoundary = null;
@@ -26,26 +27,37 @@ class StorySpeechSynthesis {
   loadVoices() {
     this.voices = this.speechSynthesis.getVoices();
     
-    // Filter for English and Filipino voices
-    this.voices = this.voices.filter(voice => 
-      voice.lang.includes('en-') || voice.lang.includes('fil-') || voice.lang.includes('tl-')
-    );
+    // Filter for specific voices only
+    this.voices = this.voices.filter(voice => {
+      const voiceName = voice.name.toLowerCase();
+      return (
+        voiceName.includes('angelo') || 
+        voiceName.includes('blessica') ||
+        voiceName.includes('andrew') ||
+        voiceName.includes('emma')
+      );
+    });
     
     // Set default voice if available
     if (this.voices.length > 0) {
-      this.currentVoice = this.voices.find(voice => 
-        voice.lang.includes('en-US') || voice.lang.includes('fil-PH') || voice.lang.includes('tl-PH')
-      ) || this.voices[0];
+      this.currentVoice = this.voices[0];
     }
   }
 
   startSpeech(title, origin, contentElement) {
-    const content = contentElement.textContent;
-    const textToRead = `${title}. From ${origin}. ${content}`;
+    const titleText = `${title}. `;
+    const originText = `From ${origin}. `;
+    const contentText = contentElement.textContent;
+    
+    // Calculate lengths for each section
+    this.titleLength = titleText.length;
+    this.originLength = originText.length;
+    
+    const fullText = titleText + originText + contentText;
     
     this.stopSpeech(); // Stop any current speech
     
-    this.speechUtterance = new SpeechSynthesisUtterance(textToRead);
+    this.speechUtterance = new SpeechSynthesisUtterance(fullText);
     this.speechUtterance.voice = this.currentVoice;
     this.speechUtterance.rate = this.speechOptions.rate;
     

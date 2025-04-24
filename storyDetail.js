@@ -197,17 +197,32 @@ function onSpeechError(event) {
   removeHighlighting();
 }
 
-// Highlighting functions
 function highlightSpokenWord(event) {
   if (event.name !== 'word') return;
   
   const charIndex = event.charIndex;
   const charLength = event.charLength;
-  const storyContent = document.getElementById('story-content');
+  
+  // Determine which section is being spoken
+  let element, adjustedIndex;
+  
+  if (charIndex < speechSynthesizer.titleLength) {
+    // Title section
+    element = document.getElementById('story-title');
+    adjustedIndex = charIndex;
+  } else if (charIndex < speechSynthesizer.titleLength + speechSynthesizer.originLength) {
+    // Origin section
+    element = document.getElementById('story-origin');
+    adjustedIndex = charIndex - speechSynthesizer.titleLength;
+  } else {
+    // Main content section
+    element = document.getElementById('story-content');
+    adjustedIndex = charIndex - (speechSynthesizer.titleLength + speechSynthesizer.originLength);
+  }
   
   removeHighlighting();
   
-  const { node, position } = findTextNodeAndPosition(storyContent, charIndex);
+  const { node, position } = findTextNodeAndPosition(element, adjustedIndex);
   
   if (node && position !== -1) {
     try {
@@ -287,7 +302,14 @@ function openModal() {
   
   speechSynthesizer.getVoices().forEach(voice => {
     const option = document.createElement('option');
-    option.textContent = `${voice.name} (${voice.lang})`;
+    // Format voice name nicely
+    let displayName = voice.name;
+    if (voice.name.toLowerCase().includes('angelo')) displayName = "Angelo (Filipino)";
+    else if (voice.name.toLowerCase().includes('blessica')) displayName = "Blessica (Filipino)";
+    else if (voice.name.toLowerCase().includes('andrew')) displayName = "Andrew (English)";
+    else if (voice.name.toLowerCase().includes('emma')) displayName = "Emma (English)";
+    
+    option.textContent = displayName;
     option.setAttribute('data-name', voice.name);
     voiceSelect.appendChild(option);
     
