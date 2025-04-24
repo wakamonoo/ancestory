@@ -228,7 +228,7 @@ class StorySpeechSynthesis {
       const highlighted = text.substring(adjustedIndex, adjustedIndex + charLength);
       const after = text.substring(adjustedIndex + charLength);
 
-      element.innerHTML = `<span class="math-inline">\{this\.escapeHTML\(before\)\}<span class\="highlight\-word"\></span>{this.escapeHTML(highlighted)}</span>${this.escapeHTML(after)}`;
+      element.innerHTML = `${this.escapeHTML(before)}<span class="highlight-word">${this.escapeHTML(highlighted)}</span>${this.escapeHTML(after)}`;
 
       const highlightedSpan = element.querySelector('.highlight-word');
       if (highlightedSpan) {
@@ -253,7 +253,7 @@ class StorySpeechSynthesis {
       element.innerHTML = element.innerHTML.replace(/<span class="mobile-highlight">([^<]+)<\/span>/g, '$1');
 
       // Apply new highlight
-      element.innerHTML = `<span class="math-inline">\{this\.escapeHTML\(before\)\}<span class\="mobile\-highlight" style\="background\-color\: yellow; color\: black;"\></span>{this.escapeHTML(highlighted)}</span>${this.escapeHTML(after)}`;
+      element.innerHTML = `${this.escapeHTML(before)}<span class="mobile-highlight" style="background-color: yellow; color: black;">${this.escapeHTML(highlighted)}</span>${this.escapeHTML(after)}`;
 
       const highlightedSpan = element.querySelector('.mobile-highlight');
       if (highlightedSpan) {
@@ -278,7 +278,7 @@ class StorySpeechSynthesis {
       element.innerHTML = element.innerHTML.replace(/<mark class="mobile-highlight">([^<]+)<\/mark>/g, '$1');
 
       // Apply new highlight
-      element.innerHTML = `<span class="math-inline">\{this\.escapeHTML\(before\)\}<mark class\="mobile\-highlight" style\="background\-color\: yellow; color\: black;"\></span>{this.escapeHTML(highlighted)}</mark>${this.escapeHTML(after)}`;
+      element.innerHTML = `${this.escapeHTML(before)}<mark class="mobile-highlight" style="background-color: yellow; color: black;">${this.escapeHTML(highlighted)}</mark>${this.escapeHTML(after)}`;
 
       const highlightedMark = element.querySelector('mark.mobile-highlight');
       if (highlightedMark) {
@@ -303,7 +303,7 @@ class StorySpeechSynthesis {
       const scrollPosition = element.scrollTop;
 
       // Use bold instead of highlight for mobile
-      element.innerHTML = `<span class="math-inline">\{this\.escapeHTML\(before\)\}<strong class\="mobile\-current\-word"\></span>{this.escapeHTML(highlighted)}</strong>${this.escapeHTML(after)}`;
+      element.innerHTML = `${this.escapeHTML(before)}<strong class="mobile-current-word">${this.escapeHTML(highlighted)}</strong>${this.escapeHTML(after)}`;
 
       // Restore the scroll position
       element.scrollTop = scrollPosition;

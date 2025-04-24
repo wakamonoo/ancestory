@@ -1,3 +1,4 @@
+// storyDetail.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getFirestore,
@@ -121,26 +122,26 @@ async function fetchStoryDetails() {
 function setupSpeechUI() {
   const speakBtn = document.getElementById('speak-btn');
   const stopBtn = document.getElementById('stop-speech-btn');
-  
+
   speakBtn.addEventListener('click', toggleSpeech);
   stopBtn.addEventListener('click', stopSpeech);
-  
+
   // Modal controls
   document.getElementById('voice-select-modal').addEventListener('change', (e) => {
     speechSynthesizer.changeVoice(e.target.selectedOptions[0].getAttribute('data-name'));
   });
-  
+
   document.getElementById('rate-control-modal').addEventListener('input', (e) => {
     const rate = parseFloat(e.target.value);
     speechSynthesizer.changeRate(rate);
     document.getElementById('rate-value').textContent = `${rate.toFixed(1)}x`;
   });
-  
+
   document.getElementById('apply-speech-options').addEventListener('click', () => {
     closeModal();
     startReadingStory();
   });
-  
+
   document.querySelector('.close-modal').addEventListener('click', closeModal);
 }
 
@@ -157,9 +158,14 @@ function startReadingStory() {
   const title = document.getElementById('story-title').textContent;
   const origin = document.getElementById('story-origin').textContent.replace('Origin:', '').trim();
   const contentElement = document.getElementById('story-content');
-  
+
+  // Clone the content element for manipulation
+  const contentClone = contentElement.cloneNode(true);
+  contentElement.parentNode.replaceChild(contentClone, contentElement);
+  contentClone.id = 'story-content';
+
   try {
-    speechSynthesizer.startSpeech(title, origin, contentElement);
+    speechSynthesizer.startSpeech(title, origin, contentClone);
     updateSpeechUI(true);
   } catch (error) {
     console.error('Error starting speech:', error);
@@ -209,13 +215,13 @@ function onSpeechError(event) {
 
 function highlightSpokenWord(event) {
   if (event.name !== 'word') return;
-  
+
   const charIndex = event.charIndex;
   const charLength = event.charLength;
-  
+
   // Determine which section is being spoken
   let element, adjustedIndex;
-  
+
   if (charIndex < speechSynthesizer.titleLength) {
     // Title section
     element = document.getElementById('story-title');
@@ -229,34 +235,24 @@ function highlightSpokenWord(event) {
     element = document.getElementById('story-content');
     adjustedIndex = charIndex - (speechSynthesizer.titleLength + speechSynthesizer.originLength);
   }
-  
-  removeHighlighting();
-  
-  if (!element || !element.firstChild) return;
-  
-  // Different handling for mobile vs desktop
-  if (speechSynthesizer.isMobile) {
-    // Mobile: use bolding instead of highlighting
-    boldSpokenWordMobile(element, adjustedIndex, charLength);
-  } else {
-    // Desktop: use highlighting with proper range selection
-    highlightSpokenWordDesktop(element, adjustedIndex, charLength);
-  }
-}
 
-function highlightSpokenWordDesktop(element, adjustedIndex, charLength) {
+  removeHighlighting();
+
+  // Fallback for browsers that don't support range highlighting well
+  if (!element || !element.firstChild) return;
+
   // Try modern approach first
   try {
     const { node, position } = findTextNodeAndPosition(element, adjustedIndex);
-    
+
     if (node && position !== -1) {
       const range = document.createRange();
       range.setStart(node, position);
       range.setEnd(node, position + charLength);
-      
+
       const span = document.createElement('span');
       span.className = 'highlight-word';
-      
+
       try {
         range.surroundContents(span);
         scrollToHighlight(span);
@@ -268,18 +264,18 @@ function highlightSpokenWordDesktop(element, adjustedIndex, charLength) {
   } catch (e) {
     console.log('Modern highlighting error:', e);
   }
-  
+
   // Fallback approach for browsers with limited range support
   try {
     const text = element.textContent || element.innerText;
     if (adjustedIndex + charLength > text.length) return;
-    
+
     const before = text.substring(0, adjustedIndex);
     const highlighted = text.substring(adjustedIndex, adjustedIndex + charLength);
     const after = text.substring(adjustedIndex + charLength);
-    
+
     element.innerHTML = `${escapeHTML(before)}<span class="highlight-word">${escapeHTML(highlighted)}</span>${escapeHTML(after)}`;
-    
+
     const highlightedSpan = element.querySelector('.highlight-word');
     if (highlightedSpan) {
       scrollToHighlight(highlightedSpan);
@@ -289,35 +285,8 @@ function highlightSpokenWordDesktop(element, adjustedIndex, charLength) {
   }
 }
 
-function boldSpokenWordMobile(element, adjustedIndex, charLength) {
-  try {
-    const text = element.textContent || element.innerText;
-    if (adjustedIndex + charLength > text.length) return;
-    
-    const before = text.substring(0, adjustedIndex);
-    const highlighted = text.substring(adjustedIndex, adjustedIndex + charLength);
-    const after = text.substring(adjustedIndex + charLength);
-    
-    // Save the current scroll position
-    const scrollPosition = element.scrollTop;
-    
-    // Use bold instead of highlight for mobile
-    element.innerHTML = `${escapeHTML(before)}<strong class="mobile-current-word">${escapeHTML(highlighted)}</strong>${escapeHTML(after)}`;
-    
-    // Restore the scroll position
-    element.scrollTop = scrollPosition;
-    
-    const boldedWord = element.querySelector('.mobile-current-word');
-    if (boldedWord) {
-      scrollToHighlight(boldedWord);
-    }
-  } catch (e) {
-    console.error('Mobile word bolding failed:', e);
-  }
-}
-
 function escapeHTML(str) {
-  return str.replace(/[&<>'"]/g, 
+  return str.replace(/[&<>'"]/g,
     tag => ({
       '&': '&amp;',
       '<': '&lt;',
@@ -329,17 +298,17 @@ function escapeHTML(str) {
 
 function findTextNodeAndPosition(element, charIndex) {
   if (!element) return { node: null, position: -1 };
-  
+
   const walker = document.createTreeWalker(
     element,
     NodeFilter.SHOW_TEXT,
     null,
     false
   );
-  
+
   let currentIndex = 0;
   let node;
-  
+
   while (node = walker.nextNode()) {
     const nodeLength = node.textContent.length;
     if (currentIndex + nodeLength > charIndex) {
@@ -350,7 +319,7 @@ function findTextNodeAndPosition(element, charIndex) {
     }
     currentIndex += nodeLength;
   }
-  
+
   // Fallback for browsers that might not handle tree walker correctly
   if (element.nodeType === Node.TEXT_NODE) {
     if (charIndex <= element.textContent.length) {
@@ -360,21 +329,19 @@ function findTextNodeAndPosition(element, charIndex) {
       };
     }
   }
-  
+
   return { node: null, position: -1 };
 }
 
 function scrollToHighlight(element) {
   const storyContainer = document.getElementById('storyContainer');
-  if (!storyContainer) return;
-  
   const containerRect = storyContainer.getBoundingClientRect();
   const elementRect = element.getBoundingClientRect();
-  
+
   const elementTop = elementRect.top - containerRect.top;
   const elementBottom = elementRect.bottom - containerRect.top;
   const containerHeight = containerRect.height;
-  
+
   if (elementTop < storyContainer.scrollTop) {
     storyContainer.scrollTop = elementTop - 20;
   } else if (elementBottom > storyContainer.scrollTop + containerHeight) {
@@ -383,19 +350,10 @@ function scrollToHighlight(element) {
 }
 
 function removeHighlighting() {
-  // Remove highlight spans (desktop)
   const highlights = document.querySelectorAll('.highlight-word');
   highlights.forEach(highlight => {
     const parent = highlight.parentNode;
     parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
-    parent.normalize();
-  });
-  
-  // Remove bold spans (mobile)
-  const boldWords = document.querySelectorAll('.mobile-current-word');
-  boldWords.forEach(boldWord => {
-    const parent = boldWord.parentNode;
-    parent.replaceChild(document.createTextNode(boldWord.textContent), boldWord);
     parent.normalize();
   });
 }
@@ -404,37 +362,37 @@ function removeHighlighting() {
 function openModal() {
   const modal = document.getElementById('speech-options-modal');
   modal.style.display = 'block';
-  
+
   // Populate voices
   const voiceSelect = document.getElementById('voice-select-modal');
   voiceSelect.innerHTML = '';
-  
+
   speechSynthesizer.getVoices().forEach(voice => {
     const option = document.createElement('option');
     let displayName = voice.name;
-    
+
     // Format preferred voices nicely
     if (voice.name.toLowerCase().includes('angelo')) displayName = "Angelo (Filipino)";
     else if (voice.name.toLowerCase().includes('blessica')) displayName = "Blessica (Filipino)";
     else if (voice.name.toLowerCase().includes('andrew')) displayName = "Andrew (English)";
     else if (voice.name.toLowerCase().includes('emma')) displayName = "Emma (English)";
-    
+
     option.textContent = displayName;
     option.setAttribute('data-name', voice.name);
     option.setAttribute('data-lang', voice.lang);
-    
+
     // Mark preferred voices
     if (displayName !== voice.name) {
       option.style.fontWeight = 'bold';
     }
-    
+
     voiceSelect.appendChild(option);
-    
+
     if (voice === speechSynthesizer.getCurrentVoice()) {
       option.selected = true;
     }
   });
-  
+
   // Set rate control
   const rateControl = document.getElementById('rate-control-modal');
   rateControl.value = speechSynthesizer.getCurrentRate();
@@ -448,7 +406,7 @@ function closeModal() {
 function updateSpeechUI(isSpeaking) {
   const speakBtn = document.getElementById('speak-btn');
   const stopBtn = document.getElementById('stop-speech-btn');
-  
+
   if (isSpeaking) {
     speakBtn.style.display = 'none';
     stopBtn.style.display = 'flex';
@@ -459,6 +417,7 @@ function updateSpeechUI(isSpeaking) {
     speakBtn.querySelector('span').textContent = 'Listen';
   }
 }
+
 function formatStoryContent(content) {
   return content
     .split("\n")
