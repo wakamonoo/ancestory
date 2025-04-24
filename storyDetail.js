@@ -179,21 +179,28 @@ function toggleSpeech() {
   }
 }
 
+// Replace the startReadingStory function with this:
 function startReadingStory() {
   const title = document.getElementById('story-title').textContent;
   const origin = document.getElementById('story-origin').textContent.replace('Origin:', '').trim();
   const contentElement = document.getElementById('story-content');
   
-  // Clone the content element for manipulation
-  const contentClone = contentElement.cloneNode(true);
-  contentElement.parentNode.replaceChild(contentClone, contentElement);
-  contentClone.id = 'story-content';
+  // Store the original HTML to restore later
+  const originalHTML = contentElement.innerHTML;
   
   try {
-    speechSynthesizer.startSpeech(title, origin, contentClone);
+    speechSynthesizer.startSpeech(title, origin, contentElement);
     updateSpeechUI(true);
+    
+    // Restore original HTML when speech ends
+    speechSynthesizer.speechUtterance.onend = () => {
+      contentElement.innerHTML = originalHTML;
+      onSpeechEnd();
+    };
   } catch (error) {
     console.error('Error starting speech:', error);
+    // Restore original HTML if error occurs
+    contentElement.innerHTML = originalHTML;
     Swal.fire({
       title: "Voice Not Supported",
       text: "The selected voice is not supported on your device/browser. Please try a different voice.",
@@ -204,7 +211,7 @@ function startReadingStory() {
       color: "#20462f",
       confirmButtonColor: "#C09779",
     }).then(() => {
-      openModal(); // Reopen modal to select different voice
+      openModal();
     });
   }
 }
@@ -238,18 +245,8 @@ function onSpeechError(event) {
   removeHighlighting();
 }
 
+// Replace the highlightSpokenWord function with this:
 function highlightSpokenWord(event) {
-  // Check if we're on a mobile device
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  
-  if (isMobile) {
-    mobileWordHighlight(event);
-  } else {
-    pcWordHighlight(event);
-  }
-}
-
-function pcWordHighlight(event) {
   if (event.name !== 'word') return;
   
   const charIndex = event.charIndex;
@@ -259,64 +256,54 @@ function pcWordHighlight(event) {
   let element, adjustedIndex;
   
   if (charIndex < speechSynthesizer.titleLength) {
-    // Title section
     element = document.getElementById('story-title');
     adjustedIndex = charIndex;
   } else if (charIndex < speechSynthesizer.titleLength + speechSynthesizer.originLength) {
-    // Origin section
     element = document.getElementById('story-origin');
     adjustedIndex = charIndex - speechSynthesizer.titleLength;
   } else {
-    // Main content section
     element = document.getElementById('story-content');
     adjustedIndex = charIndex - (speechSynthesizer.titleLength + speechSynthesizer.originLength);
   }
   
   removeHighlighting();
   
-  if (!element || !element.firstChild) return;
+  if (!element) return;
   
-  // Try modern approach first
-  try {
-    const { node, position } = findTextNodeAndPosition(element, adjustedIndex);
-    
-    if (node && position !== -1) {
-      const range = document.createRange();
-      range.setStart(node, position);
-      range.setEnd(node, position + charLength);
-      
-      const span = document.createElement('span');
-      span.className = 'highlight-word';
-      
-      try {
-        range.surroundContents(span);
-        scrollToHighlight(span);
-        return;
-      } catch (e) {
-        console.log('Modern highlighting failed, trying fallback');
-      }
-    }
-  } catch (e) {
-    console.log('Modern highlighting error:', e);
-  }
+  // Get the text content once
+  const text = element.textContent || element.innerText;
+  if (adjustedIndex + charLength > text.length) return;
   
-  // Fallback approach for browsers with limited range support
-  try {
-    const text = element.textContent || element.innerText;
-    if (adjustedIndex + charLength > text.length) return;
-    
-    const before = text.substring(0, adjustedIndex);
-    const highlighted = text.substring(adjustedIndex, adjustedIndex + charLength);
-    const after = text.substring(adjustedIndex + charLength);
-    
-    element.innerHTML = `${escapeHTML(before)}<span class="highlight-word">${escapeHTML(highlighted)}</span>${escapeHTML(after)}`;
-    
-    const highlightedSpan = element.querySelector('.highlight-word');
-    if (highlightedSpan) {
-      scrollToHighlight(highlightedSpan);
-    }
-  } catch (e) {
-    console.error('Fallback highlighting failed:', e);
+  // Find the current word boundaries
+  const before = text.substring(0, adjustedIndex);
+  const currentWord = text.substring(adjustedIndex, adjustedIndex + charLength);
+  const after = text.substring(adjustedIndex + charLength);
+  
+  // Create a temporary span to measure the exact position
+  const tempSpan = document.createElement('span');
+  tempSpan.textContent = before;
+  tempSpan.style.visibility = 'hidden';
+  tempSpan.style.position = 'absolute';
+  document.body.appendChild(tempSpan);
+  
+  // Get the exact position where the word starts
+  const wordStart = tempSpan.offsetWidth;
+  document.body.removeChild(tempSpan);
+  
+  // Create the highlight span
+  const highlightSpan = document.createElement('span');
+  highlightSpan.className = 'highlight-word';
+  highlightSpan.textContent = currentWord;
+  
+  // Insert the highlight at the exact position
+  element.innerHTML = before + 
+                     highlightSpan.outerHTML + 
+                     after;
+  
+  // Scroll to the highlighted word
+  const highlightedElement = element.querySelector('.highlight-word');
+  if (highlightedElement) {
+    scrollToHighlight(highlightedElement);
   }
 }
 
@@ -430,20 +417,13 @@ function scrollToHighlight(element) {
 }
 
 function removeHighlighting() {
-  // Remove PC highlights
-  const pcHighlights = document.querySelectorAll('.highlight-word');
-  pcHighlights.forEach(highlight => {
+  const highlights = document.querySelectorAll('.highlight-word');
+  highlights.forEach(highlight => {
     const parent = highlight.parentNode;
-    parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
-    parent.normalize();
-  });
-  
-  // Remove mobile highlights
-  const mobileHighlights = document.querySelectorAll('.mobile-highlight-word');
-  mobileHighlights.forEach(highlight => {
-    const parent = highlight.parentNode;
-    parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
-    parent.normalize();
+    if (parent) {
+      parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
+      parent.normalize();
+    }
   });
 }
 // Modal functions

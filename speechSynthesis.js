@@ -53,7 +53,6 @@ class StorySpeechSynthesis {
   }
 
   startSpeech(title, origin, contentElement) {
-    this.contentElement = contentElement;
     const titleText = `${title}. `;
     const originText = `From ${origin}. `;
     const contentText = contentElement.textContent;
@@ -84,13 +83,6 @@ class StorySpeechSynthesis {
       }
     };
 
-    this.speechUtterance.onpause = () => {
-      this.isSpeaking = false;
-      if (this.onSpeechPause && typeof this.onSpeechPause === "function") {
-        this.onSpeechPause();
-      }
-    };
-
     this.speechUtterance.onerror = (event) => {
       this.isSpeaking = false;
       if (this.onSpeechError && typeof this.onSpeechError === "function") {
@@ -100,14 +92,7 @@ class StorySpeechSynthesis {
 
     this.speechSynthesis.speak(this.speechUtterance);
     this.isSpeaking = true;
-    this.speechStartTime = Date.now();
-    
-    // Call speech start handler if defined
-    if (this.onSpeechStart && typeof this.onSpeechStart === "function") {
-      this.onSpeechStart();
-    }
   }
-
   pauseSpeech() {
     if (this.isSpeaking) {
       this.speechSynthesis.pause();
