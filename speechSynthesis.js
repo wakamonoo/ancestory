@@ -11,135 +11,188 @@ class StorySpeechSynthesis {
     this.originLength = 0;
     this.contentLength = 0;
     this.currentHighlight = null;
-
+    this.voiceLoadAttempts = 0;
+    
+    // Our required voices with fallback configurations
+    this.requiredVoices = [
+      {
+        name: "Angelo",
+        lang: "fil-PH",
+        fallback: { pitch: 1.1, rate: 0.95, voiceURI: "Angelo" }
+      },
+      {
+        name: "Blessica",
+        lang: "fil-PH",
+        fallback: { pitch: 0.9, rate: 1.05, voiceURI: "Blessica" }
+      },
+      {
+        name: "Andrew",
+        lang: "en-US",
+        fallback: { pitch: 1.0, rate: 1.0, voiceURI: "Andrew" }
+      },
+      {
+        name: "Emma",
+        lang: "en-US",
+        fallback: { pitch: 1.05, rate: 1.0, voiceURI: "Emma" }
+      }
+    ];
+    
     // Event handlers
     this.onWordBoundary = null;
     this.onSpeechEnd = null;
     this.onSpeechError = null;
     this.onSpeechPause = null;
-
+    
     this.init();
   }
 
   init() {
-    // Load available voices
     this.loadVoices();
-
+    
     // Some browsers don't support onvoiceschanged properly
     // So we'll poll for voices if they're not loaded immediately
     if (this.voices.length === 0) {
       const voiceCheckInterval = setInterval(() => {
+        this.voiceLoadAttempts++;
         this.loadVoices();
-        if (this.voices.length > 0) {
+        
+        if (this.voices.length > 0 || this.voiceLoadAttempts >= 10) {
           clearInterval(voiceCheckInterval);
+          
+          // If still no voices after attempts, create our fallback voices
+          if (this.voices.length === 0) {
+            this.createFallbackVoices();
+          }
         }
-      }, 200);
-
-      // Give up after 5 seconds
-      setTimeout(() => {
-        clearInterval(voiceCheckInterval);
-      }, 5000);
+      }, 500);
     }
   }
 
   loadVoices() {
-    this.voices = this.speechSynthesis.getVoices();
-
-    // Filter for specific voices only with fallbacks
-    const preferredVoices = [
-      { name: 'Angelo', lang: 'fil-PH' },
-      { name: 'Blessica', lang: 'fil-PH' },
-      { name: 'Google Filipino', lang: 'fil-PH' },
-      { name: 'Microsoft Maria - Filipino (Philippines)', lang: 'fil-PH' },
-      { name: 'Microsoft David - English (United States)', lang: 'en-US' },
-      { name: 'Google US English', lang: 'en-US' },
-      { name: 'Alex', lang: 'en-US' },
-      { name: 'Samantha', lang: 'en-US' }
-    ];
-
-    // Try to find exact matches first
-    const exactMatches = preferredVoices.filter(prefVoice =>
-      this.voices.some(voice =>
-        voice.name.includes(prefVoice.name) &&
-        voice.lang.includes(prefVoice.lang)
-    ));
-
-    if (exactMatches.length > 0) {
-      this.voices = this.voices.filter(voice =>
-        exactMatches.some(match =>
-          voice.name.includes(match.name) &&
-          voice.lang.includes(match.lang)
-        )
+    const nativeVoices = this.speechSynthesis.getVoices();
+    this.voices = [];
+    
+    // First try to find our required voices in native voices
+    this.requiredVoices.forEach(reqVoice => {
+      const foundVoice = nativeVoices.find(voice => 
+        voice.name.includes(reqVoice.name) && 
+        voice.lang.includes(reqVoice.lang)
       );
-    } else {
-      // Fallback to any Filipino or English voices
-      this.voices = this.voices.filter(voice =>
-        voice.lang.includes('fil-') ||
-        voice.lang.includes('en-')
-      );
-    }
-
-    // Sort voices - Filipino first, then English
-    this.voices.sort((a, b) => {
-      if (a.lang.includes('fil-') && !b.lang.includes('fil-')) return -1;
-      if (!a.lang.includes('fil-') && b.lang.includes('fil-')) return 1;
-      return a.name.localeCompare(b.name);
+      
+      if (foundVoice) {
+        this.voices.push(foundVoice);
+      }
     });
-
-    // Set default voice if available
-    if (this.voices.length > 0) {
-      this.currentVoice = this.voices[0];
+    
+    // If we didn't find all required voices, try to find similar voices
+    if (this.voices.length < this.requiredVoices.length) {
+      const remainingVoices = this.requiredVoices.filter(reqVoice => 
+        !this.voices.some(v => v.name.includes(reqVoice.name))
+      );
+      
+      remainingVoices.forEach(reqVoice => {
+        // Try to find any voice with matching language
+        const fallbackVoice = nativeVoices.find(voice => 
+          voice.lang.includes(reqVoice.lang)
+        );
+        
+        if (fallbackVoice) {
+          // Clone the voice and modify its name to match our required voice
+          const modifiedVoice = Object.assign({}, fallbackVoice, {
+            name: reqVoice.name,
+            voiceURI: reqVoice.name
+          });
+          this.voices.push(modifiedVoice);
+        }
+      });
     }
+    
+    // If we still don't have voices, we'll create fallback ones later
+    if (this.voices.length === 0) return;
+    
+    // Set default voice if available
+    this.currentVoice = this.voices[0];
+  }
+
+  createFallbackVoices() {
+    // Create synthetic voice objects for our required voices
+    this.requiredVoices.forEach(reqVoice => {
+      const syntheticVoice = {
+        name: reqVoice.name,
+        lang: reqVoice.lang,
+        voiceURI: reqVoice.name,
+        localService: true,
+        default: false,
+        ...reqVoice.fallback
+      };
+      
+      this.voices.push(syntheticVoice);
+    });
+    
+    this.currentVoice = this.voices[0];
   }
 
   startSpeech(title, origin, contentElement) {
     const titleText = `${title}. `;
     const originText = `From ${origin}. `;
     const contentText = contentElement.textContent;
-
+    
     // Calculate lengths for each section
     this.titleLength = titleText.length;
     this.originLength = originText.length;
     this.contentLength = contentText.length;
-
+    
     const fullText = titleText + originText + contentText;
-
+    
     this.stopSpeech(); // Stop any current speech
-
+    
     this.speechUtterance = new SpeechSynthesisUtterance(fullText);
-    this.speechUtterance.voice = this.currentVoice;
-    this.speechUtterance.rate = this.speechOptions.rate;
-
+    
+    // Apply voice settings - works with both native and synthetic voices
+    Object.assign(this.speechUtterance, {
+      voice: this.currentVoice,
+      voiceURI: this.currentVoice.voiceURI || this.currentVoice.name,
+      lang: this.currentVoice.lang,
+      rate: this.speechOptions.rate,
+      pitch: this.currentVoice.pitch || 1,
+      volume: 1
+    });
+    
     // Set up event handlers
     this.speechUtterance.onboundary = (event) => {
       if (this.onWordBoundary && typeof this.onWordBoundary === 'function') {
         this.onWordBoundary(event);
       }
     };
-
+    
     this.speechUtterance.onend = () => {
       this.isSpeaking = false;
       if (this.onSpeechEnd && typeof this.onSpeechEnd === 'function') {
         this.onSpeechEnd();
       }
     };
-
+    
     this.speechUtterance.onpause = () => {
       this.isSpeaking = false;
       if (this.onSpeechPause && typeof this.onSpeechPause === 'function') {
         this.onSpeechPause();
       }
     };
-
+    
     this.speechUtterance.onerror = (event) => {
       this.isSpeaking = false;
       if (this.onSpeechError && typeof this.onSpeechError === 'function') {
         this.onSpeechError(event);
       }
     };
-
-    this.speechSynthesis.speak(this.speechUtterance);
-    this.isSpeaking = true;
+    
+    try {
+      this.speechSynthesis.speak(this.speechUtterance);
+      this.isSpeaking = true;
+    } catch (e) {
+      console.error('Speech synthesis error:', e);
+      this.handleSpeechError();
+    }
   }
 
   pauseSpeech() {
@@ -292,6 +345,26 @@ class StorySpeechSynthesis {
       this.currentHighlight = null;
     }
   }
+
+  handleSpeechError() {
+    // If we get an error, try recreating voices and speaking again
+    this.createFallbackVoices();
+    
+    if (this.speechUtterance) {
+      try {
+        this.speechSynthesis.speak(this.speechUtterance);
+        this.isSpeaking = true;
+      } catch (e) {
+        console.error('Fallback speech synthesis failed:', e);
+        this.isSpeaking = false;
+        
+        if (this.onSpeechError) {
+          this.onSpeechError({ error: 'synthesis-failed' });
+        }
+      }
+    }
+  }
 }
+
 
 export { StorySpeechSynthesis };

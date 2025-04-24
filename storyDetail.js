@@ -133,7 +133,17 @@ function setupSpeechUI() {
   const voiceSelect = document.getElementById('voice-select-modal');
   voiceSelect.addEventListener('change', (e) => {
     const selectedOption = e.target.selectedOptions[0];
-    speechSynthesizer.changeVoice(selectedOption.getAttribute('data-name'));
+    const voiceName = selectedOption.getAttribute('data-name');
+    const voiceLang = selectedOption.getAttribute('data-lang');
+    
+    // Find voice by name and lang to ensure exact match
+    const voice = speechSynthesizer.getVoices().find(v => 
+      v.name === voiceName && v.lang === voiceLang
+    );
+    
+    if (voice) {
+      speechSynthesizer.changeVoice(voice.name);
+    }
   });
   
   const rateControl = document.getElementById('rate-control-modal');
@@ -150,6 +160,7 @@ function setupSpeechUI() {
   
   document.querySelector('.close-modal').addEventListener('click', closeModal);
 }
+
 
 
 function toggleSpeech() {
@@ -205,7 +216,6 @@ function onSpeechError(event) {
 }
 
 
-// Updated openModal function
 function openModal() {
   const modal = document.getElementById('speech-options-modal');
   modal.style.display = 'block';
@@ -217,52 +227,44 @@ function openModal() {
   const voices = speechSynthesizer.getVoices();
   
   if (voices.length === 0) {
-    // No voices available - show error
-    voiceSelect.innerHTML = '<option>No voices available</option>';
-    document.getElementById('apply-speech-options').disabled = true;
-    
-    Swal.fire({
-      title: "Speech Error",
-      text: "No voices available for speech synthesis. Please try another browser or device.",
-      icon: "error",
-      iconColor: "#20462f",
-      confirmButtonText: "Okay",
-      background: "#D29F80",
-      color: "#20462f",
-      confirmButtonColor: "#C09779",
-    });
-    return;
+    // Try to force create voices
+    speechSynthesizer.createFallbackVoices();
+    voices = speechSynthesizer.getVoices();
   }
   
-  voices.forEach(voice => {
+  // Always show our 4 required voices, even if we need to create synthetic ones
+  const requiredVoices = [
+    { name: "Angelo", lang: "fil-PH" },
+    { name: "Blessica", lang: "fil-PH" },
+    { name: "Andrew", lang: "en-US" },
+    { name: "Emma", lang: "en-US" }
+  ];
+  
+  requiredVoices.forEach(reqVoice => {
+    // Find matching voice or create synthetic entry
+    let voice = voices.find(v => 
+      v.name.includes(reqVoice.name) && 
+      v.lang.includes(reqVoice.lang)
+    );
+    
+    if (!voice) {
+      voice = {
+        name: reqVoice.name,
+        lang: reqVoice.lang,
+        voiceURI: reqVoice.name,
+        localService: false,
+        default: false
+      };
+    }
+    
     const option = document.createElement('option');
-    
-    // Format voice name nicely
-    let displayName = voice.name;
-    let lang = '';
-    
-    if (voice.lang.includes('fil-')) {
-      lang = ' (Filipino)';
-    } else if (voice.lang.includes('en-')) {
-      lang = ' (English)';
-    }
-    
-    // Shorten common voice names
-    if (voice.name.includes('Google Filipino')) {
-      displayName = 'Google Filipino';
-    } else if (voice.name.includes('Microsoft Maria')) {
-      displayName = 'Microsoft Maria';
-    } else if (voice.name.includes('Microsoft David')) {
-      displayName = 'Microsoft David';
-    } else if (voice.name.includes('Google US English')) {
-      displayName = 'Google US English';
-    }
-    
-    option.textContent = `${displayName}${lang}`;
+    option.textContent = `${voice.name} (${voice.lang.includes('fil') ? 'Filipino' : 'English'})`;
     option.setAttribute('data-name', voice.name);
+    option.setAttribute('data-lang', voice.lang);
     voiceSelect.appendChild(option);
     
-    if (voice === speechSynthesizer.getCurrentVoice()) {
+    if (voice === speechSynthesizer.getCurrentVoice() || 
+        (!speechSynthesizer.getCurrentVoice() && reqVoice.name === "Angelo")) {
       option.selected = true;
     }
   });
@@ -272,7 +274,6 @@ function openModal() {
   rateControl.value = speechSynthesizer.getCurrentRate();
   document.getElementById('rate-value').textContent = `${speechSynthesizer.getCurrentRate().toFixed(1)}x`;
 }
-
 
 function closeModal() {
   document.getElementById('speech-options-modal').style.display = 'none';
