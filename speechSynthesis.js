@@ -25,20 +25,25 @@ class StorySpeechSynthesis {
   }
 
   loadVoices() {
-    this.voices = this.speechSynthesis.getVoices();
+    this.voices = window.speechSynthesis.getVoices();
     
-    // Sort voices - preferred voices first, then others
+    // Filter for English and Filipino voices only
+    this.voices = this.voices.filter(voice => {
+      return voice.lang.startsWith('en-') || 
+             voice.lang.startsWith('fil-') || 
+             voice.lang.startsWith('tl-'); // Filipino language codes
+    });
+  
+    // Sort voices - prioritize natural sounding voices
     this.voices.sort((a, b) => {
-      const aName = a.name.toLowerCase();
-      const bName = b.name.toLowerCase();
+      // Give priority to voices that sound more natural
+      const aNatural = a.name.toLowerCase().includes('natural') || 
+                      a.name.toLowerCase().includes('premium');
+      const bNatural = b.name.toLowerCase().includes('natural') || 
+                      b.name.toLowerCase().includes('premium');
       
-      const isAPreferred = aName.includes("angelo") || aName.includes("blessica") || 
-                           aName.includes("andrew") || aName.includes("emma");
-      const isBPreferred = bName.includes("angelo") || bName.includes("blessica") || 
-                           bName.includes("andrew") || bName.includes("emma");
-      
-      if (isAPreferred && !isBPreferred) return -1;
-      if (!isAPreferred && isBPreferred) return 1;
+      if (aNatural && !bNatural) return -1;
+      if (!aNatural && bNatural) return 1;
       return 0;
     });
   

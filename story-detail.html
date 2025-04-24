@@ -37,7 +37,7 @@
       }
 
       .highlight-word::after {
-        content: '';
+        content: "";
         position: absolute;
         bottom: -2px;
         left: 0;
@@ -48,8 +48,12 @@
       }
 
       @keyframes underline-pulse {
-        from { opacity: 0.5; }
-        to { opacity: 1; }
+        from {
+          opacity: 0.5;
+        }
+        to {
+          opacity: 1;
+        }
       }
 
       #speech-controls {
@@ -94,7 +98,7 @@
       }
 
       .modal-content {
-        background-color: #D29F80;
+        background-color: #d29f80;
         margin: 15% auto;
         padding: 20px;
         border: 1px solid #20462f;
@@ -125,7 +129,7 @@
         margin-bottom: 5px;
       }
 
-      .modal-control select, 
+      .modal-control select,
       .modal-control input[type="range"] {
         width: 100%;
         padding: 8px;
@@ -154,6 +158,18 @@
         width: 40px;
         text-align: center;
       }
+      @media (max-width: 768px) {
+        .highlight-word {
+          background-color: rgba(255, 215, 0, 0.9) !important;
+          padding: 3px 0 !important;
+          border-radius: 5px !important;
+        }
+
+        .highlight-word::after {
+          height: 3px !important;
+          bottom: -3px !important;
+        }
+      }
     </style>
   </head>
   <body>
@@ -168,7 +184,11 @@
               <i class="fas fa-volume-up"></i>
               <span>Listen</span>
             </button>
-            <button id="stop-speech-btn" aria-label="Stop reading" style="display: none;">
+            <button
+              id="stop-speech-btn"
+              aria-label="Stop reading"
+              style="display: none"
+            >
               <i class="fas fa-stop"></i>
               <span>Stop</span>
             </button>
@@ -261,7 +281,14 @@
         </div>
         <div class="modal-control">
           <label for="rate-control-modal">Speed:</label>
-          <input type="range" id="rate-control-modal" min="0.5" max="2" step="0.1" value="1">
+          <input
+            type="range"
+            id="rate-control-modal"
+            min="0.5"
+            max="2"
+            step="0.1"
+            value="1"
+          />
           <span id="rate-value">1.0x</span>
         </div>
         <button id="apply-speech-options">Apply</button>

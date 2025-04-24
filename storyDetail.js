@@ -223,77 +223,55 @@ function highlightSpokenWord(event) {
   let element, adjustedIndex;
   
   if (charIndex < speechSynthesizer.titleLength) {
-    // Title section
     element = document.getElementById('story-title');
     adjustedIndex = charIndex;
-  } else if (charIndex < speechSynthesizer.titleLength + speechSynthesizer.originLength) {
-    // Origin section
+  } 
+  else if (charIndex < speechSynthesizer.titleLength + speechSynthesizer.originLength) {
     element = document.getElementById('story-origin');
     adjustedIndex = charIndex - speechSynthesizer.titleLength;
-  } else {
-    // Main content section
+  } 
+  else {
     element = document.getElementById('story-content');
     adjustedIndex = charIndex - (speechSynthesizer.titleLength + speechSynthesizer.originLength);
   }
   
   removeHighlighting();
   
-  // Fallback for browsers that don't support range highlighting well
-  if (!element || !element.firstChild) return;
+  if (!element) return;
+
+  // Mobile-friendly highlighting approach
+  const text = element.textContent || element.innerText;
+  if (adjustedIndex + charLength > text.length) return;
   
-  // Try modern approach first
-  try {
-    const { node, position } = findTextNodeAndPosition(element, adjustedIndex);
-    
-    if (node && position !== -1) {
-      const range = document.createRange();
-      range.setStart(node, position);
-      range.setEnd(node, position + charLength);
-      
-      const span = document.createElement('span');
-      span.className = 'highlight-word';
-      
-      try {
-        range.surroundContents(span);
-        scrollToHighlight(span);
-        return;
-      } catch (e) {
-        console.log('Modern highlighting failed, trying fallback');
-      }
-    }
-  } catch (e) {
-    console.log('Modern highlighting error:', e);
-  }
+  const before = text.substring(0, adjustedIndex);
+  const highlighted = text.substring(adjustedIndex, adjustedIndex + charLength);
+  const after = text.substring(adjustedIndex + charLength);
   
-  // Fallback approach for browsers with limited range support
-  try {
-    const text = element.textContent || element.innerText;
-    if (adjustedIndex + charLength > text.length) return;
-    
-    const before = text.substring(0, adjustedIndex);
-    const highlighted = text.substring(adjustedIndex, adjustedIndex + charLength);
-    const after = text.substring(adjustedIndex + charLength);
-    
-    element.innerHTML = `${escapeHTML(before)}<span class="highlight-word">${escapeHTML(highlighted)}</span>${escapeHTML(after)}`;
-    
-    const highlightedSpan = element.querySelector('.highlight-word');
-    if (highlightedSpan) {
+  // Save original HTML if it exists
+  const originalHTML = element.innerHTML;
+  
+  // Create mobile-friendly highlight
+  element.innerHTML = `${before}<span class="highlight-word">${highlighted}</span>${after}`;
+  
+  // Scroll to the highlighted word
+  const highlightedSpan = element.querySelector('.highlight-word');
+  if (highlightedSpan) {
+    // Mobile-specific scrolling behavior
+    if ('ontouchstart' in window) {
+      // For mobile devices, use smoother scrolling
+      highlightedSpan.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'center'
+      });
+    } else {
+      // For desktop, use the existing scroll behavior
       scrollToHighlight(highlightedSpan);
     }
-  } catch (e) {
-    console.error('Fallback highlighting failed:', e);
   }
-}
-
-function escapeHTML(str) {
-  return str.replace(/[&<>'"]/g, 
-    tag => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      "'": '&#39;',
-      '"': '&quot;'
-    }[tag]));
+  
+  // Store original HTML for restoration later
+  element.dataset.originalHtml = originalHTML;
 }
 
 function findTextNodeAndPosition(element, charIndex) {
@@ -350,11 +328,34 @@ function scrollToHighlight(element) {
 }
 
 function removeHighlighting() {
-  const highlights = document.querySelectorAll('.highlight-word');
-  highlights.forEach(highlight => {
-    const parent = highlight.parentNode;
-    parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
-    parent.normalize();
+  // Handle title
+  const title = document.getElementById('story-title');
+  if (title && title.dataset.originalHtml) {
+    title.innerHTML = title.dataset.originalHtml;
+    delete title.dataset.originalHtml;
+  }
+  
+  // Handle origin
+  const origin = document.getElementById('story-origin');
+  if (origin && origin.dataset.originalHtml) {
+    origin.innerHTML = origin.dataset.originalHtml;
+    delete origin.dataset.originalHtml;
+  }
+  
+  // Handle content
+  const content = document.getElementById('story-content');
+  if (content && content.dataset.originalHtml) {
+    content.innerHTML = content.dataset.originalHtml;
+    delete content.dataset.originalHtml;
+  }
+  
+  // Also remove any remaining highlight spans (fallback)
+  document.querySelectorAll('.highlight-word').forEach(span => {
+    const parent = span.parentNode;
+    if (parent) {
+      parent.replaceChild(document.createTextNode(span.textContent), span);
+      parent.normalize();
+    }
   });
 }
 
@@ -371,18 +372,24 @@ function openModal() {
     const option = document.createElement('option');
     let displayName = voice.name;
     
-    // Format preferred voices nicely
-    if (voice.name.toLowerCase().includes('angelo')) displayName = "Angelo (Filipino)";
-    else if (voice.name.toLowerCase().includes('blessica')) displayName = "Blessica (Filipino)";
-    else if (voice.name.toLowerCase().includes('andrew')) displayName = "Andrew (English)";
-    else if (voice.name.toLowerCase().includes('emma')) displayName = "Emma (English)";
+    // Simplify display names
+    if (voice.lang.startsWith('en-')) {
+      displayName = `English: ${voice.name.replace('Microsoft ', '')
+                                         .replace('Google ', '')
+                                         .replace('Natural', '')}`;
+    } 
+    else if (voice.lang.startsWith('fil-') || voice.lang.startsWith('tl-')) {
+      displayName = `Filipino: ${voice.name.replace('Microsoft ', '')
+                                          .replace('Google ', '')
+                                          .replace('Natural', '')}`;
+    }
     
-    option.textContent = displayName;
+    option.textContent = displayName.trim();
     option.setAttribute('data-name', voice.name);
     option.setAttribute('data-lang', voice.lang);
     
-    // Mark preferred voices
-    if (displayName !== voice.name) {
+    // Mark natural voices
+    if (voice.name.toLowerCase().includes('natural')) {
       option.style.fontWeight = 'bold';
     }
     
@@ -398,7 +405,6 @@ function openModal() {
   rateControl.value = speechSynthesizer.getCurrentRate();
   document.getElementById('rate-value').textContent = `${speechSynthesizer.getCurrentRate().toFixed(1)}x`;
 }
-
 function closeModal() {
   document.getElementById('speech-options-modal').style.display = 'none';
 }
