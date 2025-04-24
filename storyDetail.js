@@ -203,6 +203,9 @@ function highlightSpokenWord(event) {
   const charIndex = event.charIndex;
   const charLength = event.charLength;
   
+  // Remove previous highlights first
+  removeHighlighting();
+  
   // Determine which section is being spoken
   let element, adjustedIndex;
   
@@ -220,7 +223,17 @@ function highlightSpokenWord(event) {
     adjustedIndex = charIndex - (speechSynthesizer.titleLength + speechSynthesizer.originLength);
   }
   
-  removeHighlighting();
+  // Mobile workaround - sometimes the element isn't ready
+  if (!element) {
+    console.warn('Element not found for highlighting');
+    return;
+  }
+
+  // Clone the node to ensure we can modify it
+  const clone = element.cloneNode(true);
+  element.parentNode.replaceChild(clone, element);
+  element = clone;
+  element.id = element.id; // Maintain the same ID
   
   const { node, position } = findTextNodeAndPosition(element, adjustedIndex);
   
@@ -234,12 +247,16 @@ function highlightSpokenWord(event) {
       span.className = 'highlight-word';
       range.surroundContents(span);
       
-      scrollToHighlight(span);
+      // Mobile-friendly scroll behavior
+      requestAnimationFrame(() => {
+        scrollToHighlight(span);
+      });
     } catch (e) {
       console.error('Could not highlight word:', e);
     }
   }
 }
+
 
 function findTextNodeAndPosition(element, charIndex) {
   const walker = document.createTreeWalker(
@@ -267,18 +284,26 @@ function findTextNodeAndPosition(element, charIndex) {
 }
 
 function scrollToHighlight(element) {
-  const storyContainer = document.getElementById('storyContainer');
-  const containerRect = storyContainer.getBoundingClientRect();
+  const storyContainer = document.getElementById('storyContainer') || document.documentElement;
   const elementRect = element.getBoundingClientRect();
+  const containerRect = storyContainer.getBoundingClientRect();
   
+  // Calculate positions with mobile viewport in mind
   const elementTop = elementRect.top - containerRect.top;
   const elementBottom = elementRect.bottom - containerRect.top;
-  const containerHeight = containerRect.height;
+  const containerHeight = window.innerHeight || containerRect.height;
   
-  if (elementTop < storyContainer.scrollTop) {
-    storyContainer.scrollTop = elementTop - 20;
-  } else if (elementBottom > storyContainer.scrollTop + containerHeight) {
-    storyContainer.scrollTop = elementBottom - containerHeight + 20;
+  // Mobile-optimized scrolling
+  if (elementTop < storyContainer.scrollTop + 50) { // 50px buffer
+    storyContainer.scrollTo({
+      top: elementTop - 20,
+      behavior: 'smooth'
+    });
+  } else if (elementBottom > storyContainer.scrollTop + containerHeight - 50) {
+    storyContainer.scrollTo({
+      top: elementBottom - containerHeight + 20,
+      behavior: 'smooth'
+    });
   }
 }
 
