@@ -54,12 +54,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // Set up event handlers
     speechSynthesizer.onSpeechEnd = onSpeechEnd;
     speechSynthesizer.onSpeechError = onSpeechError;
-    speechSynthesizer.onWordBoundary = highlightSpokenWord;
+    speechSynthesizer.onWordBoundary = (event) => {
+      speechSynthesizer.highlightSpokenWord(event);
+    };
     
     // Set up UI event listeners
     setupSpeechUI();
   } else {
     document.getElementById('speak-btn').style.display = 'none';
+    document.getElementById('stop-speech-btn').style.display = 'none';
     console.warn('Speech synthesis not supported');
   }
 });
@@ -118,7 +121,7 @@ async function fetchStoryDetails() {
   loadComments();
 }
 
-// SPEECH FUNCTIONS
+// Updated setupSpeechUI function
 function setupSpeechUI() {
   const speakBtn = document.getElementById('speak-btn');
   const stopBtn = document.getElementById('stop-speech-btn');
@@ -127,11 +130,14 @@ function setupSpeechUI() {
   stopBtn.addEventListener('click', stopSpeech);
   
   // Modal controls
-  document.getElementById('voice-select-modal').addEventListener('change', (e) => {
-    speechSynthesizer.changeVoice(e.target.selectedOptions[0].getAttribute('data-name'));
+  const voiceSelect = document.getElementById('voice-select-modal');
+  voiceSelect.addEventListener('change', (e) => {
+    const selectedOption = e.target.selectedOptions[0];
+    speechSynthesizer.changeVoice(selectedOption.getAttribute('data-name'));
   });
   
-  document.getElementById('rate-control-modal').addEventListener('input', (e) => {
+  const rateControl = document.getElementById('rate-control-modal');
+  rateControl.addEventListener('input', (e) => {
     const rate = parseFloat(e.target.value);
     speechSynthesizer.changeRate(rate);
     document.getElementById('rate-value').textContent = `${rate.toFixed(1)}x`;
@@ -144,6 +150,7 @@ function setupSpeechUI() {
   
   document.querySelector('.close-modal').addEventListener('click', closeModal);
 }
+
 
 function toggleSpeech() {
   if (speechSynthesizer.isSpeaking) {
@@ -164,24 +171,8 @@ function startReadingStory() {
   contentElement.parentNode.replaceChild(contentClone, contentElement);
   contentClone.id = 'story-content';
   
-  try {
-    speechSynthesizer.startSpeech(title, origin, contentClone);
-    updateSpeechUI(true);
-  } catch (error) {
-    console.error('Error starting speech:', error);
-    Swal.fire({
-      title: "Voice Not Supported",
-      text: "The selected voice is not supported on your device/browser. Please try a different voice.",
-      icon: "error",
-      iconColor: "#20462f",
-      confirmButtonText: "Okay",
-      background: "#D29F80",
-      color: "#20462f",
-      confirmButtonColor: "#C09779",
-    }).then(() => {
-      openModal(); // Reopen modal to select different voice
-    });
-  }
+  speechSynthesizer.startSpeech(title, origin, contentClone);
+  updateSpeechUI(true);
 }
 
 function stopSpeech() {
@@ -213,152 +204,8 @@ function onSpeechError(event) {
   removeHighlighting();
 }
 
-function highlightSpokenWord(event) {
-  if (event.name !== 'word') return;
-  
-  const charIndex = event.charIndex;
-  const charLength = event.charLength;
-  
-  // Determine which section is being spoken
-  let element, adjustedIndex;
-  
-  if (charIndex < speechSynthesizer.titleLength) {
-    // Title section
-    element = document.getElementById('story-title');
-    adjustedIndex = charIndex;
-  } else if (charIndex < speechSynthesizer.titleLength + speechSynthesizer.originLength) {
-    // Origin section
-    element = document.getElementById('story-origin');
-    adjustedIndex = charIndex - speechSynthesizer.titleLength;
-  } else {
-    // Main content section
-    element = document.getElementById('story-content');
-    adjustedIndex = charIndex - (speechSynthesizer.titleLength + speechSynthesizer.originLength);
-  }
-  
-  removeHighlighting();
-  
-  // Fallback for browsers that don't support range highlighting well
-  if (!element || !element.firstChild) return;
-  
-  // Try modern approach first
-  try {
-    const { node, position } = findTextNodeAndPosition(element, adjustedIndex);
-    
-    if (node && position !== -1) {
-      const range = document.createRange();
-      range.setStart(node, position);
-      range.setEnd(node, position + charLength);
-      
-      const span = document.createElement('span');
-      span.className = 'highlight-word';
-      
-      try {
-        range.surroundContents(span);
-        scrollToHighlight(span);
-        return;
-      } catch (e) {
-        console.log('Modern highlighting failed, trying fallback');
-      }
-    }
-  } catch (e) {
-    console.log('Modern highlighting error:', e);
-  }
-  
-  // Fallback approach for browsers with limited range support
-  try {
-    const text = element.textContent || element.innerText;
-    if (adjustedIndex + charLength > text.length) return;
-    
-    const before = text.substring(0, adjustedIndex);
-    const highlighted = text.substring(adjustedIndex, adjustedIndex + charLength);
-    const after = text.substring(adjustedIndex + charLength);
-    
-    element.innerHTML = `${escapeHTML(before)}<span class="highlight-word">${escapeHTML(highlighted)}</span>${escapeHTML(after)}`;
-    
-    const highlightedSpan = element.querySelector('.highlight-word');
-    if (highlightedSpan) {
-      scrollToHighlight(highlightedSpan);
-    }
-  } catch (e) {
-    console.error('Fallback highlighting failed:', e);
-  }
-}
 
-function escapeHTML(str) {
-  return str.replace(/[&<>'"]/g, 
-    tag => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      "'": '&#39;',
-      '"': '&quot;'
-    }[tag]));
-}
-
-function findTextNodeAndPosition(element, charIndex) {
-  if (!element) return { node: null, position: -1 };
-  
-  const walker = document.createTreeWalker(
-    element,
-    NodeFilter.SHOW_TEXT,
-    null,
-    false
-  );
-  
-  let currentIndex = 0;
-  let node;
-  
-  while (node = walker.nextNode()) {
-    const nodeLength = node.textContent.length;
-    if (currentIndex + nodeLength > charIndex) {
-      return {
-        node: node,
-        position: charIndex - currentIndex
-      };
-    }
-    currentIndex += nodeLength;
-  }
-  
-  // Fallback for browsers that might not handle tree walker correctly
-  if (element.nodeType === Node.TEXT_NODE) {
-    if (charIndex <= element.textContent.length) {
-      return {
-        node: element,
-        position: charIndex
-      };
-    }
-  }
-  
-  return { node: null, position: -1 };
-}
-
-function scrollToHighlight(element) {
-  const storyContainer = document.getElementById('storyContainer');
-  const containerRect = storyContainer.getBoundingClientRect();
-  const elementRect = element.getBoundingClientRect();
-  
-  const elementTop = elementRect.top - containerRect.top;
-  const elementBottom = elementRect.bottom - containerRect.top;
-  const containerHeight = containerRect.height;
-  
-  if (elementTop < storyContainer.scrollTop) {
-    storyContainer.scrollTop = elementTop - 20;
-  } else if (elementBottom > storyContainer.scrollTop + containerHeight) {
-    storyContainer.scrollTop = elementBottom - containerHeight + 20;
-  }
-}
-
-function removeHighlighting() {
-  const highlights = document.querySelectorAll('.highlight-word');
-  highlights.forEach(highlight => {
-    const parent = highlight.parentNode;
-    parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
-    parent.normalize();
-  });
-}
-
-// Modal functions
+// Updated openModal function
 function openModal() {
   const modal = document.getElementById('speech-options-modal');
   modal.style.display = 'block';
@@ -367,25 +214,52 @@ function openModal() {
   const voiceSelect = document.getElementById('voice-select-modal');
   voiceSelect.innerHTML = '';
   
-  speechSynthesizer.getVoices().forEach(voice => {
+  const voices = speechSynthesizer.getVoices();
+  
+  if (voices.length === 0) {
+    // No voices available - show error
+    voiceSelect.innerHTML = '<option>No voices available</option>';
+    document.getElementById('apply-speech-options').disabled = true;
+    
+    Swal.fire({
+      title: "Speech Error",
+      text: "No voices available for speech synthesis. Please try another browser or device.",
+      icon: "error",
+      iconColor: "#20462f",
+      confirmButtonText: "Okay",
+      background: "#D29F80",
+      color: "#20462f",
+      confirmButtonColor: "#C09779",
+    });
+    return;
+  }
+  
+  voices.forEach(voice => {
     const option = document.createElement('option');
+    
+    // Format voice name nicely
     let displayName = voice.name;
+    let lang = '';
     
-    // Format preferred voices nicely
-    if (voice.name.toLowerCase().includes('angelo')) displayName = "Angelo (Filipino)";
-    else if (voice.name.toLowerCase().includes('blessica')) displayName = "Blessica (Filipino)";
-    else if (voice.name.toLowerCase().includes('andrew')) displayName = "Andrew (English)";
-    else if (voice.name.toLowerCase().includes('emma')) displayName = "Emma (English)";
-    
-    option.textContent = displayName;
-    option.setAttribute('data-name', voice.name);
-    option.setAttribute('data-lang', voice.lang);
-    
-    // Mark preferred voices
-    if (displayName !== voice.name) {
-      option.style.fontWeight = 'bold';
+    if (voice.lang.includes('fil-')) {
+      lang = ' (Filipino)';
+    } else if (voice.lang.includes('en-')) {
+      lang = ' (English)';
     }
     
+    // Shorten common voice names
+    if (voice.name.includes('Google Filipino')) {
+      displayName = 'Google Filipino';
+    } else if (voice.name.includes('Microsoft Maria')) {
+      displayName = 'Microsoft Maria';
+    } else if (voice.name.includes('Microsoft David')) {
+      displayName = 'Microsoft David';
+    } else if (voice.name.includes('Google US English')) {
+      displayName = 'Google US English';
+    }
+    
+    option.textContent = `${displayName}${lang}`;
+    option.setAttribute('data-name', voice.name);
     voiceSelect.appendChild(option);
     
     if (voice === speechSynthesizer.getCurrentVoice()) {
@@ -398,6 +272,7 @@ function openModal() {
   rateControl.value = speechSynthesizer.getCurrentRate();
   document.getElementById('rate-value').textContent = `${speechSynthesizer.getCurrentRate().toFixed(1)}x`;
 }
+
 
 function closeModal() {
   document.getElementById('speech-options-modal').style.display = 'none';
