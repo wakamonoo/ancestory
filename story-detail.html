@@ -28,64 +28,62 @@
     />
     <style>
       .highlight-word {
-        background-color: rgba(255, 215, 0, 0.7);
+        background-color: #D5C7A3;
         color: #20462f;
         padding: 2px 0;
-        border-radius: 3px;
+        border-radius: 5px;
         transition: all 0.1s ease;
         position: relative;
       }
 
-      .highlight-word::after {
-        content: "";
-        position: absolute;
-        bottom: -2px;
-        left: 0;
-        width: 100%;
-        height: 2px;
-        background-color: #20462f;
-        animation: underline-pulse 0.5s infinite alternate;
-      }
-
-      @keyframes underline-pulse {
-        from {
-          opacity: 0.5;
-        }
-        to {
-          opacity: 1;
-        }
-      }
-
       #speech-controls {
-        margin: 10px 0;
+        margin: 20px auto;
         display: flex;
+        flex-direction: column;
+        justify-content: center;
         align-items: center;
-        gap: 10px;
-        margin-left: 10%;
+        gap: 15px;
+        padding: 8px;
+        background-color: #f7f7f7;
+        border-radius: 30px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        max-width: 600px;
       }
 
       #speech-controls button {
         background-color: #20462f;
-        color: white;
+        color: #f1d1b5;
         border: none;
-        padding: 8px 15px;
-        border-radius: 20px;
+        padding: 10px 20px;
+        border-radius: 25px;
         cursor: pointer;
         display: flex;
         align-items: center;
-        gap: 5px;
-        transition: all 0.3s ease;
+        gap: 8px;
+        font-size: 16px;
+        transition: background-color 0.3s ease, transform 0.2s ease-in-out;
+        width: 100%;
+        justify-content: center;
       }
 
       #speech-controls button:hover {
         background-color: #2d5a3d;
+        transform: scale(1.05);
       }
 
       #speech-controls button i {
-        font-size: 16px;
+        font-size: 18px;
       }
 
-      /* Speech Modal Styles */
+      #speech-options-btn {
+        background-color: #d5c7a3;
+        color: #20462f;
+      }
+
+      #speech-options-btn:hover {
+        background-color: #c7b794;
+      }
+
       .modal {
         display: none;
         position: fixed;
@@ -94,143 +92,145 @@
         top: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.4);
+        background-color: rgba(0, 0, 0, 0.5);
+        overflow: auto;
       }
 
       .modal-content {
-        background-color: #d29f80;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #20462f;
-        width: 80%;
-        max-width: 400px;
-        border-radius: 10px;
+        background-color: #c09779;
+        margin: 10% auto;
+        padding: 30px;
+        border-radius: 15px;
+        max-width: 500px;
         color: #20462f;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        animation: fade-in 0.3s ease-out;
+      }
+
+      @keyframes fade-in {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       .close-modal {
         color: #20462f;
         float: right;
-        font-size: 28px;
+        font-size: 30px;
         font-weight: bold;
         cursor: pointer;
+        transition: color 0.2s ease;
       }
 
       .close-modal:hover {
-        color: #2d5a3d;
+        color: #33614a;
       }
 
       .modal-control {
-        margin: 15px 0;
+        margin-bottom: 20px;
       }
 
       .modal-control label {
         display: block;
-        margin-bottom: 5px;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #33614a;
       }
 
       .modal-control select,
       .modal-control input[type="range"] {
-        width: 100%;
-        padding: 8px;
-        border-radius: 4px;
-        border: 1px solid #20462f;
-        background-color: white;
+        width: calc(100% - 16px);
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #d5c7a3;
+        background-color: #f7f7f7;
+        font-size: 16px;
+        color: #20462f;
       }
 
       #apply-speech-options {
         background-color: #20462f;
-        color: white;
+        color: #f1d1b5;
         border: none;
-        padding: 10px 20px;
-        border-radius: 20px;
+        padding: 12px 25px;
+        border-radius: 25px;
         cursor: pointer;
-        margin-top: 10px;
+        font-size: 16px;
+        transition: background-color 0.3s ease, transform 0.2s ease-in-out;
         width: 100%;
       }
 
-      .mobile-current-word {
-  font-weight: bold;
-  color: #20462f; /* Or any color you prefer */
-}
-
       #apply-speech-options:hover {
         background-color: #2d5a3d;
+        transform: scale(1.02);
       }
 
       #rate-value {
         display: inline-block;
         width: 40px;
         text-align: center;
-      }
-      /* Speech highlighting styles */
-      .highlight-word {
-        background-color: rgba(255, 215, 0, 0.5);
-        border-radius: 3px;
-        padding: 0 2px;
-        transition: background-color 0.1s ease;
+        margin-left: 10px;
+        color: #33614a;
       }
 
-      .mobile-highlight-word {
-        background-color: #ffd700;
-        color: #000;
-        padding: 2px 0;
-        border-radius: 3px;
-        box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
-      }
-
-      /* Speech controls */
-      #speak-btn,
-      #stop-speech-btn {
-        transition: all 0.3s ease;
-      }
-
-      #stop-speech-btn {
-        display: none;
-      }
-
-      /* Modal styles */
-      #speech-options-modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-      }
-
-      .modal-content {
-        background-color: #d29f80;
-        margin: 15% auto;
-        padding: 20px;
-        border-radius: 10px;
-        max-width: 500px;
-        color: #20462f;
-      }
-
-      .close-modal {
-        color: #20462f;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-      }
-
-      .close-modal:hover {
-        color: #000;
-      }
-      @media (max-width: 768px) {
-        .highlight-word {
-          background-color: rgba(255, 215, 0, 0.9) !important;
-          padding: 3px 0 !important;
-          border-radius: 5px !important;
+      @media (max-width: 1200px) {
+        #speech-controls {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 10px;
+          padding: 8px;
+          max-width: 95%;
+          margin: 20px auto;
         }
 
-        .highlight-word::after {
-          height: 3px !important;
-          bottom: -3px !important;
+        #speech-controls button {
+          width: 100%;
+          justify-content: center;
+          font-size: 14px;
+          padding: 8px 15px;
+        }
+
+        #speech-controls button i {
+          font-size: 16px;
+        }
+
+        .modal-content {
+          margin: 15% 5%;
+          width: 90%;
+          padding: 20px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        #speech-controls {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 10px;
+          padding: 5px;
+          max-width: 95%;
+          margin: 20px auto;
+        }
+
+        #speech-controls button {
+          width: 100%;
+          justify-content: center;
+          font-size: 14px;
+          padding: 8px 15px;
+        }
+
+        #speech-controls button i {
+          font-size: 16px;
+        }
+
+        .modal-content {
+          margin: 15% 5%;
+          width: 90%;
+          padding: 15px;
         }
       }
     </style>
