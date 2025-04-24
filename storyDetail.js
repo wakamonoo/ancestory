@@ -224,57 +224,68 @@ function openModal() {
   const voiceSelect = document.getElementById('voice-select-modal');
   voiceSelect.innerHTML = '';
   
-  const voices = speechSynthesizer.getVoices();
-  
-  if (voices.length === 0) {
-    // Try to force create voices
+  // Ensure we have voices (create fallback if needed)
+  if (speechSynthesizer.getVoices().length === 0) {
     speechSynthesizer.createFallbackVoices();
-    voices = speechSynthesizer.getVoices();
   }
-  
-  // Always show our 4 required voices, even if we need to create synthetic ones
+
+  // Always show our 4 required voices
   const requiredVoices = [
-    { name: "Angelo", lang: "fil-PH" },
-    { name: "Blessica", lang: "fil-PH" },
-    { name: "Andrew", lang: "en-US" },
-    { name: "Emma", lang: "en-US" }
+    { name: "Angelo", lang: "fil-PH", display: "Angelo (Filipino)" },
+    { name: "Blessica", lang: "fil-PH", display: "Blessica (Filipino)" },
+    { name: "Andrew", lang: "en-US", display: "Andrew (English)" },
+    { name: "Emma", lang: "en-US", display: "Emma (English)" }
   ];
-  
+
   requiredVoices.forEach(reqVoice => {
-    // Find matching voice or create synthetic entry
-    let voice = voices.find(v => 
-      v.name.includes(reqVoice.name) && 
-      v.lang.includes(reqVoice.lang)
+    const option = document.createElement('option');
+    
+    // Check if this voice is actually available
+    const voiceAvailable = speechSynthesizer.getVoices().some(v => 
+      v.name === reqVoice.name && v.lang === reqVoice.lang
     );
     
-    if (!voice) {
-      voice = {
-        name: reqVoice.name,
-        lang: reqVoice.lang,
-        voiceURI: reqVoice.name,
-        localService: false,
-        default: false
-      };
+    option.textContent = reqVoice.display;
+    option.setAttribute('data-name', reqVoice.name);
+    option.setAttribute('data-lang', reqVoice.lang);
+    
+    // Mark if this is a fallback voice
+    if (!voiceAvailable) {
+      option.setAttribute('data-fallback', 'true');
+      option.textContent += ' (Fallback)';
     }
     
-    const option = document.createElement('option');
-    option.textContent = `${voice.name} (${voice.lang.includes('fil') ? 'Filipino' : 'English'})`;
-    option.setAttribute('data-name', voice.name);
-    option.setAttribute('data-lang', voice.lang);
     voiceSelect.appendChild(option);
     
-    if (voice === speechSynthesizer.getCurrentVoice() || 
-        (!speechSynthesizer.getCurrentVoice() && reqVoice.name === "Angelo")) {
+    // Select current voice or default to Angelo
+    const currentVoice = speechSynthesizer.getCurrentVoice();
+    if ((currentVoice && currentVoice.name === reqVoice.name) || 
+        (!currentVoice && reqVoice.name === "Angelo")) {
       option.selected = true;
     }
   });
-  
+
   // Set rate control
   const rateControl = document.getElementById('rate-control-modal');
   rateControl.value = speechSynthesizer.getCurrentRate();
   document.getElementById('rate-value').textContent = `${speechSynthesizer.getCurrentRate().toFixed(1)}x`;
+  
+  // Show warning if using fallback voices
+  if (speechSynthesizer.usingFallbackVoices && typeof Swal !== 'undefined') {
+    Swal.fire({
+      title: "Note",
+      text: "Using fallback voices - some features may be limited",
+      icon: "info",
+      iconColor: "#20462f",
+      confirmButtonText: "Okay",
+      background: "#D29F80",
+      color: "#20462f",
+      confirmButtonColor: "#C09779",
+      timer: 3000,
+      showConfirmButton: false
+    });
+  }
 }
-
 function closeModal() {
   document.getElementById('speech-options-modal').style.display = 'none';
 }

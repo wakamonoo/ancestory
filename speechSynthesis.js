@@ -12,28 +12,29 @@ class StorySpeechSynthesis {
     this.contentLength = 0;
     this.currentHighlight = null;
     this.voiceLoadAttempts = 0;
+    this.usingFallbackVoices = false;
     
     // Our required voices with fallback configurations
     this.requiredVoices = [
       {
         name: "Angelo",
         lang: "fil-PH",
-        fallback: { pitch: 1.1, rate: 0.95, voiceURI: "Angelo" }
+        fallback: { pitch: 1.1, rate: 0.95 }
       },
       {
         name: "Blessica",
         lang: "fil-PH",
-        fallback: { pitch: 0.9, rate: 1.05, voiceURI: "Blessica" }
+        fallback: { pitch: 0.9, rate: 1.05 }
       },
       {
         name: "Andrew",
         lang: "en-US",
-        fallback: { pitch: 1.0, rate: 1.0, voiceURI: "Andrew" }
+        fallback: { pitch: 1.0, rate: 1.0 }
       },
       {
         name: "Emma",
         lang: "en-US",
-        fallback: { pitch: 1.05, rate: 1.0, voiceURI: "Emma" }
+        fallback: { pitch: 1.05, rate: 1.0 }
       }
     ];
     
@@ -50,18 +51,23 @@ class StorySpeechSynthesis {
     this.loadVoices();
     
     // Some browsers don't support onvoiceschanged properly
-    // So we'll poll for voices if they're not loaded immediately
+    if (this.speechSynthesis.onvoiceschanged !== undefined) {
+      this.speechSynthesis.onvoiceschanged = () => this.loadVoices();
+    }
+    
+    // Poll for voices if they're not loaded immediately
     if (this.voices.length === 0) {
       const voiceCheckInterval = setInterval(() => {
         this.voiceLoadAttempts++;
         this.loadVoices();
         
-        if (this.voices.length > 0 || this.voiceLoadAttempts >= 10) {
+        if (this.voices.length > 0 || this.voiceLoadAttempts >= 5) {
           clearInterval(voiceCheckInterval);
           
           // If still no voices after attempts, create our fallback voices
           if (this.voices.length === 0) {
             this.createFallbackVoices();
+            this.showVoiceSupportAlert();
           }
         }
       }, 500);
@@ -71,6 +77,7 @@ class StorySpeechSynthesis {
   loadVoices() {
     const nativeVoices = this.speechSynthesis.getVoices();
     this.voices = [];
+    this.usingFallbackVoices = false;
     
     // First try to find our required voices in native voices
     this.requiredVoices.forEach(reqVoice => {
@@ -84,45 +91,52 @@ class StorySpeechSynthesis {
       }
     });
     
-    // If we didn't find all required voices, try to find similar voices
-    if (this.voices.length < this.requiredVoices.length) {
-      const remainingVoices = this.requiredVoices.filter(reqVoice => 
-        !this.voices.some(v => v.name.includes(reqVoice.name))
-      );
-      
-      remainingVoices.forEach(reqVoice => {
-        // Try to find any voice with matching language
-        const fallbackVoice = nativeVoices.find(voice => 
-          voice.lang.includes(reqVoice.lang)
-        );
-        
-        if (fallbackVoice) {
-          // Clone the voice and modify its name to match our required voice
-          const modifiedVoice = Object.assign({}, fallbackVoice, {
-            name: reqVoice.name,
-            voiceURI: reqVoice.name
-          });
-          this.voices.push(modifiedVoice);
-        }
-      });
+    // If we found all required voices, we're done
+    if (this.voices.length === this.requiredVoices.length) {
+      this.currentVoice = this.voices[0];
+      return;
     }
     
-    // If we still don't have voices, we'll create fallback ones later
-    if (this.voices.length === 0) return;
+    // Try to find similar voices for missing ones
+    const remainingVoices = this.requiredVoices.filter(reqVoice => 
+      !this.voices.some(v => v.name.includes(reqVoice.name))
+    );
+    
+    remainingVoices.forEach(reqVoice => {
+      // Try to find any voice with matching language
+      const fallbackVoice = nativeVoices.find(voice => 
+        voice.lang.includes(reqVoice.lang)
+      );
+      
+      if (fallbackVoice) {
+        // Clone the voice and modify its name to match our required voice
+        const modifiedVoice = Object.assign({}, fallbackVoice, {
+          name: reqVoice.name,
+          voiceURI: reqVoice.name,
+          isFallback: true
+        });
+        this.voices.push(modifiedVoice);
+      }
+    });
     
     // Set default voice if available
-    this.currentVoice = this.voices[0];
+    if (this.voices.length > 0) {
+      this.currentVoice = this.voices[0];
+    }
   }
 
   createFallbackVoices() {
+    this.usingFallbackVoices = true;
+    
     // Create synthetic voice objects for our required voices
     this.requiredVoices.forEach(reqVoice => {
       const syntheticVoice = {
         name: reqVoice.name,
         lang: reqVoice.lang,
         voiceURI: reqVoice.name,
-        localService: true,
+        localService: false,
         default: false,
+        isFallback: true,
         ...reqVoice.fallback
       };
       
@@ -130,6 +144,31 @@ class StorySpeechSynthesis {
     });
     
     this.currentVoice = this.voices[0];
+  }
+
+  showVoiceSupportAlert() {
+    if (this.usingFallbackVoices && typeof Swal !== 'undefined') {
+      Swal.fire({
+        title: "Limited Voice Support",
+        html: `
+          <p>Your browser doesn't fully support our preferred voices.</p>
+          <p>We've enabled fallback voices that may sound different.</p>
+          <p>For best experience, try Microsoft Edge.</p>
+        `,
+        icon: "info",
+        iconColor: "#20462f",
+        confirmButtonText: "Okay",
+        background: "#D29F80",
+        color: "#20462f",
+        confirmButtonColor: "#C09779",
+        showClass: {
+          popup: "animate__animated animate__fadeIn",
+        },
+        hideClass: {
+          popup: "animate__animated animate__fadeOut",
+        }
+      });
+    }
   }
 
   startSpeech(title, origin, contentElement) {
@@ -148,7 +187,7 @@ class StorySpeechSynthesis {
     
     this.speechUtterance = new SpeechSynthesisUtterance(fullText);
     
-    // Apply voice settings - works with both native and synthetic voices
+    // Apply voice settings
     Object.assign(this.speechUtterance, {
       voice: this.currentVoice,
       voiceURI: this.currentVoice.voiceURI || this.currentVoice.name,
@@ -184,6 +223,12 @@ class StorySpeechSynthesis {
       if (this.onSpeechError && typeof this.onSpeechError === 'function') {
         this.onSpeechError(event);
       }
+      
+      // Try fallback if error occurs
+      if (!this.usingFallbackVoices) {
+        this.createFallbackVoices();
+        this.startSpeech(title, origin, contentElement);
+      }
     };
     
     try {
@@ -191,7 +236,36 @@ class StorySpeechSynthesis {
       this.isSpeaking = true;
     } catch (e) {
       console.error('Speech synthesis error:', e);
-      this.handleSpeechError();
+      this.handleSpeechError(title, origin, contentElement);
+    }
+  }
+
+  handleSpeechError(title, origin, contentElement) {
+    // If we get an error, try recreating voices and speaking again
+    if (!this.usingFallbackVoices) {
+      this.createFallbackVoices();
+      this.startSpeech(title, origin, contentElement);
+      return;
+    }
+    
+    // If we're already using fallback and still get error
+    this.isSpeaking = false;
+    
+    if (this.onSpeechError) {
+      this.onSpeechError({ error: 'synthesis-failed' });
+    }
+    
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({
+        title: "Speech Unavailable",
+        text: "Text-to-speech is not supported in your current browser.",
+        icon: "error",
+        iconColor: "#20462f",
+        confirmButtonText: "Okay",
+        background: "#D29F80",
+        color: "#20462f",
+        confirmButtonColor: "#C09779",
+      });
     }
   }
 
