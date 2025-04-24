@@ -459,21 +459,6 @@ function updateSpeechUI(isSpeaking) {
     speakBtn.querySelector('span').textContent = 'Listen';
   }
 }
-function updateSpeechUI(isSpeaking) {
-  const speakBtn = document.getElementById('speak-btn');
-  const stopBtn = document.getElementById('stop-speech-btn');
-  
-  if (isSpeaking) {
-    speakBtn.style.display = 'none';
-    stopBtn.style.display = 'flex';
-    speakBtn.querySelector('span').textContent = 'Pause';
-  } else {
-    speakBtn.style.display = 'flex';
-    stopBtn.style.display = 'none';
-    speakBtn.querySelector('span').textContent = 'Listen';
-  }
-}
-
 function formatStoryContent(content) {
   return content
     .split("\n")
