@@ -8,12 +8,16 @@ class StorySpeechSynthesis {
     this.isSpeaking = false;
     this.titleLength = 0;
     this.originLength = 0;
+    this.contentElement = null;
+    this.speechStartTime = 0;
+    this.highlightInterval = null;
 
     // Event handlers
     this.onWordBoundary = null;
     this.onSpeechEnd = null;
     this.onSpeechError = null;
     this.onSpeechPause = null;
+    this.onSpeechStart = null;
 
     this.init();
   }
@@ -49,6 +53,7 @@ class StorySpeechSynthesis {
   }
 
   startSpeech(title, origin, contentElement) {
+    this.contentElement = contentElement;
     const titleText = `${title}. `;
     const originText = `From ${origin}. `;
     const contentText = contentElement.textContent;
@@ -95,6 +100,12 @@ class StorySpeechSynthesis {
 
     this.speechSynthesis.speak(this.speechUtterance);
     this.isSpeaking = true;
+    this.speechStartTime = Date.now();
+    
+    // Call speech start handler if defined
+    if (this.onSpeechStart && typeof this.onSpeechStart === "function") {
+      this.onSpeechStart();
+    }
   }
 
   pauseSpeech() {
@@ -116,6 +127,10 @@ class StorySpeechSynthesis {
       this.speechSynthesis.cancel();
     }
     this.isSpeaking = false;
+    if (this.highlightInterval) {
+      clearInterval(this.highlightInterval);
+      this.highlightInterval = null;
+    }
   }
 
   changeVoice(voiceName) {
@@ -140,6 +155,20 @@ class StorySpeechSynthesis {
 
   isSpeechSupported() {
     return "speechSynthesis" in window;
+  }
+
+  getCurrentWordPosition() {
+    if (!this.speechUtterance) return null;
+    
+    // This is a simplified version for mobile that estimates position
+    const elapsedTime = (Date.now() - this.speechStartTime) / 1000;
+    const estimatedChars = Math.floor(elapsedTime * this.speechOptions.rate * 10); // Approx chars per second
+    
+    return {
+      name: 'word',
+      charIndex: estimatedChars,
+      charLength: 5 // Approximate word length
+    };
   }
 }
 

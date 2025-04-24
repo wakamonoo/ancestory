@@ -1,4 +1,3 @@
-// storyDetail.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getFirestore,
@@ -51,10 +50,36 @@ document.addEventListener("DOMContentLoaded", () => {
   if ('speechSynthesis' in window) {
     speechSynthesizer = new StorySpeechSynthesis();
     
-    // Set up event handlers
-    speechSynthesizer.onSpeechEnd = onSpeechEnd;
-    speechSynthesizer.onSpeechError = onSpeechError;
-    speechSynthesizer.onWordBoundary = highlightSpokenWord;
+    // Mobile detection and setup
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      // Mobile devices - use polling for word position
+      speechSynthesizer.onSpeechStart = () => {
+        speechSynthesizer.speechStartTime = Date.now();
+        speechSynthesizer.highlightInterval = setInterval(() => {
+          const fakeEvent = speechSynthesizer.getCurrentWordPosition();
+          if (fakeEvent) {
+            highlightSpokenWord(fakeEvent);
+          }
+        }, 300); // Update every 300ms
+      };
+      
+      speechSynthesizer.onSpeechEnd = () => {
+        clearInterval(speechSynthesizer.highlightInterval);
+        onSpeechEnd();
+      };
+      
+      speechSynthesizer.onSpeechError = (event) => {
+        clearInterval(speechSynthesizer.highlightInterval);
+        onSpeechError(event);
+      };
+    } else {
+      // PC - use normal boundary events
+      speechSynthesizer.onWordBoundary = highlightSpokenWord;
+      speechSynthesizer.onSpeechEnd = onSpeechEnd;
+      speechSynthesizer.onSpeechError = onSpeechError;
+    }
     
     // Set up UI event listeners
     setupSpeechUI();
@@ -214,6 +239,17 @@ function onSpeechError(event) {
 }
 
 function highlightSpokenWord(event) {
+  // Check if we're on a mobile device
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
+  if (isMobile) {
+    mobileWordHighlight(event);
+  } else {
+    pcWordHighlight(event);
+  }
+}
+
+function pcWordHighlight(event) {
   if (event.name !== 'word') return;
   
   const charIndex = event.charIndex;
@@ -238,7 +274,6 @@ function highlightSpokenWord(event) {
   
   removeHighlighting();
   
-  // Fallback for browsers that don't support range highlighting well
   if (!element || !element.firstChild) return;
   
   // Try modern approach first
@@ -282,6 +317,51 @@ function highlightSpokenWord(event) {
     }
   } catch (e) {
     console.error('Fallback highlighting failed:', e);
+  }
+}
+
+function mobileWordHighlight(event) {
+  const charIndex = event.charIndex;
+  const charLength = event.charLength || 5; // Default to 5 chars if not provided
+  
+  // Determine which section is being spoken
+  let element, adjustedIndex;
+  
+  if (charIndex < speechSynthesizer.titleLength) {
+    element = document.getElementById('story-title');
+    adjustedIndex = charIndex;
+  } else if (charIndex < speechSynthesizer.titleLength + speechSynthesizer.originLength) {
+    element = document.getElementById('story-origin');
+    adjustedIndex = charIndex - speechSynthesizer.titleLength;
+  } else {
+    element = document.getElementById('story-content');
+    adjustedIndex = charIndex - (speechSynthesizer.titleLength + speechSynthesizer.originLength);
+  }
+  
+  removeHighlighting();
+  
+  if (!element) return;
+  
+  try {
+    const text = element.textContent || element.innerText;
+    if (adjustedIndex + charLength > text.length) return;
+    
+    // Find word boundaries more reliably for mobile
+    const fullText = text;
+    const before = fullText.substring(0, adjustedIndex);
+    const word = fullText.substring(adjustedIndex, adjustedIndex + charLength);
+    const after = fullText.substring(adjustedIndex + charLength);
+    
+    // Create a simple highlight span
+    element.innerHTML = `${escapeHTML(before)}<span class="mobile-highlight-word">${escapeHTML(word)}</span>${escapeHTML(after)}`;
+    
+    // Scroll to the highlighted word
+    const highlightedSpan = element.querySelector('.mobile-highlight-word');
+    if (highlightedSpan) {
+      scrollToHighlight(highlightedSpan);
+    }
+  } catch (e) {
+    console.error('Mobile highlighting failed:', e);
   }
 }
 
@@ -350,14 +430,22 @@ function scrollToHighlight(element) {
 }
 
 function removeHighlighting() {
-  const highlights = document.querySelectorAll('.highlight-word');
-  highlights.forEach(highlight => {
+  // Remove PC highlights
+  const pcHighlights = document.querySelectorAll('.highlight-word');
+  pcHighlights.forEach(highlight => {
+    const parent = highlight.parentNode;
+    parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
+    parent.normalize();
+  });
+  
+  // Remove mobile highlights
+  const mobileHighlights = document.querySelectorAll('.mobile-highlight-word');
+  mobileHighlights.forEach(highlight => {
     const parent = highlight.parentNode;
     parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
     parent.normalize();
   });
 }
-
 // Modal functions
 function openModal() {
   const modal = document.getElementById('speech-options-modal');
