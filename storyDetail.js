@@ -118,6 +118,7 @@ async function fetchStoryDetails() {
   loadComments();
 }
 
+// SPEECH FUNCTIONS
 function setupSpeechUI() {
   const speakBtn = document.getElementById('speak-btn');
   const stopBtn = document.getElementById('stop-speech-btn');
@@ -241,34 +242,9 @@ function highlightSpokenWord(event) {
   
   removeHighlighting();
   
-  // Fallback for browsers that don't support range highlighting well
   if (!element || !element.firstChild) return;
   
-  // Try modern approach first
-  try {
-    const { node, position } = findTextNodeAndPosition(element, adjustedIndex);
-    
-    if (node && position !== -1) {
-      const range = document.createRange();
-      range.setStart(node, position);
-      range.setEnd(node, position + charLength);
-      
-      const span = document.createElement('span');
-      span.className = 'highlight-word';
-      
-      try {
-        range.surroundContents(span);
-        scrollToHighlight(span);
-        return;
-      } catch (e) {
-        console.log('Modern highlighting failed, trying fallback');
-      }
-    }
-  } catch (e) {
-    console.log('Modern highlighting error:', e);
-  }
-  
-  // Fallback approach for browsers with limited range support
+  // Mobile-friendly highlighting approach
   try {
     const text = element.textContent || element.innerText;
     if (adjustedIndex + charLength > text.length) return;
@@ -277,14 +253,20 @@ function highlightSpokenWord(event) {
     const highlighted = text.substring(adjustedIndex, adjustedIndex + charLength);
     const after = text.substring(adjustedIndex + charLength);
     
+    // Use innerHTML for mobile compatibility
     element.innerHTML = `${escapeHTML(before)}<span class="highlight-word">${escapeHTML(highlighted)}</span>${escapeHTML(after)}`;
     
+    // Scroll to highlight
     const highlightedSpan = element.querySelector('.highlight-word');
     if (highlightedSpan) {
-      scrollToHighlight(highlightedSpan);
+      highlightedSpan.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'nearest'
+      });
     }
   } catch (e) {
-    console.error('Fallback highlighting failed:', e);
+    console.error('Highlighting failed:', e);
   }
 }
 
@@ -297,59 +279,6 @@ function escapeHTML(str) {
       "'": '&#39;',
       '"': '&quot;'
     }[tag]));
-}
-
-function findTextNodeAndPosition(element, charIndex) {
-  if (!element) return { node: null, position: -1 };
-  
-  const walker = document.createTreeWalker(
-    element,
-    NodeFilter.SHOW_TEXT,
-    null,
-    false
-  );
-  
-  let currentIndex = 0;
-  let node;
-  
-  while (node = walker.nextNode()) {
-    const nodeLength = node.textContent.length;
-    if (currentIndex + nodeLength > charIndex) {
-      return {
-        node: node,
-        position: charIndex - currentIndex
-      };
-    }
-    currentIndex += nodeLength;
-  }
-  
-  // Fallback for browsers that might not handle tree walker correctly
-  if (element.nodeType === Node.TEXT_NODE) {
-    if (charIndex <= element.textContent.length) {
-      return {
-        node: element,
-        position: charIndex
-      };
-    }
-  }
-  
-  return { node: null, position: -1 };
-}
-
-function scrollToHighlight(element) {
-  const storyContainer = document.getElementById('storyContainer');
-  const containerRect = storyContainer.getBoundingClientRect();
-  const elementRect = element.getBoundingClientRect();
-  
-  const elementTop = elementRect.top - containerRect.top;
-  const elementBottom = elementRect.bottom - containerRect.top;
-  const containerHeight = containerRect.height;
-  
-  if (elementTop < storyContainer.scrollTop) {
-    storyContainer.scrollTop = elementTop - 20;
-  } else if (elementBottom > storyContainer.scrollTop + containerHeight) {
-    storyContainer.scrollTop = elementBottom - containerHeight + 20;
-  }
 }
 
 function removeHighlighting() {
@@ -366,6 +295,9 @@ function openModal() {
   const modal = document.getElementById('speech-options-modal');
   modal.style.display = 'block';
   
+  // Check voice support
+  const voiceSupport = speechSynthesizer.checkVoiceSupport();
+  
   // Populate voices
   const voiceSelect = document.getElementById('voice-select-modal');
   voiceSelect.innerHTML = '';
@@ -375,23 +307,35 @@ function openModal() {
     let displayName = voice.name;
     
     // Format preferred voices nicely
-    if (voice.name.toLowerCase().includes('angelo')) displayName = "Angelo (Filipino)";
-    else if (voice.name.toLowerCase().includes('blessica')) displayName = "Blessica (Filipino)";
-    else if (voice.name.toLowerCase().includes('andrew')) displayName = "Andrew (English)";
-    else if (voice.name.toLowerCase().includes('emma')) displayName = "Emma (English)";
+    const isPreferred = speechSynthesizer.preferredVoices.some(v => 
+      voice.name.toLowerCase().includes(v.name.toLowerCase()) && 
+      voice.lang === v.lang
+    );
+    
+    if (isPreferred) {
+      // Format preferred voices
+      if (voice.name.toLowerCase().includes('angelo')) displayName = "Angelo (Filipino)";
+      else if (voice.name.toLowerCase().includes('blessica')) displayName = "Blessica (Filipino)";
+      else if (voice.name.toLowerCase().includes('andrew')) displayName = "Andrew (English)";
+      else if (voice.name.toLowerCase().includes('emma')) displayName = "Emma (English)";
+    } else {
+      // Format non-preferred voices
+      if (voice.lang.startsWith('fil-')) displayName = `${voice.name} (Filipino)`;
+      else if (voice.lang.startsWith('en-')) displayName = `${voice.name} (English)`;
+    }
     
     option.textContent = displayName;
     option.setAttribute('data-name', voice.name);
     option.setAttribute('data-lang', voice.lang);
     
     // Mark preferred voices
-    if (displayName !== voice.name) {
+    if (isPreferred) {
       option.style.fontWeight = 'bold';
     }
     
     voiceSelect.appendChild(option);
     
-    if (voice === speechSynthesizer.getCurrentVoice()) {
+    if (voice.name === speechSynthesizer.getCurrentVoice()?.name) {
       option.selected = true;
     }
   });
@@ -400,6 +344,17 @@ function openModal() {
   const rateControl = document.getElementById('rate-control-modal');
   rateControl.value = speechSynthesizer.getCurrentRate();
   document.getElementById('rate-value').textContent = `${speechSynthesizer.getCurrentRate().toFixed(1)}x`;
+  
+  // Show warning if preferred voices not available
+  if (!voiceSupport.hasPreferred) {
+    const warning = document.createElement('div');
+    warning.className = 'voice-warning';
+    warning.innerHTML = `
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>Preferred voices not available on this device. Using alternative voices.</span>
+    `;
+    voiceSelect.parentNode.insertBefore(warning, voiceSelect.nextSibling);
+  }
 }
 
 function closeModal() {
@@ -733,7 +688,6 @@ async function handleReaction(reactionType) {
   }
 }
 
-// Add this function to your existing code
 async function deleteComment(commentId) {
   if (!currentUser) return;
 
@@ -785,7 +739,6 @@ async function deleteComment(commentId) {
   }
 }
 
-// Modify the addCommentToDOM function to include delete button for user's own comments
 function addCommentToDOM(comment) {
   const commentEl = document.createElement("div");
   commentEl.className = "comment";
@@ -848,7 +801,6 @@ function formatTime(date) {
   return date.toLocaleDateString(undefined, options);
 }
 
-// Update the loadComments function to include comment IDs
 async function loadComments() {
   try {
     const commentsRef = collection(db, "comments");
@@ -869,20 +821,20 @@ async function loadComments() {
       return;
     }
 
-    // Update comment count
-    document.getElementById("comment-count").textContent = `${
-      querySnapshot.size
-    } comment${querySnapshot.size !== 1 ? "s" : ""}`;
+  // Update comment count
+  document.getElementById("comment-count").textContent = `${
+    querySnapshot.size
+  } comment${querySnapshot.size !== 1 ? "s" : ""}`;
 
-    // Display comments
-    querySnapshot.forEach((doc) => {
-      const comment = { id: doc.id, ...doc.data() };
-      addCommentToDOM(comment);
-    });
-  } catch (error) {
-    console.error("Error loading comments:", error);
-    document.getElementById("comments-section").innerHTML =
-      "<p>Error loading comments. Please refresh the page.</p>";
+  // Display comments
+  querySnapshot.forEach((doc) => {
+    const comment = { id: doc.id, ...doc.data() };
+    addCommentToDOM(comment);
+  });
+} catch (error) {
+  console.error("Error loading comments:", error);
+  document.getElementById("comments-section").innerHTML =
+    "<p>Error loading comments. Please refresh the page.</p>";
   }
 }
 
