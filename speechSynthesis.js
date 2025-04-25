@@ -29,16 +29,10 @@ class StorySpeechSynthesis {
       const aName = a.name.toLowerCase();
       const bName = b.name.toLowerCase();
 
-      const isAPreferred =
-        aName.includes("angelo") ||
-        aName.includes("blessica") ||
-        aName.includes("andrew") ||
-        aName.includes("emma");
-      const isBPreferred =
-        bName.includes("angelo") ||
-        bName.includes("blessica") ||
-        bName.includes("andrew") ||
-        bName.includes("emma");
+      const isAPreferred = aName.includes("angelo") || aName.includes("blessica") ||
+        aName.includes("andrew") || aName.includes("emma");
+      const isBPreferred = bName.includes("angelo") || bName.includes("blessica") ||
+        bName.includes("andrew") || bName.includes("emma");
 
       if (isAPreferred && !isBPreferred) return -1;
       if (!isAPreferred && isBPreferred) return 1;
@@ -67,17 +61,7 @@ class StorySpeechSynthesis {
     this.speechUtterance.rate = this.speechOptions.rate;
 
     this.speechUtterance.onstart = () => {
-      const actualVoice = this.speechUtterance.voice;
-      if (actualVoice?.name !== this.currentVoice?.name) {
-        Swal.fire({
-          title: "Voice Change Not Applied",
-          text: `The selected voice "${this.currentVoice?.name}" could not be applied. Your system default voice "${actualVoice?.name}" is being used instead. Please change the voice in your system TTS settings.`,
-          icon: "warning",
-          background: "#C09779",
-          color: "#20462F",
-          confirmButtonColor: "#D29F80",
-        });
-      }
+      // Alert removed
     };
 
     this.speechUtterance.onboundary = (event) => {
@@ -134,10 +118,8 @@ class StorySpeechSynthesis {
 
   changeVoice(voiceName) {
     const selected = this.voices.find((v) => v.name === voiceName);
-
     if (selected) {
       this.currentVoice = selected;
-      // We now check actual usage during `onstart` in `startSpeech`, not here
     }
   }
 
