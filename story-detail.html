@@ -353,5 +353,48 @@
     </div>
 
     <script type="module" src="storyDetail.js"></script>
+    <script>
+      // Get the elements
+      const listenButton = document.getElementById("speak-btn");
+      const speechOptionsModal = document.getElementById("speech-options-modal");
+      const proceedButton = document.getElementById("apply-speech-options");
+    
+      // Show SweetAlert when the user clicks "Listen"
+      listenButton.addEventListener("click", () => {
+        Swal.fire({
+          title: 'Notice',
+          text: 'The voice model and text-highlighting features may not work properly depending on your device and browser. If you experience issues, we recommend adjusting the TTS settings on your device.',
+          icon: 'info',
+          confirmButtonText: 'Proceed',
+          showCancelButton: true,
+          cancelButtonText: 'Cancel',
+          allowOutsideClick: false,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // If the user presses "Proceed", open the speech options modal
+            speechOptionsModal.style.display = 'flex';
+          }
+        });
+      });
+    
+      // Close the modal when clicking the "X" button
+      const closeModal = document.querySelector(".close-modal");
+      closeModal.addEventListener("click", () => {
+        speechOptionsModal.style.display = "none";
+      });
+    
+      // Function to change TTS settings (device specific instructions)
+      function changeTTSSettings() {
+        Swal.fire({
+          title: 'Adjust Your TTS Settings',
+          text: 'To improve your experience, you can change the Text-to-Speech settings on your device. Please follow the steps below:\n\n1. Open device settings.\n2. Go to Accessibility or Language & Input.\n3. Select Text-to-Speech output.\n4. Choose a supported voice model like "Andrew" for English or "Angelo" for Filipino.',
+          icon: 'info',
+          confirmButtonText: 'Got it!',
+        });
+      }
+    
+      // Call this function when you want to guide users to change their TTS settings
+      changeTTSSettings();  // This can be triggered manually if needed.
+    </script>
   </body>
 </html>
