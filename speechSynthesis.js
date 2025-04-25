@@ -8,87 +8,102 @@ class StorySpeechSynthesis {
     this.isSpeaking = false;
     this.titleLength = 0;
     this.originLength = 0;
+    this.voicesReady = false;
 
     // Event handlers
     this.onWordBoundary = null;
     this.onSpeechEnd = null;
     this.onSpeechError = null;
     this.onSpeechPause = null;
+    this.onVoicesReady = null;
 
     this.init();
   }
 
   init() {
-    // Load available voices
-    this.speechSynthesis.onvoiceschanged = () => this.loadVoices();
+    if (typeof speechSynthesis === "undefined") {
+      console.warn("Speech synthesis not supported in this browser.");
+      return;
+    }
+
+    // Handle voices load (desktop + mobile)
+    this.speechSynthesis.onvoiceschanged = () => {
+      this.loadVoices();
+    };
+
+    // Try loading voices right away (some browsers may load them immediately)
     this.loadVoices();
   }
 
   loadVoices() {
-    this.voices = this.speechSynthesis.getVoices();
-    
-    // Sort voices - preferred voices first, then others
-    this.voices.sort((a, b) => {
+    const allVoices = this.speechSynthesis.getVoices();
+    if (!allVoices.length) {
+      console.warn("No voices available yet. They may load after user interaction.");
+      return;
+    }
+
+    this.voices = allVoices.sort((a, b) => {
       const aName = a.name.toLowerCase();
       const bName = b.name.toLowerCase();
-      
-      const isAPreferred = aName.includes("angelo") || aName.includes("blessica") || 
-                           aName.includes("andrew") || aName.includes("emma");
-      const isBPreferred = bName.includes("angelo") || bName.includes("blessica") || 
-                           bName.includes("andrew") || bName.includes("emma");
-      
+      const preferred = ["angelo", "blessica", "andrew", "emma"];
+      const isAPreferred = preferred.some(p => aName.includes(p));
+      const isBPreferred = preferred.some(p => bName.includes(p));
+
       if (isAPreferred && !isBPreferred) return -1;
       if (!isAPreferred && isBPreferred) return 1;
       return 0;
     });
-  
-    // Set default voice to first available voice
-    if (this.voices.length > 0) {
-      this.currentVoice = this.voices[0];
+
+    this.currentVoice = this.voices[0];
+    this.voicesReady = true;
+
+    if (typeof this.onVoicesReady === "function") {
+      this.onVoicesReady(this.voices);
     }
+
+    console.log("Voices loaded:", this.voices.map(v => v.name));
   }
 
   startSpeech(title, origin, contentElement) {
+    if (!this.voicesReady) {
+      console.warn("Voices not ready yet.");
+      return;
+    }
+
     const titleText = `${title}. `;
     const originText = `From ${origin}. `;
     const contentText = contentElement.textContent;
-
-    // Calculate lengths for each section
-    this.titleLength = titleText.length;
-    this.originLength = originText.length;
-
     const fullText = titleText + originText + contentText;
 
-    this.stopSpeech(); // Stop any current speech
+    this.stopSpeech();
 
     this.speechUtterance = new SpeechSynthesisUtterance(fullText);
     this.speechUtterance.voice = this.currentVoice;
     this.speechUtterance.rate = this.speechOptions.rate;
 
-    // Set up event handlers
     this.speechUtterance.onboundary = (event) => {
-      if (this.onWordBoundary && typeof this.onWordBoundary === "function") {
+      if (typeof this.onWordBoundary === "function") {
         this.onWordBoundary(event);
       }
     };
 
     this.speechUtterance.onend = () => {
       this.isSpeaking = false;
-      if (this.onSpeechEnd && typeof this.onSpeechEnd === "function") {
+      if (typeof this.onSpeechEnd === "function") {
         this.onSpeechEnd();
       }
     };
 
     this.speechUtterance.onpause = () => {
       this.isSpeaking = false;
-      if (this.onSpeechPause && typeof this.onSpeechPause === "function") {
+      if (typeof this.onSpeechPause === "function") {
         this.onSpeechPause();
       }
     };
 
     this.speechUtterance.onerror = (event) => {
       this.isSpeaking = false;
-      if (this.onSpeechError && typeof this.onSpeechError === "function") {
+      if (typeof this.onSpeechError === "function") {
         this.onSpeechError(event);
       }
     };
@@ -119,7 +134,13 @@ class StorySpeechSynthesis {
   }
 
   changeVoice(voiceName) {
-    this.currentVoice = this.voices.find((voice) => voice.name === voiceName);
+    const voice = this.voices.find((v) => v.name === voiceName);
+    if (voice) {
+      this.currentVoice = voice;
+      console.log(`Voice changed to: ${voice.name}`);
+    } else {
+      console.warn(`Voice "${voiceName}" not found. Using default voice.`);
+    }
   }
 
   changeRate(rate) {
