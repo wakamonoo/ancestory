@@ -9,34 +9,17 @@ class StorySpeechSynthesis {
     this.titleLength = 0;
     this.originLength = 0;
 
-    // Event handlers
     this.onWordBoundary = null;
     this.onSpeechEnd = null;
     this.onSpeechError = null;
     this.onSpeechPause = null;
 
     this.init();
-    this.detectMobileLimitations();
   }
 
   init() {
     this.speechSynthesis.onvoiceschanged = () => this.loadVoices();
     this.loadVoices();
-  }
-
-  detectMobileLimitations() {
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile) {
-      Swal.fire({
-        title: 'Voice Change May Not Work',
-        text: 'On mobile browsers, voice selection may not apply. The device default voice will be used.',
-        icon: 'info',
-        background: '#C09779',
-        color: '#20462F',
-        confirmButtonColor: '#D29F80',
-        confirmButtonText: 'Understood',
-      });
-    }
   }
 
   loadVoices() {
@@ -45,8 +28,11 @@ class StorySpeechSynthesis {
     this.voices.sort((a, b) => {
       const aName = a.name.toLowerCase();
       const bName = b.name.toLowerCase();
-      const isAPreferred = aName.includes("angelo") || aName.includes("blessica") || aName.includes("andrew") || aName.includes("emma");
-      const isBPreferred = bName.includes("angelo") || bName.includes("blessica") || bName.includes("andrew") || bName.includes("emma");
+
+      const isAPreferred = aName.includes("angelo") || aName.includes("blessica") ||
+        aName.includes("andrew") || aName.includes("emma");
+      const isBPreferred = bName.includes("angelo") || bName.includes("blessica") ||
+        bName.includes("andrew") || bName.includes("emma");
 
       if (isAPreferred && !isBPreferred) return -1;
       if (!isAPreferred && isBPreferred) return 1;
@@ -62,6 +48,10 @@ class StorySpeechSynthesis {
     const titleText = `${title}. `;
     const originText = `From ${origin}. `;
     const contentText = contentElement.textContent;
+
+    this.titleLength = titleText.length;
+    this.originLength = originText.length;
+
     const fullText = titleText + originText + contentText;
 
     this.stopSpeech();
@@ -70,17 +60,10 @@ class StorySpeechSynthesis {
     this.speechUtterance.voice = this.currentVoice;
     this.speechUtterance.rate = this.speechOptions.rate;
 
-    // Event Handlers
-    this.speechUtterance.onstart = () => {
-      this.isSpeaking = true;
-      Swal.fire({
-        title: 'Speech Started',
-        text: `Narrating: ${title}`,
-        icon: 'success',
-        background: '#C09779',
-        color: '#20462F',
-        confirmButtonColor: '#D29F80',
-      });
+    this.speechUtterance.onboundary = (event) => {
+      if (this.onWordBoundary && typeof this.onWordBoundary === "function") {
+        this.onWordBoundary(event);
+      }
     };
 
     this.speechUtterance.onend = () => {
@@ -88,28 +71,6 @@ class StorySpeechSynthesis {
       if (this.onSpeechEnd && typeof this.onSpeechEnd === "function") {
         this.onSpeechEnd();
       }
-      Swal.fire({
-        title: 'Speech Finished',
-        icon: 'success',
-        background: '#C09779',
-        color: '#20462F',
-        confirmButtonColor: '#D29F80',
-      });
-    };
-
-    this.speechUtterance.onerror = (event) => {
-      this.isSpeaking = false;
-      if (this.onSpeechError && typeof this.onSpeechError === "function") {
-        this.onSpeechError(event);
-      }
-      Swal.fire({
-        title: 'Speech Error',
-        text: 'An error occurred while narrating.',
-        icon: 'error',
-        background: '#C09779',
-        color: '#20462F',
-        confirmButtonColor: '#D29F80',
-      });
     };
 
     this.speechUtterance.onpause = () => {
@@ -119,13 +80,15 @@ class StorySpeechSynthesis {
       }
     };
 
-    this.speechUtterance.onboundary = (event) => {
-      if (this.onWordBoundary && typeof this.onWordBoundary === "function") {
-        this.onWordBoundary(event);
+    this.speechUtterance.onerror = (event) => {
+      this.isSpeaking = false;
+      if (this.onSpeechError && typeof this.onSpeechError === "function") {
+        this.onSpeechError(event);
       }
     };
 
     this.speechSynthesis.speak(this.speechUtterance);
+    this.isSpeaking = true;
   }
 
   pauseSpeech() {
@@ -151,16 +114,39 @@ class StorySpeechSynthesis {
 
   changeVoice(voiceName) {
     const selected = this.voices.find((v) => v.name === voiceName);
+
     if (selected) {
       this.currentVoice = selected;
-      Swal.fire({
-        title: 'Voice Changed',
-        text: `Now using: ${selected.name}`,
-        icon: 'info',
-        background: '#C09779',
-        color: '#20462F',
-        confirmButtonColor: '#D29F80',
-      });
+
+      const testUtterance = new SpeechSynthesisUtterance("Test");
+      testUtterance.voice = selected;
+      testUtterance.volume = 0; // silent
+
+      testUtterance.onend = () => {
+        const actuallyUsed = testUtterance.voice?.name || "Unknown";
+
+        if (actuallyUsed !== selected.name) {
+          Swal.fire({
+            title: 'Voice Change Limited',
+            text: `The selected voice may not be applied due to your device or browser restrictions. You can change the default voice in your system settings.`,
+            icon: 'warning',
+            background: '#C09779',
+            color: '#20462F',
+            confirmButtonColor: '#D29F80',
+          });
+        } else {
+          Swal.fire({
+            title: 'Voice Changed',
+            text: `Now using: ${selected.name}`,
+            icon: 'info',
+            background: '#C09779',
+            color: '#20462F',
+            confirmButtonColor: '#D29F80',
+          });
+        }
+      };
+
+      this.speechSynthesis.speak(testUtterance);
     }
   }
 
