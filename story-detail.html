@@ -27,7 +27,6 @@
       href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"
     />
     <style>
-      /* Your existing styles */
       .noteModal {
         margin: 10px auto;
         color: #20462f;
@@ -324,57 +323,35 @@
           across different devices (smartphones, tablets, etc.). However, the
           quality of the voice and the highlighting experience may vary
           depending on your device's capabilities. <br /><br />
-          Please note that the selected voice model and speed may also vary
-          depending on the system configuration of your device.
+          <span>Recommended Voice Models:</span><br />
+          - For English (ENG): Andrew | Emma<br />
+          - For Filipino (FIL): Angelo | Blessica<br /><br />
+          Please be aware that on certain devices, these features might not
+          function as expected or might have limited functionality. If you
+          experience issues, we recommend trying a different browser or device
+          for the best experience.
         </p>
+
         <div class="modal-control">
-          <label for="voice">Select Voice Model:</label>
-          <select id="voice">
-            <option value="en-US">English (US)</option>
-            <option value="en-GB">English (UK)</option>
-            <option value="fil-PH">Filipino</option>
-          </select>
+          <label for="voice-select-modal">Voice:</label>
+          <select id="voice-select-modal"></select>
         </div>
         <div class="modal-control">
-          <label for="rate">Speech Speed:</label>
+          <label for="rate-control-modal">Speed:</label>
           <input
             type="range"
-            id="rate"
+            id="rate-control-modal"
             min="0.5"
             max="2"
             step="0.1"
             value="1"
           />
-          <span id="rate-value">1</span>
+          <span id="rate-value">1.0x</span>
         </div>
         <button id="apply-speech-options">Apply</button>
       </div>
     </div>
 
-    <script>
-      // Trigger the SweetAlert first before modal shows
-      function showSweetAlert() {
-        Swal.fire({
-          title: 'Loading Story...',
-          text: 'Please wait while we load your story.',
-          icon: 'info',
-          showConfirmButton: false,
-          timer: 1500,
-        }).then(() => {
-          // Show the modal after the SweetAlert closes
-          document.getElementById('speech-options-modal').style.display = 'block';
-        });
-      }
-
-      // Close the modal
-      document.querySelector('.close-modal').addEventListener('click', function () {
-        document.getElementById('speech-options-modal').style.display = 'none';
-      });
-
-      // Trigger the SweetAlert on page load or when needed
-      window.onload = function () {
-        showSweetAlert();
-      };
-    </script>
+    <script type="module" src="storyDetail.js"></script>
   </body>
 </html>
