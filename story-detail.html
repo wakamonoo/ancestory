@@ -317,21 +317,12 @@
         <span class="close-modal">&times;</span>
         <h3>Speech Options</h3>
         <p class="noteModal">
-          <span>Note:</span> The voice model and text-highlighting features are
-          based on the compatibility of your device and browser. These features
-          are optimized for use on desktop browsers, but they should still work
-          across different devices (smartphones, tablets, etc.). However, the
-          quality of the voice and the highlighting experience may vary
-          depending on your device's capabilities. <br /><br />
-          <span>Recommended Voice Models:</span><br />
-          - For English (ENG): Andrew | Emma<br />
-          - For Filipino (FIL): Angelo | Blessica<br /><br />
-          Please be aware that on certain devices, these features might not
-          function as expected or might have limited functionality. If you
-          experience issues, we recommend trying a different browser or device
-          for the best experience.
+          <span>Note:</span>The voice model and highlight function is based on
+          the compatibily of your device and browser, this best work for pc but
+          still work cross devices. <br /><br />
+          <span>Best Voice Model</span><br />ENG - Andrew | Emma <br />
+          FIL - Angelo | Blessica
         </p>
-
         <div class="modal-control">
           <label for="voice-select-modal">Voice:</label>
           <select id="voice-select-modal"></select>
@@ -354,47 +345,48 @@
 
     <script type="module" src="storyDetail.js"></script>
     <script>
-      // Get the elements
-      const listenButton = document.getElementById("speak-btn");
-      const speechOptionsModal = document.getElementById("speech-options-modal");
-      const proceedButton = document.getElementById("apply-speech-options");
-    
-      // Show SweetAlert when the user clicks "Listen"
-      listenButton.addEventListener("click", () => {
+      // Get elements
+      const speakBtn = document.getElementById("speak-btn");
+      const stopSpeechBtn = document.getElementById("stop-speech-btn");
+      const speechOptionsModal = document.getElementById(
+        "speech-options-modal"
+      );
+      const closeModalBtn = document.querySelector(".close-modal");
+
+      // Function to show SweetAlert
+      function showCompatibilityAlert() {
         Swal.fire({
-          title: 'Notice',
-          text: 'The voice model and text-highlighting features may not work properly depending on your device and browser. If you experience issues, we recommend adjusting the TTS settings on your device.',
-          icon: 'info',
-          confirmButtonText: 'Proceed',
+          title: "Important Notice!",
+          text: "The voice model and text-highlighting features are optimized for desktop browsers. Some features may not work as expected on your device. You can change the TTS settings from your device’s accessibility options for better experience.",
+          icon: "info",
           showCancelButton: true,
-          cancelButtonText: 'Cancel',
-          allowOutsideClick: false,
+          confirmButtonText: "Proceed to Speech Options",
+          cancelButtonText: "Cancel",
         }).then((result) => {
           if (result.isConfirmed) {
-            // If the user presses "Proceed", open the speech options modal
-            speechOptionsModal.style.display = 'flex';
+            // Open the speech options modal if user chooses to proceed
+            speechOptionsModal.style.display = "flex";
           }
         });
+      }
+
+      // Event listener for the 'Listen' button
+      speakBtn.addEventListener("click", function () {
+        // Show SweetAlert first
+        showCompatibilityAlert();
       });
-    
-      // Close the modal when clicking the "X" button
-      const closeModal = document.querySelector(".close-modal");
-      closeModal.addEventListener("click", () => {
+
+      // Event listener for closing the modal
+      closeModalBtn.addEventListener("click", function () {
         speechOptionsModal.style.display = "none";
       });
-    
-      // Function to change TTS settings (device specific instructions)
-      function changeTTSSettings() {
-        Swal.fire({
-          title: 'Adjust Your TTS Settings',
-          text: 'To improve your experience, you can change the Text-to-Speech settings on your device. Please follow the steps below:\n\n1. Open device settings.\n2. Go to Accessibility or Language & Input.\n3. Select Text-to-Speech output.\n4. Choose a supported voice model like "Andrew" for English or "Angelo" for Filipino.',
-          icon: 'info',
-          confirmButtonText: 'Got it!',
-        });
-      }
-    
-      // Call this function when you want to guide users to change their TTS settings
-      changeTTSSettings();  // This can be triggered manually if needed.
+
+      // Optional: Close modal when clicking outside of it
+      window.addEventListener("click", function (event) {
+        if (event.target === speechOptionsModal) {
+          speechOptionsModal.style.display = "none";
+        }
+      });
     </script>
   </body>
 </html>
