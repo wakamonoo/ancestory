@@ -29,17 +29,23 @@ class StorySpeechSynthesis {
       const aName = a.name.toLowerCase();
       const bName = b.name.toLowerCase();
 
-      const isAPreferred = aName.includes("angelo") || aName.includes("blessica") ||
-        aName.includes("andrew") || aName.includes("emma");
-      const isBPreferred = bName.includes("angelo") || bName.includes("blessica") ||
-        bName.includes("andrew") || bName.includes("emma");
+      const isAPreferred =
+        aName.includes("angelo") ||
+        aName.includes("blessica") ||
+        aName.includes("andrew") ||
+        aName.includes("emma");
+      const isBPreferred =
+        bName.includes("angelo") ||
+        bName.includes("blessica") ||
+        bName.includes("andrew") ||
+        bName.includes("emma");
 
       if (isAPreferred && !isBPreferred) return -1;
       if (!isAPreferred && isBPreferred) return 1;
       return 0;
     });
 
-    if (this.voices.length > 0) {
+    if (this.voices.length > 0 && !this.currentVoice) {
       this.currentVoice = this.voices[0];
     }
   }
@@ -59,6 +65,20 @@ class StorySpeechSynthesis {
     this.speechUtterance = new SpeechSynthesisUtterance(fullText);
     this.speechUtterance.voice = this.currentVoice;
     this.speechUtterance.rate = this.speechOptions.rate;
+
+    this.speechUtterance.onstart = () => {
+      const actualVoice = this.speechUtterance.voice;
+      if (actualVoice?.name !== this.currentVoice?.name) {
+        Swal.fire({
+          title: "Voice Change Not Applied",
+          text: `The selected voice "${this.currentVoice?.name}" could not be applied. Your system default voice "${actualVoice?.name}" is being used instead. Please change the voice in your system TTS settings.`,
+          icon: "warning",
+          background: "#C09779",
+          color: "#20462F",
+          confirmButtonColor: "#D29F80",
+        });
+      }
+    };
 
     this.speechUtterance.onboundary = (event) => {
       if (this.onWordBoundary && typeof this.onWordBoundary === "function") {
@@ -117,36 +137,7 @@ class StorySpeechSynthesis {
 
     if (selected) {
       this.currentVoice = selected;
-
-      const testUtterance = new SpeechSynthesisUtterance("Test");
-      testUtterance.voice = selected;
-      testUtterance.volume = 0; // silent
-
-      testUtterance.onend = () => {
-        const actuallyUsed = testUtterance.voice?.name || "Unknown";
-
-        if (actuallyUsed !== selected.name) {
-          Swal.fire({
-            title: 'Voice Change Limited',
-            text: `The selected voice may not be applied due to your device or browser restrictions. You can change the default voice in your system settings.`,
-            icon: 'warning',
-            background: '#C09779',
-            color: '#20462F',
-            confirmButtonColor: '#D29F80',
-          });
-        } else {
-          Swal.fire({
-            title: 'Voice Changed',
-            text: `Now using: ${selected.name}`,
-            icon: 'info',
-            background: '#C09779',
-            color: '#20462F',
-            confirmButtonColor: '#D29F80',
-          });
-        }
-      };
-
-      this.speechSynthesis.speak(testUtterance);
+      // We now check actual usage during `onstart` in `startSpeech`, not here
     }
   }
 
