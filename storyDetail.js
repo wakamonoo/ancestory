@@ -123,8 +123,14 @@ function setupSpeechUI() {
   const speakBtn = document.getElementById('speak-btn');
   const stopBtn = document.getElementById('stop-speech-btn');
   
-  speakBtn.addEventListener('click', toggleSpeech);
-  stopBtn.addEventListener('click', stopSpeech);
+  // Remove any existing click listeners
+  speakBtn.replaceWith(speakBtn.cloneNode(true)); // Clean existing listeners
+  stopBtn.replaceWith(stopBtn.cloneNode(true));
+  
+  // Add fresh listeners
+  document.getElementById('speak-btn').addEventListener('click', toggleSpeech);
+  document.getElementById('stop-speech-btn').addEventListener('click', stopSpeech);
+;
   
   // Modal controls
   document.getElementById('voice-select-modal').addEventListener('change', (e) => {
@@ -150,8 +156,28 @@ function toggleSpeech() {
     speechSynthesizer.pauseSpeech();
     updateSpeechUI(false);
   } else {
-    openModal();
+    showCompatibilityAlert();
   }
+}
+
+// New function in storyDetail.js
+function showCompatibilityAlert() {
+  Swal.fire({
+    title: "Important Notice!",
+    text: "The voice model and text-highlighting features are optimized for desktop browsers. Some features may not work as expected on your device. You can change the TTS settings from your device's accessibility options for better experience.",
+    icon: "info",
+    showCancelButton: true,
+    confirmButtonText: "Proceed to Speech Options",
+    cancelButtonText: "Cancel",
+    background: "#D29F80",
+    color: "#20462f",
+    confirmButtonColor: "#C09779",
+    cancelButtonColor: "#20462f",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      openModal();
+    }
+  });
 }
 
 function startReadingStory() {
