@@ -8,68 +8,57 @@ class StorySpeechSynthesis {
     this.isSpeaking = false;
     this.titleLength = 0;
     this.originLength = 0;
-    this.voicesReady = false;
 
     // Event handlers
     this.onWordBoundary = null;
     this.onSpeechEnd = null;
     this.onSpeechError = null;
     this.onSpeechPause = null;
-    this.onVoicesReady = null;
 
     this.init();
+    this.detectMobileLimitations();
   }
 
   init() {
-    if (typeof speechSynthesis === "undefined") {
-      console.warn("Speech synthesis not supported in this browser.");
-      return;
-    }
-
-    // Handle voices load (desktop + mobile)
-    this.speechSynthesis.onvoiceschanged = () => {
-      this.loadVoices();
-    };
-
-    // Try loading voices right away (some browsers may load them immediately)
+    this.speechSynthesis.onvoiceschanged = () => this.loadVoices();
     this.loadVoices();
   }
 
-  loadVoices() {
-    const allVoices = this.speechSynthesis.getVoices();
-    if (!allVoices.length) {
-      console.warn("No voices available yet. They may load after user interaction.");
-      return;
+  detectMobileLimitations() {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+      Swal.fire({
+        title: 'Voice Change May Not Work',
+        text: 'On mobile browsers, voice selection may not apply. The device default voice will be used.',
+        icon: 'info',
+        background: '#C09779',
+        color: '#20462F',
+        confirmButtonColor: '#D29F80',
+        confirmButtonText: 'Understood',
+      });
     }
+  }
 
-    this.voices = allVoices.sort((a, b) => {
+  loadVoices() {
+    this.voices = this.speechSynthesis.getVoices();
+
+    this.voices.sort((a, b) => {
       const aName = a.name.toLowerCase();
       const bName = b.name.toLowerCase();
-      const preferred = ["angelo", "blessica", "andrew", "emma"];
-      const isAPreferred = preferred.some(p => aName.includes(p));
-      const isBPreferred = preferred.some(p => bName.includes(p));
+      const isAPreferred = aName.includes("angelo") || aName.includes("blessica") || aName.includes("andrew") || aName.includes("emma");
+      const isBPreferred = bName.includes("angelo") || bName.includes("blessica") || bName.includes("andrew") || bName.includes("emma");
 
       if (isAPreferred && !isBPreferred) return -1;
       if (!isAPreferred && isBPreferred) return 1;
       return 0;
     });
 
-    this.currentVoice = this.voices[0];
-    this.voicesReady = true;
-
-    if (typeof this.onVoicesReady === "function") {
-      this.onVoicesReady(this.voices);
+    if (this.voices.length > 0) {
+      this.currentVoice = this.voices[0];
     }
-
-    console.log("Voices loaded:", this.voices.map(v => v.name));
   }
 
   startSpeech(title, origin, contentElement) {
-    if (!this.voicesReady) {
-      console.warn("Voices not ready yet.");
-      return;
-    }
-
     const titleText = `${title}. `;
     const originText = `From ${origin}. `;
     const contentText = contentElement.textContent;
@@ -81,35 +70,62 @@ class StorySpeechSynthesis {
     this.speechUtterance.voice = this.currentVoice;
     this.speechUtterance.rate = this.speechOptions.rate;
 
-    this.speechUtterance.onboundary = (event) => {
-      if (typeof this.onWordBoundary === "function") {
-        this.onWordBoundary(event);
-      }
+    // Event Handlers
+    this.speechUtterance.onstart = () => {
+      this.isSpeaking = true;
+      Swal.fire({
+        title: 'Speech Started',
+        text: `Narrating: ${title}`,
+        icon: 'success',
+        background: '#C09779',
+        color: '#20462F',
+        confirmButtonColor: '#D29F80',
+      });
     };
 
     this.speechUtterance.onend = () => {
       this.isSpeaking = false;
-      if (typeof this.onSpeechEnd === "function") {
+      if (this.onSpeechEnd && typeof this.onSpeechEnd === "function") {
         this.onSpeechEnd();
       }
-    };
-
-    this.speechUtterance.onpause = () => {
-      this.isSpeaking = false;
-      if (typeof this.onSpeechPause === "function") {
-        this.onSpeechPause();
-      }
+      Swal.fire({
+        title: 'Speech Finished',
+        icon: 'success',
+        background: '#C09779',
+        color: '#20462F',
+        confirmButtonColor: '#D29F80',
+      });
     };
 
     this.speechUtterance.onerror = (event) => {
       this.isSpeaking = false;
-      if (typeof this.onSpeechError === "function") {
+      if (this.onSpeechError && typeof this.onSpeechError === "function") {
         this.onSpeechError(event);
+      }
+      Swal.fire({
+        title: 'Speech Error',
+        text: 'An error occurred while narrating.',
+        icon: 'error',
+        background: '#C09779',
+        color: '#20462F',
+        confirmButtonColor: '#D29F80',
+      });
+    };
+
+    this.speechUtterance.onpause = () => {
+      this.isSpeaking = false;
+      if (this.onSpeechPause && typeof this.onSpeechPause === "function") {
+        this.onSpeechPause();
+      }
+    };
+
+    this.speechUtterance.onboundary = (event) => {
+      if (this.onWordBoundary && typeof this.onWordBoundary === "function") {
+        this.onWordBoundary(event);
       }
     };
 
     this.speechSynthesis.speak(this.speechUtterance);
-    this.isSpeaking = true;
   }
 
   pauseSpeech() {
@@ -134,12 +150,17 @@ class StorySpeechSynthesis {
   }
 
   changeVoice(voiceName) {
-    const voice = this.voices.find((v) => v.name === voiceName);
-    if (voice) {
-      this.currentVoice = voice;
-      console.log(`Voice changed to: ${voice.name}`);
-    } else {
-      console.warn(`Voice "${voiceName}" not found. Using default voice.`);
+    const selected = this.voices.find((v) => v.name === voiceName);
+    if (selected) {
+      this.currentVoice = selected;
+      Swal.fire({
+        title: 'Voice Changed',
+        text: `Now using: ${selected.name}`,
+        icon: 'info',
+        background: '#C09779',
+        color: '#20462F',
+        confirmButtonColor: '#D29F80',
+      });
     }
   }
 
