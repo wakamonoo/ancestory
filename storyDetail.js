@@ -399,6 +399,51 @@ function removeHighlighting() {
   });
 }
 
+// Modal functions
+function openModal() {
+  const modal = document.getElementById('speech-options-modal');
+  modal.style.display = 'block';
+  
+  // Populate voices
+  const voiceSelect = document.getElementById('voice-select-modal');
+  voiceSelect.innerHTML = '';
+  
+  speechSynthesizer.getVoices().forEach(voice => {
+    const option = document.createElement('option');
+    let displayName = voice.name;
+    
+    // Format preferred voices nicely
+    if (voice.name.toLowerCase().includes('angelo')) displayName = "Angelo (Filipino)";
+    else if (voice.name.toLowerCase().includes('blessica')) displayName = "Blessica (Filipino)";
+    else if (voice.name.toLowerCase().includes('andrew')) displayName = "Andrew (English)";
+    else if (voice.name.toLowerCase().includes('emma')) displayName = "Emma (English)";
+    
+    option.textContent = displayName;
+    option.setAttribute('data-name', voice.name);
+    option.setAttribute('data-lang', voice.lang);
+    
+    // Mark preferred voices
+    if (displayName !== voice.name) {
+      option.style.fontWeight = 'bold';
+    }
+    
+    voiceSelect.appendChild(option);
+    
+    if (voice === speechSynthesizer.getCurrentVoice()) {
+      option.selected = true;
+    }
+  });
+  
+  // Set rate control
+  const rateControl = document.getElementById('rate-control-modal');
+  rateControl.value = speechSynthesizer.getCurrentRate();
+  document.getElementById('rate-value').textContent = `${speechSynthesizer.getCurrentRate().toFixed(1)}x`;
+}
+
+function closeModal() {
+  document.getElementById('speech-options-modal').style.display = 'none';
+}
+
 function updateSpeechUI(isSpeaking) {
   const speakBtn = document.getElementById('speak-btn');
   const stopBtn = document.getElementById('stop-speech-btn');
