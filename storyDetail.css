@@ -264,8 +264,7 @@
   margin-bottom: 5px;
 }
 
-.delete-comment-btn,
-.delete-reaction-btn {
+.delete-comment-btn, .delete-reaction-btn {
   background: none;
   border: none;
   color: #f33e58;
@@ -275,8 +274,7 @@
   transition: color 0.2s;
 }
 
-.delete-comment-btn,
-.delete-reaction-btn:hover {
+.delete-comment-btn, .delete-reaction-btn:hover {
   color: #d11a2d;
 }
 
@@ -498,10 +496,33 @@
     inset 10px 10px 5px hsl(var(--hue) 20% 15% / 100%),
     inset 10px 10px 7px hsl(var(--hue) 20% 45% / 100%);
 }
-
 /*-------------------------Responsive Design-------------------------*/
 /*------------------------------1200px------------------------------*/
 @media (min-width: 601px) and (max-width: 1200px) {
+  /*---------------StorySection---------------*/
+  .storytitle {
+    margin-left: -5%;
+  }
+  #storyContent {
+    padding: 2%;
+  }
+
+  #storyContainer {
+    margin-top: 15%;
+    width: 90%;
+  }
+
+  .story-card h2 {
+    font-size: 24px;
+  }
+
+  .read-button {
+    font-size: 14px;
+  }
+  .StorySub {
+    font-size: 14px;
+  }
+
   /*---------------StoryContent---------------*/
   #story-title {
     font-size: 32px;
@@ -573,6 +594,30 @@
 }
 /*------------------------------600px------------------------------*/
 @media only screen and (max-width: 600px) {
+  /*---------------StorySection---------------*/
+  .storytitle {
+    margin-left: -8%;
+  }
+  #storyContent {
+    padding: 2%;
+  }
+
+  #storyContainer {
+    margin-top: 15%;
+    width: 90%;
+  }
+
+  .story-card h2 {
+    font-size: 24px;
+  }
+
+  .read-button {
+    font-size: 14px;
+  }
+  .StorySub {
+    font-size: 14px;
+  }
+
   /*---------------StoryContent---------------*/
   #story-title {
     font-size: 32px;
