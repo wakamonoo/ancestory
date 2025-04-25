@@ -13,6 +13,7 @@ body {
   overflow-x: hidden;
   width: 100vw;
   scroll-behavior: smooth;
+  
 }
 
 body {
@@ -297,13 +298,13 @@ nav ul li a:hover {
   width: 300px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 10;
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Smooth transitions */
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; 
 }
 
 .story-card:hover {
-  transform: translateY(-5px); /* Slight upward movement */
+  transform: translateY(-5px); 
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
-  cursor: pointer; /* Indicate it's interactive */
+  cursor: pointer; 
 }
 .story-card h2 {
   color: #20462f;
