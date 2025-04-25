@@ -345,14 +345,63 @@
 
     <script type="module" src="storyDetail.js"></script>
     <script>
+      // Modal functions
+      function openModal() {
+        const modal = document.getElementById("speech-options-modal");
+        modal.style.display = "block";
+    
+        // Populate voices
+        const voiceSelect = document.getElementById("voice-select-modal");
+        voiceSelect.innerHTML = "";
+    
+        speechSynthesizer.getVoices().forEach((voice) => {
+          const option = document.createElement("option");
+          let displayName = voice.name;
+    
+          // Format preferred voices nicely
+          if (voice.name.toLowerCase().includes("angelo"))
+            displayName = "Angelo (Filipino)";
+          else if (voice.name.toLowerCase().includes("blessica"))
+            displayName = "Blessica (Filipino)";
+          else if (voice.name.toLowerCase().includes("andrew"))
+            displayName = "Andrew (English)";
+          else if (voice.name.toLowerCase().includes("emma"))
+            displayName = "Emma (English)";
+    
+          option.textContent = displayName;
+          option.setAttribute("data-name", voice.name);
+          option.setAttribute("data-lang", voice.lang);
+    
+          // Mark preferred voices
+          if (displayName !== voice.name) {
+            option.style.fontWeight = "bold";
+          }
+    
+          voiceSelect.appendChild(option);
+    
+          if (voice === speechSynthesizer.getCurrentVoice()) {
+            option.selected = true;
+          }
+        });
+    
+        // Set rate control
+        const rateControl = document.getElementById("rate-control-modal");
+        rateControl.value = speechSynthesizer.getCurrentRate();
+        document.getElementById("rate-value").textContent = `${speechSynthesizer
+          .getCurrentRate()
+          .toFixed(1)}x`;
+      }
+    
+      function closeModal() {
+        document.getElementById("speech-options-modal").style.display = "none";
+      }
+    
       // Get elements
       const speakBtn = document.getElementById("speak-btn");
       const stopSpeechBtn = document.getElementById("stop-speech-btn");
-      const speechOptionsModal = document.getElementById(
-        "speech-options-modal"
-      );
+      const speechOptionsModal = document.getElementById("speech-options-modal");
       const closeModalBtn = document.querySelector(".close-modal");
-
+    
       // Function to show SweetAlert
       function showCompatibilityAlert() {
         Swal.fire({
@@ -364,23 +413,23 @@
           cancelButtonText: "Cancel",
         }).then((result) => {
           if (result.isConfirmed) {
-            // Open the speech options modal if user chooses to proceed
-            speechOptionsModal.style.display = "flex";
+            // Only open the speech options modal if user chooses to proceed
+            openModal();
           }
         });
       }
-
+    
       // Event listener for the 'Listen' button
       speakBtn.addEventListener("click", function () {
         // Show SweetAlert first
         showCompatibilityAlert();
       });
-
+    
       // Event listener for closing the modal
       closeModalBtn.addEventListener("click", function () {
         speechOptionsModal.style.display = "none";
       });
-
+    
       // Optional: Close modal when clicking outside of it
       window.addEventListener("click", function (event) {
         if (event.target === speechOptionsModal) {
@@ -388,5 +437,6 @@
         }
       });
     </script>
+    
   </body>
 </html>
