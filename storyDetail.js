@@ -1,4 +1,3 @@
-// storyDetail.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getFirestore,
@@ -18,12 +17,13 @@ import {
   getAuth,
   onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { StorySpeechSynthesis } from './speechSynthesis.js';
+import { StorySpeechSynthesis } from "./speechSynthesis.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
   authDomain: "ancestory-c068e.firebaseapp.com",
-  databaseURL: "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL:
+    "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "ancestory-c068e",
   storageBucket: "ancestory-c068e.appspot.com",
   messagingSenderId: "579709470015",
@@ -48,19 +48,19 @@ let speechSynthesizer = null;
 
 // Initialize speech synthesis when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
-  if ('speechSynthesis' in window) {
+  if ("speechSynthesis" in window) {
     speechSynthesizer = new StorySpeechSynthesis();
-    
+
     // Set up event handlers
     speechSynthesizer.onSpeechEnd = onSpeechEnd;
     speechSynthesizer.onSpeechError = onSpeechError;
     speechSynthesizer.onWordBoundary = highlightSpokenWord;
-    
+
     // Set up UI event listeners
     setupSpeechUI();
   } else {
-    document.getElementById('speak-btn').style.display = 'none';
-    console.warn('Speech synthesis not supported');
+    document.getElementById("speak-btn").style.display = "none";
+    console.warn("Speech synthesis not supported");
   }
 });
 
@@ -120,35 +120,43 @@ async function fetchStoryDetails() {
 
 // SPEECH FUNCTIONS
 function setupSpeechUI() {
-  const speakBtn = document.getElementById('speak-btn');
-  const stopBtn = document.getElementById('stop-speech-btn');
-  
+  const speakBtn = document.getElementById("speak-btn");
+  const stopBtn = document.getElementById("stop-speech-btn");
+
   // Remove any existing click listeners
   speakBtn.replaceWith(speakBtn.cloneNode(true)); // Clean existing listeners
   stopBtn.replaceWith(stopBtn.cloneNode(true));
-  
+
   // Add fresh listeners
-  document.getElementById('speak-btn').addEventListener('click', toggleSpeech);
-  document.getElementById('stop-speech-btn').addEventListener('click', stopSpeech);
-;
-  
+  document.getElementById("speak-btn").addEventListener("click", toggleSpeech);
+  document
+    .getElementById("stop-speech-btn")
+    .addEventListener("click", stopSpeech);
   // Modal controls
-  document.getElementById('voice-select-modal').addEventListener('change', (e) => {
-    speechSynthesizer.changeVoice(e.target.selectedOptions[0].getAttribute('data-name'));
-  });
-  
-  document.getElementById('rate-control-modal').addEventListener('input', (e) => {
-    const rate = parseFloat(e.target.value);
-    speechSynthesizer.changeRate(rate);
-    document.getElementById('rate-value').textContent = `${rate.toFixed(1)}x`;
-  });
-  
-  document.getElementById('apply-speech-options').addEventListener('click', () => {
-    closeModal();
-    startReadingStory();
-  });
-  
-  document.querySelector('.close-modal').addEventListener('click', closeModal);
+  document
+    .getElementById("voice-select-modal")
+    .addEventListener("change", (e) => {
+      speechSynthesizer.changeVoice(
+        e.target.selectedOptions[0].getAttribute("data-name")
+      );
+    });
+
+  document
+    .getElementById("rate-control-modal")
+    .addEventListener("input", (e) => {
+      const rate = parseFloat(e.target.value);
+      speechSynthesizer.changeRate(rate);
+      document.getElementById("rate-value").textContent = `${rate.toFixed(1)}x`;
+    });
+
+  document
+    .getElementById("apply-speech-options")
+    .addEventListener("click", () => {
+      closeModal();
+      startReadingStory();
+    });
+
+  document.querySelector(".close-modal").addEventListener("click", closeModal);
 }
 
 function toggleSpeech() {
@@ -181,20 +189,23 @@ function showCompatibilityAlert() {
 }
 
 function startReadingStory() {
-  const title = document.getElementById('story-title').textContent;
-  const origin = document.getElementById('story-origin').textContent.replace('Origin:', '').trim();
-  const contentElement = document.getElementById('story-content');
-  
+  const title = document.getElementById("story-title").textContent;
+  const origin = document
+    .getElementById("story-origin")
+    .textContent.replace("Origin:", "")
+    .trim();
+  const contentElement = document.getElementById("story-content");
+
   // Clone the content element for manipulation
   const contentClone = contentElement.cloneNode(true);
   contentElement.parentNode.replaceChild(contentClone, contentElement);
-  contentClone.id = 'story-content';
-  
+  contentClone.id = "story-content";
+
   try {
     speechSynthesizer.startSpeech(title, origin, contentClone);
     updateSpeechUI(true);
   } catch (error) {
-    console.error('Error starting speech:', error);
+    console.error("Error starting speech:", error);
     Swal.fire({
       title: "Voice Not Supported",
       text: "The selected voice is not supported on your device/browser. Please try a different voice.",
@@ -223,7 +234,7 @@ function onSpeechEnd() {
 
 function onSpeechError(event) {
   // Only show error if it's not a user-initiated stop
-  if (event.error !== 'interrupted') {
+  if (event.error !== "interrupted") {
     Swal.fire({
       title: "Speech Error",
       text: "An error occurred while reading the story.",
@@ -240,65 +251,73 @@ function onSpeechError(event) {
 }
 
 function highlightSpokenWord(event) {
-  if (event.name !== 'word') return;
-  
+  if (event.name !== "word") return;
+
   const charIndex = event.charIndex;
   const charLength = event.charLength;
-  
+
   // Determine which section is being spoken
   let element, adjustedIndex;
-  
+
   if (charIndex < speechSynthesizer.titleLength) {
     // Title section
-    element = document.getElementById('story-title');
+    element = document.getElementById("story-title");
     adjustedIndex = charIndex;
-  } else if (charIndex < speechSynthesizer.titleLength + speechSynthesizer.originLength) {
+  } else if (
+    charIndex <
+    speechSynthesizer.titleLength + speechSynthesizer.originLength
+  ) {
     // Origin section
-    element = document.getElementById('story-origin');
+    element = document.getElementById("story-origin");
     adjustedIndex = charIndex - speechSynthesizer.titleLength;
   } else {
     // Main content section
-    element = document.getElementById('story-content');
-    adjustedIndex = charIndex - (speechSynthesizer.titleLength + speechSynthesizer.originLength);
+    element = document.getElementById("story-content");
+    adjustedIndex =
+      charIndex -
+      (speechSynthesizer.titleLength + speechSynthesizer.originLength);
   }
-  
+
   removeHighlighting();
-  
+
   if (!element || !element.firstChild) return;
-  
+
   // Create a temporary clone for manipulation
   const tempClone = element.cloneNode(true);
-  
+
   try {
-    const { node, position } = findTextNodeAndPosition(tempClone, adjustedIndex);
-    
+    const { node, position } = findTextNodeAndPosition(
+      tempClone,
+      adjustedIndex
+    );
+
     if (node && position !== -1) {
       const range = document.createRange();
       range.setStart(node, position);
       range.setEnd(node, position + charLength);
-      
-      const span = document.createElement('span');
-      span.className = 'highlight-word';
-      
+
+      const span = document.createElement("span");
+      span.className = "highlight-word";
+
       try {
         range.surroundContents(span);
-        
+
         // Only update the original element if the manipulation succeeded
         element.innerHTML = tempClone.innerHTML;
-        
-        const highlightedSpan = element.querySelector('.highlight-word');
+
+        const highlightedSpan = element.querySelector(".highlight-word");
         if (highlightedSpan) {
           scrollToHighlight(highlightedSpan);
         }
         return;
       } catch (e) {
-        console.log('Modern highlighting failed, trying fallback');
+        console.log("Modern highlighting failed, trying fallback");
       }
     }
   } catch (e) {
-    console.log('Modern highlighting error:', e);
+    console.log("Modern highlighting error:", e);
   }
-  
+
   // Fallback approach that preserves formatting
   try {
     const textNodes = [];
@@ -308,16 +327,16 @@ function highlightSpokenWord(event) {
       null,
       false
     );
-    
+
     let node;
-    while (node = walker.nextNode()) {
+    while ((node = walker.nextNode())) {
       textNodes.push(node);
     }
-    
+
     let currentPos = 0;
     let foundNode = null;
     let foundPos = 0;
-    
+
     for (const node of textNodes) {
       const nodeLength = node.textContent.length;
       if (currentPos + nodeLength > adjustedIndex) {
@@ -327,85 +346,88 @@ function highlightSpokenWord(event) {
       }
       currentPos += nodeLength;
     }
-    
+
     if (foundNode) {
       const range = document.createRange();
       range.setStart(foundNode, foundPos);
       range.setEnd(foundNode, foundPos + charLength);
-      
-      const span = document.createElement('span');
-      span.className = 'highlight-word';
-      
+
+      const span = document.createElement("span");
+      span.className = "highlight-word";
+
       range.surroundContents(span);
       element.innerHTML = tempClone.innerHTML;
-      
-      const highlightedSpan = element.querySelector('.highlight-word');
+
+      const highlightedSpan = element.querySelector(".highlight-word");
       if (highlightedSpan) {
         scrollToHighlight(highlightedSpan);
       }
     }
   } catch (e) {
-    console.error('Fallback highlighting failed:', e);
+    console.error("Fallback highlighting failed:", e);
   }
 }
 
 function escapeHTML(str) {
-  return str.replace(/[&<>'"]/g, 
-    tag => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      "'": '&#39;',
-      '"': '&quot;'
-    }[tag]));
+  return str.replace(
+    /[&<>'"]/g,
+    (tag) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "'": "&#39;",
+        '"': "&quot;",
+      }[tag])
+  );
 }
 
 function findTextNodeAndPosition(element, charIndex) {
   if (!element) return { node: null, position: -1 };
-  
+
   const walker = document.createTreeWalker(
     element,
     NodeFilter.SHOW_TEXT,
     null,
     false
   );
-  
+
   let currentIndex = 0;
   let node;
-  
-  while (node = walker.nextNode()) {
+
+  while ((node = walker.nextNode())) {
     const nodeLength = node.textContent.length;
     if (currentIndex + nodeLength > charIndex) {
       return {
         node: node,
-        position: charIndex - currentIndex
+        position: charIndex - currentIndex,
       };
     }
     currentIndex += nodeLength;
   }
-  
+
   // Fallback for browsers that might not handle tree walker correctly
   if (element.nodeType === Node.TEXT_NODE) {
     if (charIndex <= element.textContent.length) {
       return {
         node: element,
-        position: charIndex
+        position: charIndex,
       };
     }
   }
-  
+
   return { node: null, position: -1 };
 }
 
 function scrollToHighlight(element) {
-  const storyContainer = document.getElementById('storyContainer');
+  const storyContainer = document.getElementById("storyContainer");
   const containerRect = storyContainer.getBoundingClientRect();
   const elementRect = element.getBoundingClientRect();
-  
+
   const elementTop = elementRect.top - containerRect.top;
   const elementBottom = elementRect.bottom - containerRect.top;
   const containerHeight = containerRect.height;
-  
+
   if (elementTop < storyContainer.scrollTop) {
     storyContainer.scrollTop = elementTop - 20;
   } else if (elementBottom > storyContainer.scrollTop + containerHeight) {
@@ -414,12 +436,15 @@ function scrollToHighlight(element) {
 }
 
 function removeHighlighting() {
-  const highlights = document.querySelectorAll('.highlight-word');
-  highlights.forEach(highlight => {
+  const highlights = document.querySelectorAll(".highlight-word");
+  highlights.forEach((highlight) => {
     // Replace only the highlight span with its text content
     const parent = highlight.parentNode;
     if (parent) {
-      parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
+      parent.replaceChild(
+        document.createTextNode(highlight.textContent),
+        highlight
+      );
       parent.normalize(); // Merge adjacent text nodes
     }
   });
@@ -427,61 +452,67 @@ function removeHighlighting() {
 
 // Modal functions
 function openModal() {
-  const modal = document.getElementById('speech-options-modal');
-  modal.style.display = 'block';
-  
+  const modal = document.getElementById("speech-options-modal");
+  modal.style.display = "block";
+
   // Populate voices
-  const voiceSelect = document.getElementById('voice-select-modal');
-  voiceSelect.innerHTML = '';
-  
-  speechSynthesizer.getVoices().forEach(voice => {
-    const option = document.createElement('option');
+  const voiceSelect = document.getElementById("voice-select-modal");
+  voiceSelect.innerHTML = "";
+
+  speechSynthesizer.getVoices().forEach((voice) => {
+    const option = document.createElement("option");
     let displayName = voice.name;
-    
+
     // Format preferred voices nicely
-    if (voice.name.toLowerCase().includes('angelo')) displayName = "Angelo (Filipino)";
-    else if (voice.name.toLowerCase().includes('blessica')) displayName = "Blessica (Filipino)";
-    else if (voice.name.toLowerCase().includes('andrew')) displayName = "Andrew (English)";
-    else if (voice.name.toLowerCase().includes('emma')) displayName = "Emma (English)";
-    
+    if (voice.name.toLowerCase().includes("angelo"))
+      displayName = "Angelo (Filipino)";
+    else if (voice.name.toLowerCase().includes("blessica"))
+      displayName = "Blessica (Filipino)";
+    else if (voice.name.toLowerCase().includes("andrew"))
+      displayName = "Andrew (English)";
+    else if (voice.name.toLowerCase().includes("emma"))
+      displayName = "Emma (English)";
+
     option.textContent = displayName;
-    option.setAttribute('data-name', voice.name);
-    option.setAttribute('data-lang', voice.lang);
-    
+    option.setAttribute("data-name", voice.name);
+    option.setAttribute("data-lang", voice.lang);
+
     // Mark preferred voices
     if (displayName !== voice.name) {
-      option.style.fontWeight = 'bold';
+      option.style.fontWeight = "bold";
     }
-    
+
     voiceSelect.appendChild(option);
-    
+
     if (voice === speechSynthesizer.getCurrentVoice()) {
       option.selected = true;
     }
   });
-  
+
   // Set rate control
-  const rateControl = document.getElementById('rate-control-modal');
+  const rateControl = document.getElementById("rate-control-modal");
   rateControl.value = speechSynthesizer.getCurrentRate();
-  document.getElementById('rate-value').textContent = `${speechSynthesizer.getCurrentRate().toFixed(1)}x`;
+  document.getElementById("rate-value").textContent = `${speechSynthesizer
+    .getCurrentRate()
+    .toFixed(1)}x`;
 }
 
 function closeModal() {
-  document.getElementById('speech-options-modal').style.display = 'none';
+  document.getElementById("speech-options-modal").style.display = "none";
 }
 
 function updateSpeechUI(isSpeaking) {
-  const speakBtn = document.getElementById('speak-btn');
-  const stopBtn = document.getElementById('stop-speech-btn');
-  
+  const speakBtn = document.getElementById("speak-btn");
+  const stopBtn = document.getElementById("stop-speech-btn");
+
   if (isSpeaking) {
-    speakBtn.style.display = 'none';
-    stopBtn.style.display = 'flex';
-    speakBtn.querySelector('span').textContent = 'Pause';
+    speakBtn.style.display = "none";
+    stopBtn.style.display = "flex";
+    speakBtn.querySelector("span").textContent = "Pause";
   } else {
-    speakBtn.style.display = 'flex';
-    stopBtn.style.display = 'none';
-    speakBtn.querySelector('span').textContent = 'Listen';
+    speakBtn.style.display = "flex";
+    stopBtn.style.display = "none";
+    speakBtn.querySelector("span").textContent = "Listen";
   }
 }
 
@@ -987,7 +1018,7 @@ async function postComment(commentText) {
       hideClass: {
         popup: "animate__animated animate__fadeOut",
       },
-    });    
+    });
     return;
   }
 
@@ -1033,7 +1064,7 @@ async function postComment(commentText) {
       hideClass: {
         popup: "animate__animated animate__fadeOut",
       },
-    });    
+    });
   } catch (error) {
     console.error("Error posting comment:", error);
     Swal.fire({
@@ -1048,7 +1079,7 @@ async function postComment(commentText) {
       showClass: {
         popup: "animate__animated animate__shakeX",
       },
-    });    
+    });
   }
 }
 
@@ -1184,7 +1215,7 @@ document.addEventListener("DOMContentLoaded", () => {
       showClass: {
         popup: "animate__animated animate__fadeIn",
       },
-    });    
+    });
 
     // Add event listeners for each share button
     document.querySelector(".share-facebook").addEventListener("click", () => {
@@ -1228,7 +1259,7 @@ document.addEventListener("DOMContentLoaded", () => {
         Swal.fire({
           title: "Link copied to clipboard!",
           icon: "success",
-          iconColor: "#20462f",  // Added icon color
+          iconColor: "#20462f", // Added icon color
           showConfirmButton: false,
           timer: 1500,
           background: "#FF6F61",
@@ -1239,7 +1270,7 @@ document.addEventListener("DOMContentLoaded", () => {
           hideClass: {
             popup: "animate__animated animate__fadeOut",
           },
-        });        
+        });
       });
     });
   });
