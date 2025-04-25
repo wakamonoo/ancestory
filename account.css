@@ -264,6 +264,26 @@
   width: 0%;
   transition: width 0.3s ease;
 }
+.back-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  background-color: #c09779;
+  border-radius: 50%;
+  text-decoration: none;
+  color: #20462f;
+  font-size: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+
+.back-button:hover {
+  background-color: #d5c7a3;
+  color: #000;
+  transform: scale(1.05);
+}
 
 /*-------------------------Responsive Design-------------------------*/
 /*------------------------------1200px------------------------------*/
@@ -302,6 +322,11 @@
 
   .delete-account-section p {
     font-size: 14px;
+  }
+  .back-button {
+    font-size: 18px;
+    width: 35px;
+    height: 35px;
   }
 }
 
