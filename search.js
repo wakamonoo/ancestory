@@ -31,11 +31,9 @@ export function renderStories(stories) {
   if (storiesContainer) {
     storiesContainer.innerHTML = storiesHTML;
 
-    // Make the whole story-card and the title clickable
     storiesContainer.querySelectorAll(".story-card").forEach((card) => {
       const storyId = card.getAttribute("data-story-id");
 
-      // Click the card
       card.addEventListener("click", (e) => {
         const target = e.target;
         if (
@@ -46,7 +44,6 @@ export function renderStories(stories) {
         }
       });
 
-      // Click the title
       const title = card.querySelector(".story-title");
       if (title) {
         title.addEventListener("click", (e) => {
