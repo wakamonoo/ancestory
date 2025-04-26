@@ -132,7 +132,7 @@ function setupSpeechUI() {
   document
     .getElementById("stop-speech-btn")
     .addEventListener("click", stopSpeech);
-  // Modal controls
+
   document
     .getElementById("voice-select-modal")
     .addEventListener("change", (e) => {
@@ -157,7 +157,15 @@ function setupSpeechUI() {
     });
 
   document.querySelector(".close-modal").addEventListener("click", closeModal);
+
+  window.addEventListener("beforeunload", stopSpeech);
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      stopSpeech();
+    }
+  });
 }
+
 
 function toggleSpeech() {
   if (speechSynthesizer.isSpeaking) {
