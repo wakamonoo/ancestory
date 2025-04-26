@@ -27,12 +27,10 @@ const firebaseConfig = {
   measurementId: "G-S5SQWC7PEM",
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// DOM Elements
 const logoutBtn = document.getElementById("admin-logout-btn");
 const storyForm = document.getElementById("admin-story-form");
 const storiesList = document.getElementById("admin-stories-list");
@@ -40,7 +38,11 @@ const editModal = document.getElementById("admin-edit-modal");
 const editForm = document.getElementById("admin-edit-form");
 const closeModalBtn = document.querySelector(".admin-edit-modal-close");
 
-// Check authentication state
+
+
+
+// ******************** CHECK AUTH STATE ******************* //
+
 onAuthStateChanged(auth, (user) => {
   if (!user || user.email !== "joven.serdanbataller21@gmail.com") {
     window.location.href = "index.html";
@@ -49,7 +51,10 @@ onAuthStateChanged(auth, (user) => {
   loadStories();
 });
 
-// Logout functionality
+
+
+// ******************** LOGOUT ******************* //
+
 logoutBtn.addEventListener("click", () => {
   signOut(auth)
     .then(() => {
@@ -60,7 +65,9 @@ logoutBtn.addEventListener("click", () => {
     });
 });
 
-// Add new story with Filipino field
+
+// ******************** ADD NEW STORY FUNCTION ******************* //
+
 storyForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -102,7 +109,9 @@ storyForm.addEventListener("submit", async (e) => {
   }
 });
 
-// Load stories with Filipino content
+
+// ******************** LOAD STORIES FUNCTION ******************* //
+
 async function loadStories() {
   storiesList.innerHTML = '<div class="admin-loading">Loading stories...</div>';
 
@@ -156,7 +165,6 @@ async function loadStories() {
       storiesList.appendChild(storyElement);
     });
 
-    // Add event listeners for edit and delete buttons
     document.querySelectorAll(".admin-edit-btn").forEach((btn) => {
       btn.addEventListener("click", () => openEditModal(btn.dataset.id));
     });
@@ -170,7 +178,9 @@ async function loadStories() {
   }
 }
 
-// Delete story
+
+// ******************** DELETE STORY FUNCTION ******************* //
+
 async function deleteStory(storyId) {
   if (!confirm("Are you sure you want to delete this story?")) return;
 
@@ -183,7 +193,9 @@ async function deleteStory(storyId) {
   }
 }
 
-// Edit story functions with Filipino field
+
+// ******************** EDIT STORIES FUNCTION ******************* //
+
 async function openEditModal(storyId) {
   try {
     const docRef = doc(db, "Stories", storyId);
@@ -209,7 +221,6 @@ async function openEditModal(storyId) {
   }
 }
 
-// Close modal
 closeModalBtn.addEventListener("click", () => {
   editModal.style.display = "none";
 });
@@ -220,7 +231,11 @@ window.addEventListener("click", (e) => {
   }
 });
 
-// Save edited story with Filipino field
+
+
+
+// ******************** SAVE EDITED STORIES FUNCTION ******************* //
+
 editForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -254,7 +269,6 @@ editForm.addEventListener("submit", async (e) => {
   }
 });
 
-// Helper function to show errors
 function showError(message) {
   const errorElement = document.createElement("div");
   errorElement.className = "admin-error";

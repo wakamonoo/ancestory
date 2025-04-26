@@ -4,6 +4,9 @@ export function initializeSearch(storiesArray) {
   allStories = storiesArray;
 }
 
+
+// ******************** SEARCH FUNCTION ******************* //
+
 export function renderStories(stories) {
   let storiesHTML = "";
   if (stories.length === 0) {
@@ -43,7 +46,10 @@ function filterStories(searchTerm) {
   );
 }
 
-// Functions to open and close the modal
+
+
+// ******************** OPEN OR CLOSE MODAL ******************* //
+
 window.openAnceStorySearchModal = function() {
   const modal = document.getElementById("anceStorySearchModal");
   modal.style.display = "block";
@@ -54,19 +60,23 @@ window.closeAnceStorySearchModal = function() {
   modal.style.display = "none";
 };
 
-// Function to perform the search from the modal
+
+// ******************** PERFORM SEARCH ******************* //
+
 window.performModalSearch = function() {
   const searchInput = document.getElementById("modalSearchInput");
   if (searchInput) {
     const searchTerm = searchInput.value.toLowerCase().trim();
     const filteredResults = filterStories(searchTerm);
     renderStories(filteredResults);
-    closeAnceStorySearchModal(); // Close the modal after search
-    window.location.href = "#stories"; // Redirect to the stories section
+    closeAnceStorySearchModal(); 
+    window.location.href = "#stories"; 
   }
 };
 
-// Close modal if user clicks outside of it
+
+// ******************** CLOSE THE MODAL ******************* //
+
 window.addEventListener('click', function(event) {
   const modal = document.getElementById('anceStorySearchModal');
   if (event.target === modal) {

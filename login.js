@@ -23,13 +23,16 @@ const firebaseConfig = {
   measurementId: "G-S5SQWC7PEM",
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const googleAuthProvider = new GoogleAuthProvider();
 
-// Function to show login modal after delay if not logged in
+
+
+
+// ******************** LOGIN MODAL  ADTER 5S DELAY ******************* //
+
 function checkAuthAndPrompt() {
   onAuthStateChanged(auth, (user) => {
     if (!user) {
@@ -38,24 +41,25 @@ function checkAuthAndPrompt() {
         if (modal) {
           modal.style.display = "block";
 
-          // Close modal when clicking outside
           window.addEventListener("click", (event) => {
             if (event.target === modal) {
               modal.style.display = "none";
             }
           });
         }
-      }, 5000); // 5 seconds delay
+      }, 5000); 
     }
   });
 }
+
+
+// ******************** LOGIN MODAL TRIGGERS ******************* //
 
 document.addEventListener("DOMContentLoaded", () => {
   const googleSignInBtn = document.getElementById("google-sign-in-btn");
   const loginModal = document.getElementById("loginModal");
   const closeBtn = loginModal?.querySelector(".close");
 
-  // Check auth state and prompt if needed
   checkAuthAndPrompt();
 
   const openLoginModal = () => {
@@ -70,7 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // Attach event listeners to your existing modal triggers
   const loginLinkModalTrigger = document.querySelector(
     'nav ul#sidemenu li a[href="#"]'
   );
@@ -122,7 +125,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// Global functions for modal control
 window.openLoginModal = () => {
   const modal = document.getElementById("loginModal");
   if (modal) {

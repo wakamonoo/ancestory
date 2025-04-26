@@ -130,7 +130,7 @@
 }
 
 #like-count {
-  margin-left: 5px; /* Adjust this value as needed */
+  margin-left: 5px;
 }
 .reaction-container {
   position: relative;
@@ -360,7 +360,7 @@
   align-items: center;
   justify-content: center;
   --hue: 220deg;
-  --width: 7rem; /* Smaller toggle */
+  --width: 7rem; 
   --accent-hue: 22deg;
   --duration: 0.6s;
   --easing: cubic-bezier(0, 0, 0, 1);
@@ -378,9 +378,9 @@
   width: var(--width);
   height: calc(var(--width) / 2.5);
   border-radius: var(--width);
-  background-color: #f1d1b5; /* Soft beige base */
+  background-color: #f1d1b5; 
   box-shadow: inset 5px 5px 8px #e3c3a9,
-    /* Slightly deeper beige */ inset -5px -5px 8px #fce9d7; /* Slightly lighter beige */
+  inset -5px -5px 8px #fce9d7;
 }
 
 .indicator {
@@ -566,7 +566,6 @@
   background-color: #c7b794;
 }
 
-/* Modal container - CENTERED */
 .modal {
   justify-content: center;
   align-items: center;
@@ -576,7 +575,6 @@
   z-index: 9999;
 }
 
-/* Modal content */
 .modal-content {
   background-color: #c09779;
   padding: 30px;
@@ -591,7 +589,6 @@
   color: #f7f7f7;
 }
 
-/* Modal close button */
 .close-modal {
   color: #20462f;
   float: right;
@@ -605,7 +602,6 @@
   color: #33614a;
 }
 
-/* Modal form controls */
 .modal-control {
   margin-bottom: 20px;
 }
@@ -628,7 +624,6 @@
   color: #20462f;
 }
 
-/* Apply button */
 #apply-speech-options {
   background-color: #f1d1b5;
   color: #f7f7f7;
@@ -653,7 +648,6 @@
   margin-left: 10px;
   color: #33614a;
 }
-
 /*-------------------------Responsive Design-------------------------*/
 /*------------------------------1200px------------------------------*/
 @media (min-width: 601px) and (max-width: 1200px) {

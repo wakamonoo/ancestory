@@ -1,5 +1,4 @@
-/* ===== ADMIN STYLES ===== */
-/* Layout Structure */
+/*-------------------------ADMIN-------------------------*/
 .admin-header {
   background-color: #f1d1b5;
   width: 100%;
@@ -28,7 +27,6 @@
   margin-left: 10%;
 }
 
-/* Enhanced Logout Button */
 .admin-logout-btn {
   background-color: #20462f;
   color: white;
@@ -91,7 +89,6 @@
   }
 }
 
-/* Pulse animation for attention */
 @keyframes pulse {
   0% {
     transform: scale(1);
@@ -159,7 +156,6 @@
   margin-bottom: 2%;
 }
 
-/* Form Elements */
 .admin-form-group {
   margin-bottom: 1.5rem;
 }
@@ -205,7 +201,6 @@
   color: #20462f;
 }
 
-/* Stories List */
 .admin-stories-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -289,7 +284,6 @@
   background-color: #d5c7a3;
 }
 
-/* Edit Modal */
 .admin-edit-modal {
   display: none;
   position: fixed;
@@ -323,7 +317,6 @@
   color: #20462f;
 }
 
-/* Loading and Error States */
 .admin-loading {
   text-align: center;
   padding: 2rem;
@@ -543,4 +536,3 @@
     justify-content: flex-end;
   }
 }
-

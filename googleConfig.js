@@ -11,7 +11,6 @@ import {
   serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
   authDomain: "ancestory-c068e.firebaseapp.com",
@@ -24,10 +23,13 @@ const firebaseConfig = {
   measurementId: "G-S5SQWC7PEM",
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+
+
+// ******************** LINKS/BUTTONS REDIRECTION ******************* //
 
 document.addEventListener("DOMContentLoaded", () => {
   const loginLink = document.querySelector('nav ul#sidemenu li a[href="#"]');
@@ -221,7 +223,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // Auth state listener
   onAuthStateChanged(auth, updateUI);
 
   if (closeSubmitStoryModalBtn) {

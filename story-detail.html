@@ -157,51 +157,6 @@
         <button id="apply-speech-options">Apply</button>
       </div>
     </div>
-
     <script type="module" src="storyDetail.js"></script>
-    <script>
-      // Get elements
-      const speakBtn = document.getElementById("speak-btn");
-      const stopSpeechBtn = document.getElementById("stop-speech-btn");
-      const speechOptionsModal = document.getElementById(
-        "speech-options-modal"
-      );
-      const closeModalBtn = document.querySelector(".close-modal");
-
-      // Event listener for the 'Listen' button
-      speakBtn.addEventListener("click", function () {
-        // Show SweetAlert first
-        showCompatibilityAlert();
-      });
-
-      // Function to show SweetAlert
-      function showCompatibilityAlert() {
-        Swal.fire({
-          title: "Important Notice!",
-          text: "The voice model and text-highlighting features are optimized for desktop browsers. Some features may not work as expected on your device. You can change the TTS settings from your device’s accessibility options for better experience.",
-          icon: "info",
-          showCancelButton: true,
-          confirmButtonText: "Proceed to Speech Options",
-          cancelButtonText: "Cancel",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            // Open the speech options modal only if the user confirms
-            speechOptionsModal.style.display = "flex";
-          }
-        });
-      }
-
-      // Event listener for closing the modal
-      closeModalBtn.addEventListener("click", function () {
-        speechOptionsModal.style.display = "none";
-      });
-
-      // Optional: Close modal when clicking outside of it
-      window.addEventListener("click", function (event) {
-        if (event.target === speechOptionsModal) {
-          speechOptionsModal.style.display = "none";
-        }
-      });
-    </script>
   </body>
 </html>

@@ -20,7 +20,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-let allStories = []; // Store all fetched stories
+let allStories = []; 
 
 async function fetchStories() {
   try {
@@ -29,8 +29,8 @@ async function fetchStories() {
       id: doc.id,
       ...doc.data(),
     }));
-    renderStories(allStories); // Use the imported renderStories function
-    initializeSearch(allStories); // Initialize search after stories are fetched
+    renderStories(allStories); 
+    initializeSearch(allStories); 
   } catch (error) {
     console.error("Error fetching stories: ", error);
     document.getElementById("stories-container").innerHTML =
@@ -38,5 +38,4 @@ async function fetchStories() {
   }
 }
 
-// Call fetchStories when the page loads
 fetchStories();

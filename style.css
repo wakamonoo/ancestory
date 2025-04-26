@@ -576,7 +576,7 @@ nav ul li a:hover {
 }
 /*-------------------------Submit Story Modal Styling-------------------------*/
 #submitStoryModal .modal-content {
-  background-color: #f1d1b5; /* A lighter background */
+  background-color: #f1d1b5;
 }
 
 #submitStoryModal h2 {
@@ -614,7 +614,6 @@ nav ul li a:hover {
   box-shadow: 0 0 5px rgba(255, 154, 139, 0.5);
 }
 
-/* Improved Submit Button */
 .submit-btn {
   display: inline-flex;
   align-items: center;
@@ -649,6 +648,7 @@ nav ul li a:hover {
 #submitStoryModal .close:focus {
   color: #d5c7a3;
 }
+
 /*-------------------------LoginForm-------------------------*/
 .modal {
   display: none;
@@ -1015,76 +1015,7 @@ footer {
     font-size: 14px;
   }
 
-  /*---------------StoryContent---------------*/
-  #story-title {
-    font-size: 32px;
-    text-align: center;
-  }
-
-  #story-origin {
-    font-size: 14px;
-    text-align: center;
-  }
-
-  .backStory img {
-    width: 15vw;
-    height: auto;
-    z-index: 10;
-    position: absolute;
-    top: 10%;
-    left: 4%;
-  }
-
-  #story-image {
-    width: 60vw;
-  }
-
-  #story-content {
-    font-size: 14px;
-    text-align: justify;
-  }
-
-  .reaction-stats {
-    font-size: 14px;
-  }
-
-  .reaction-actions {
-    gap: 8vw;
-  }
-
-  .reaction-action {
-    font-size: 14px;
-  }
-
-  .reaction-action i {
-    font-size: 14px;
-  }
-
-  #comment-input {
-    font-size: 14px;
-  }
-
-  #post-comment {
-    font-size: 14px;
-  }
-  .reaction-options {
-    bottom: 120%;
-    margin-left: 50%;
-  }
-
-  .reaction-option {
-    font-size: 24px;
-    padding: 2px;
-  }
-  .row {
-    margin-top: 0.5vh;
-  }
-
-  .comment-time {
-    font-size: 12px;
-  }
   /*---------------AboutSection---------------*/
-
   #about {
     width: 90%;
     margin: 0 auto;
@@ -1233,6 +1164,7 @@ footer {
     width: 100%;
   }
 }
+
 /*------------------------------600px------------------------------*/
 @media only screen and (max-width: 600px) {
   /*---------------Header---------------*/
@@ -1406,85 +1338,6 @@ footer {
   }
   .StorySub {
     font-size: 14px;
-  }
-
-  /*---------------StoryContent---------------*/
-  #story-title {
-    font-size: 32px;
-    text-align: center;
-  }
-
-  #story-origin {
-    font-size: 14px;
-    text-align: center;
-  }
-
-  .backStory img {
-    width: 18vw;
-    height: auto;
-    z-index: 10;
-    position: absolute;
-    top: 8%;
-    left: 4%;
-  }
-
-  #story-image {
-    width: 50vw;
-  }
-
-  #story-content {
-    font-size: 14px;
-    text-align: justify;
-  }
-
-  .reaction-stats {
-    font-size: 14px;
-  }
-
-  .reaction-actions {
-    gap: 8vw;
-  }
-
-  .reaction-action {
-    font-size: 14px;
-  }
-
-  .reaction-action i {
-    font-size: 14px;
-  }
-
-  #comment-input {
-    font-size: 14px;
-  }
-
-  #post-comment {
-    font-size: 14px;
-  }
-  .reaction-options {
-    bottom: 120%;
-    margin-left: 50%;
-  }
-
-  .reaction-option {
-    font-size: 24px;
-    padding: 2px;
-  }
-  .row {
-    margin-top: 0.5vh;
-  }
-
-  .comment-time {
-    font-size: 12px;
-  }
-
-  .toggleContainer {
-    --width: 5rem;
-  }
-
-  .back-button {
-    font-size: 18px;
-    width: 35px;
-    height: 35px;
   }
 
   /*---------------AboutSection---------------*/

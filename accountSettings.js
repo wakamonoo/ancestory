@@ -42,14 +42,12 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 let currentUser = null;
-let isAccountBeingDeleted = false; // Flag to track account deletion state
+let isAccountBeingDeleted = false; 
 
-// Initialize the page
+// ******************** PAGE INITIALIZATION ******************* //
 document.addEventListener("DOMContentLoaded", () => {
-  // Check auth state
   onAuthStateChanged(auth, handleAuthStateChange);
 
-  // Back button
   const backButton = document.querySelector(".back-button");
   if (backButton) {
     backButton.addEventListener("click", () => {
@@ -57,7 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Tab switching
   const tabs = document.querySelectorAll(".tab-btn");
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
@@ -75,7 +72,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Account deletion
+
+
+// ******************** ACCOUNT DELETION ******************* //
+
   const deleteAccountBtn = document.getElementById("deleteAccountBtn");
   if (deleteAccountBtn) {
     deleteAccountBtn.addEventListener("click", handleAccountDeletion);
@@ -83,7 +83,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function handleAuthStateChange(user) {
-  // Skip auth state changes during account deletion
   if (isAccountBeingDeleted) return;
 
   if (user) {
@@ -92,17 +91,18 @@ function handleAuthStateChange(user) {
     loadUserComments();
     loadUserReactions();
   } else {
-    // Only redirect if not during account deletion
     if (!isAccountBeingDeleted) {
       window.location.href = "index.html";
     }
   }
 }
+
+// ******************** USER PROFILE ******************* //
+
 async function loadUserProfile() {
   if (!currentUser) return;
   const userDoc = await getDoc(doc(db, "users", currentUser.uid));
 
-  // Set display name
   const displayName =
     currentUser.displayName || userDoc.data()?.displayName || "User";
   const userNameDisplay = document.getElementById("userNameDisplay");
@@ -110,7 +110,6 @@ async function loadUserProfile() {
     userNameDisplay.textContent = displayName;
   }
 
-  // Set profile picture
   const photoURL = currentUser.photoURL || userDoc.data()?.photoURL;
   const profilePicture = document.getElementById("profilePicture");
   if (profilePicture) {
@@ -122,6 +121,8 @@ async function loadUserProfile() {
   }
 }
 
+
+// ******************** USER COMMENTS ******************* //
 async function loadUserComments() {
   if (!currentUser) return;
   const commentsRef = collection(db, "comments");
@@ -146,7 +147,6 @@ async function loadUserComments() {
     return;
   }
 
-  // Group comments by story
   const commentsByStory = {};
   querySnapshot.forEach((doc) => {
     const comment = doc.data();
@@ -156,7 +156,6 @@ async function loadUserComments() {
     commentsByStory[comment.storyId].push({ id: doc.id, ...comment });
   });
 
-  // Fetch story details for each commented story
   for (const storyId in commentsByStory) {
     const storyDoc = await getDoc(doc(db, "Stories", storyId));
     if (storyDoc.exists()) {
@@ -203,7 +202,6 @@ async function loadUserComments() {
     }
   }
 
-  // Add event listeners to delete buttons
   document.querySelectorAll(".delete-commentAcc").forEach((button) => {
     button.addEventListener("click", async (e) => {
       const commentId = e.currentTarget.dataset.commentId;
@@ -212,18 +210,21 @@ async function loadUserComments() {
   });
 }
 
+
+// ******************** DELETE COMMENT ******************* //
+
 async function deleteComment(commentId) {
   try {
     const result = await Swal.fire({
       title: "Delete Comment?",
       text: "This action cannot be undone!",
       icon: "warning",
-      iconColor: "#20462f", // Deep forest green for warning icon
-      background: "#D29F80", // Muted coral for modal background
-      color: "#20462f", // Primary text color
+      iconColor: "#20462f", 
+      background: "#D29F80",
+      color: "#20462f", 
       showCancelButton: true,
-      confirmButtonColor: "#C09779", // Warm bronze for confirm button
-      cancelButtonColor: "#F1D1B5", // Warm sand beige for cancel button
+      confirmButtonColor: "#C09779", 
+      cancelButtonColor: "#F1D1B5", 
       confirmButtonText: "Yes, delete it!",
     });
 
@@ -238,7 +239,7 @@ async function deleteComment(commentId) {
         color: "#20462f",
         confirmButtonColor: "#C09779",
       });
-      loadUserComments(); // Refresh comments
+      loadUserComments(); 
     }
   } catch (error) {
     console.error("Error deleting comment:", error);
@@ -255,6 +256,7 @@ async function deleteComment(commentId) {
 }
 
 
+// ******************** USER REACTIONS ******************* //
 
 async function loadUserReactions() {
   if (!currentUser) return;
@@ -280,7 +282,6 @@ async function loadUserReactions() {
     return;
   }
 
-  // Group reactions by story
   const reactionsByStory = {};
   querySnapshot.forEach((doc) => {
     const reaction = doc.data();
@@ -290,7 +291,6 @@ async function loadUserReactions() {
     reactionsByStory[reaction.storyId].push({ id: doc.id, ...reaction });
   });
 
-  // Fetch story details for each reacted story
   for (const storyId in reactionsByStory) {
     const storyDoc = await getDoc(doc(db, "Stories", storyId));
     if (storyDoc.exists()) {
@@ -339,7 +339,6 @@ async function loadUserReactions() {
     }
   }
 
-  // Add event listeners to delete buttons
   document.querySelectorAll(".delete-reactionAcc").forEach((button) => {
     button.addEventListener("click", async (e) => {
       const reactionId = e.currentTarget.dataset.reactionId;
@@ -347,6 +346,10 @@ async function loadUserReactions() {
     });
   });
 }
+
+
+
+// ******************** DELETE REACTIONS ******************* //
 
 async function deleteReaction(reactionId) {
   try {
@@ -416,12 +419,12 @@ function formatTime(date) {
   });
 }
 
+// ******************** ACCOUNT DELETION ******************* //
+
 async function handleAccountDeletion() {
   try {
-    // Set deletion flag
     isAccountBeingDeleted = true;
 
-    // First confirmation
     const firstConfirm = await Swal.fire({
       title: "Delete Your Account?",
       text: "This will permanently erase your account and all data!",
@@ -442,12 +445,10 @@ async function handleAccountDeletion() {
       return;
     }
 
-    // Check authentication method
     const isGoogleUser = currentUser.providerData.some(
       (p) => p.providerId === "google.com"
     );
 
-    // Reauthenticate
     if (isGoogleUser) {
       await reauthenticateWithPopup(currentUser, new GoogleAuthProvider());
     } else {
@@ -475,7 +476,6 @@ async function handleAccountDeletion() {
       await reauthenticateWithCredential(currentUser, credential);
     }
 
-    // Final confirmation
     const finalConfirm = await Swal.fire({
       title: "Confirm Permanent Deletion",
       text: "This cannot be undone! All your data will be erased.",
@@ -496,7 +496,6 @@ async function handleAccountDeletion() {
       return;
     }
 
-    // Show deletion progress
     const deletionSwal = Swal.fire({
       title: "Deleting Account...",
       html: `
@@ -514,18 +513,14 @@ async function handleAccountDeletion() {
     });
     
     try {
-      // Delete auth account
       await deleteUser(currentUser);
       document.querySelector(".progress-fill").style.width = "50%";
 
-      // Delete user data
       await deleteUserData(currentUser.uid);
       document.querySelector(".progress-fill").style.width = "100%";
 
-      // Close the progress dialog
       await deletionSwal.close();
 
-      // Show success message
       await Swal.fire({
         title: "Account Deleted",
         icon: "success",
@@ -537,8 +532,6 @@ async function handleAccountDeletion() {
         confirmButtonColor: "#C09779"
       });
       
-
-      // Force redirect to index.html
       window.location.href = "index.html";
     } catch (error) {
       isAccountBeingDeleted = false;
@@ -572,14 +565,16 @@ async function handleAccountDeletion() {
   }
 }
 
+
+
+// ******************** DELETE USER DATA ******************* //
+
 async function deleteUserData(uid) {
   const batch = writeBatch(db);
 
-  // Delete user document
   const userRef = doc(db, "users", uid);
   batch.delete(userRef);
 
-  // Delete comments
   const commentsQuery = query(
     collection(db, "comments"),
     where("userId", "==", uid)
@@ -587,7 +582,6 @@ async function deleteUserData(uid) {
   const commentsSnapshot = await getDocs(commentsQuery);
   commentsSnapshot.forEach((doc) => batch.delete(doc.ref));
 
-  // Delete reactions
   const reactionsQuery = query(
     collection(db, "reactions"),
     where("userId", "==", uid)
@@ -600,6 +594,6 @@ async function deleteUserData(uid) {
     console.log("User data deleted successfully.");
   } catch (error) {
     console.error("Error deleting user data:", error);
-    throw error; // Re-throw the error to be caught by the main deletion handler
+    throw error; 
   }
 }

@@ -46,17 +46,16 @@ let originalContent = {
 };
 let speechSynthesizer = null;
 
-// Initialize speech synthesis when DOM is loaded
+// ******************** INITIALLIZE SPEECH SYNTHESIS ******************* //
+
 document.addEventListener("DOMContentLoaded", () => {
   if ("speechSynthesis" in window) {
     speechSynthesizer = new StorySpeechSynthesis();
 
-    // Set up event handlers
     speechSynthesizer.onSpeechEnd = onSpeechEnd;
     speechSynthesizer.onSpeechError = onSpeechError;
     speechSynthesizer.onWordBoundary = highlightSpokenWord;
 
-    // Set up UI event listeners
     setupSpeechUI();
   } else {
     document.getElementById("speak-btn").style.display = "none";
@@ -74,6 +73,8 @@ onAuthStateChanged(auth, (user) => {
     document.getElementById("comment-form").style.display = "none";
   }
 });
+
+// ******************** FETCH STORY DETAILS FROM FIRESTORE ******************* //
 
 async function fetchStoryDetails() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -118,16 +119,15 @@ async function fetchStoryDetails() {
   loadComments();
 }
 
-// SPEECH FUNCTIONS
+// ******************** SPEECH FUNCTIONS ******************* //
+
 function setupSpeechUI() {
   const speakBtn = document.getElementById("speak-btn");
   const stopBtn = document.getElementById("stop-speech-btn");
 
-  // Remove any existing click listeners
-  speakBtn.replaceWith(speakBtn.cloneNode(true)); // Clean existing listeners
+  speakBtn.replaceWith(speakBtn.cloneNode(true));
   stopBtn.replaceWith(stopBtn.cloneNode(true));
 
-  // Add fresh listeners
   document.getElementById("speak-btn").addEventListener("click", toggleSpeech);
   document
     .getElementById("stop-speech-btn")
@@ -168,7 +168,6 @@ function toggleSpeech() {
   }
 }
 
-// New function in storyDetail.js
 function showCompatibilityAlert() {
   Swal.fire({
     title: "Important Notice!",
@@ -196,7 +195,6 @@ function startReadingStory() {
     .trim();
   const contentElement = document.getElementById("story-content");
 
-  // Clone the content element for manipulation
   const contentClone = contentElement.cloneNode(true);
   contentElement.parentNode.replaceChild(contentClone, contentElement);
   contentClone.id = "story-content";
@@ -216,7 +214,7 @@ function startReadingStory() {
       color: "#20462f",
       confirmButtonColor: "#C09779",
     }).then(() => {
-      openModal(); // Reopen modal to select different voice
+      openModal();
     });
   }
 }
@@ -233,7 +231,6 @@ function onSpeechEnd() {
 }
 
 function onSpeechError(event) {
-  // Only show error if it's not a user-initiated stop
   if (event.error !== "interrupted") {
     Swal.fire({
       title: "Speech Error",
@@ -256,22 +253,18 @@ function highlightSpokenWord(event) {
   const charIndex = event.charIndex;
   const charLength = event.charLength;
 
-  // Determine which section is being spoken
   let element, adjustedIndex;
 
   if (charIndex < speechSynthesizer.titleLength) {
-    // Title section
     element = document.getElementById("story-title");
     adjustedIndex = charIndex;
   } else if (
     charIndex <
     speechSynthesizer.titleLength + speechSynthesizer.originLength
   ) {
-    // Origin section
     element = document.getElementById("story-origin");
     adjustedIndex = charIndex - speechSynthesizer.titleLength;
   } else {
-    // Main content section
     element = document.getElementById("story-content");
     adjustedIndex =
       charIndex -
@@ -282,7 +275,6 @@ function highlightSpokenWord(event) {
 
   if (!element || !element.firstChild) return;
 
-  // Create a temporary clone for manipulation
   const tempClone = element.cloneNode(true);
 
   try {
@@ -302,7 +294,6 @@ function highlightSpokenWord(event) {
       try {
         range.surroundContents(span);
 
-        // Only update the original element if the manipulation succeeded
         element.innerHTML = tempClone.innerHTML;
 
         const highlightedSpan = element.querySelector(".highlight-word");
@@ -318,7 +309,6 @@ function highlightSpokenWord(event) {
     console.log("Modern highlighting error:", e);
   }
 
-  // Fallback approach that preserves formatting
   try {
     const textNodes = [];
     const walker = document.createTreeWalker(
@@ -406,7 +396,6 @@ function findTextNodeAndPosition(element, charIndex) {
     currentIndex += nodeLength;
   }
 
-  // Fallback for browsers that might not handle tree walker correctly
   if (element.nodeType === Node.TEXT_NODE) {
     if (charIndex <= element.textContent.length) {
       return {
@@ -438,24 +427,21 @@ function scrollToHighlight(element) {
 function removeHighlighting() {
   const highlights = document.querySelectorAll(".highlight-word");
   highlights.forEach((highlight) => {
-    // Replace only the highlight span with its text content
     const parent = highlight.parentNode;
     if (parent) {
       parent.replaceChild(
         document.createTextNode(highlight.textContent),
         highlight
       );
-      parent.normalize(); // Merge adjacent text nodes
+      parent.normalize();
     }
   });
 }
 
-// Modal functions
 function openModal() {
   const modal = document.getElementById("speech-options-modal");
   modal.style.display = "block";
 
-  // Populate voices
   const voiceSelect = document.getElementById("voice-select-modal");
   voiceSelect.innerHTML = "";
 
@@ -463,7 +449,6 @@ function openModal() {
     const option = document.createElement("option");
     let displayName = voice.name;
 
-    // Format preferred voices nicely
     if (voice.name.toLowerCase().includes("angelo"))
       displayName = "Angelo (Filipino)";
     else if (voice.name.toLowerCase().includes("blessica"))
@@ -477,7 +462,6 @@ function openModal() {
     option.setAttribute("data-name", voice.name);
     option.setAttribute("data-lang", voice.lang);
 
-    // Mark preferred voices
     if (displayName !== voice.name) {
       option.style.fontWeight = "bold";
     }
@@ -489,7 +473,6 @@ function openModal() {
     }
   });
 
-  // Set rate control
   const rateControl = document.getElementById("rate-control-modal");
   rateControl.value = speechSynthesizer.getCurrentRate();
   document.getElementById("rate-value").textContent = `${speechSynthesizer
@@ -516,6 +499,8 @@ function updateSpeechUI(isSpeaking) {
   }
 }
 
+// ******************** FORMAT INTO SPACING THE <BR> ******************* //
+
 function formatStoryContent(content) {
   return content
     .split("\n")
@@ -529,6 +514,8 @@ function formatStoryContent(content) {
     .join("");
 }
 
+// ******************** TRANSLATION FUNCTION ******************* //
+
 async function toggleTranslation() {
   const translateToggle = document.getElementById("translate-toggle");
 
@@ -541,18 +528,15 @@ async function toggleTranslation() {
     );
     isTranslated = false;
   } else {
-    // Show loading state on the toggle
     translateToggle.disabled = true;
 
     try {
-      // Fetch the story document from Firestore using currentStoryId
       const docRef = doc(db, "Stories", currentStoryId);
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
         const data = docSnap.data();
 
-        // If the Filipino translation exists for the story, update only the story
         if (data.filipino) {
           document.getElementById("story-title").innerText =
             originalContent.title;
@@ -562,7 +546,6 @@ async function toggleTranslation() {
             formatStoryContent(data.filipino);
           isTranslated = true;
         } else {
-          // No Filipino translation available
           translateToggle.checked = false;
           Swal.fire({
             title: "Translation Not Available",
@@ -594,6 +577,8 @@ async function toggleTranslation() {
     }
   }
 }
+
+// ******************** REACTION FUNCTION ******************* //
 
 async function loadReactions() {
   const reactionsRef = collection(db, "reactions");
@@ -634,7 +619,6 @@ function updateReactionUI(reactions) {
   const reactionStatsElement = document.querySelector(".reaction-stats");
   const likeCountElement = document.getElementById("like-count");
 
-  // Clear all existing reaction elements except the count
   while (reactionStatsElement.firstChild) {
     if (reactionStatsElement.firstChild === likeCountElement) {
       break;
@@ -649,7 +633,6 @@ function updateReactionUI(reactions) {
     const sortedReactions = reactionEntries.sort((a, b) => b[1] - a[1]);
 
     if (reactionEntries.length === 1) {
-      // Single reaction type: "X ReactionName"
       const [type, count] = reactionEntries[0];
       const icon = createReactionIcon(type);
       reactionStatsElement.insertBefore(icon, likeCountElement);
@@ -657,12 +640,10 @@ function updateReactionUI(reactions) {
         count !== 1 ? "s" : ""
       }`;
     } else {
-      // Multiple reaction types: show all icons with commas (no spacing)
       sortedReactions.forEach(([type], index) => {
         const icon = createReactionIcon(type);
         reactionStatsElement.insertBefore(icon, likeCountElement);
 
-        // Add comma separator without spacing
         if (index < sortedReactions.length - 1) {
           const comma = document.createElement("span");
           comma.textContent = ",";
@@ -828,12 +809,12 @@ async function handleReaction(reactionType) {
   }
 }
 
-// Add this function to your existing code
+// ******************** COMMENT FUNCTION ******************* //
+
 async function deleteComment(commentId) {
   if (!currentUser) return;
 
   try {
-    // Show confirmation dialog
     const result = await Swal.fire({
       title: "Delete Comment?",
       text: "You won't be able to revert this!",
@@ -848,10 +829,8 @@ async function deleteComment(commentId) {
     });
 
     if (result.isConfirmed) {
-      // Delete the comment from Firestore
       await deleteDoc(doc(db, "comments", commentId));
 
-      // Show success message
       Swal.fire({
         title: "Deleted!",
         text: "Your comment has been deleted.",
@@ -863,7 +842,6 @@ async function deleteComment(commentId) {
         color: "#20462f",
       });
 
-      // Reload comments
       loadComments();
     }
   } catch (error) {
@@ -880,18 +858,15 @@ async function deleteComment(commentId) {
   }
 }
 
-// Modify the addCommentToDOM function to include delete button for user's own comments
 function addCommentToDOM(comment) {
   const commentEl = document.createElement("div");
   commentEl.className = "comment";
   commentEl.dataset.commentId = comment.id;
 
-  // Use the user's photo if available, otherwise use the default icon
   const avatarContent = comment.userPhoto
     ? `<img src="${comment.userPhoto}" alt="User Avatar" class="comment-avatar-img">`
     : `<i class="fas fa-user-circle" style="font-size: 32px; color: #20462f;"></i>`;
 
-  // Add delete button if the comment belongs to the current user
   const deleteButton =
     currentUser && comment.userId === currentUser.uid
       ? `<button class="delete-comment-btn" title="Delete comment"><i class="fas fa-trash-alt"></i></button>`
@@ -920,7 +895,6 @@ function addCommentToDOM(comment) {
 
   commentsSection.prepend(commentEl);
 
-  // Add event listener for delete button if it exists
   if (deleteButton && currentUser && comment.userId === currentUser.uid) {
     commentEl
       .querySelector(".delete-comment-btn")
@@ -943,7 +917,6 @@ function formatTime(date) {
   return date.toLocaleDateString(undefined, options);
 }
 
-// Update the loadComments function to include comment IDs
 async function loadComments() {
   try {
     const commentsRef = collection(db, "comments");
@@ -964,12 +937,10 @@ async function loadComments() {
       return;
     }
 
-    // Update comment count
     document.getElementById("comment-count").textContent = `${
       querySnapshot.size
     } comment${querySnapshot.size !== 1 ? "s" : ""}`;
 
-    // Display comments
     querySnapshot.forEach((doc) => {
       const comment = { id: doc.id, ...doc.data() };
       addCommentToDOM(comment);
@@ -1032,13 +1003,10 @@ async function postComment(commentText) {
       timestamp: serverTimestamp(),
     });
 
-    // Get the newly added comment with its ID
     const commentDoc = await getDoc(commentRef);
     if (commentDoc.exists()) {
-      // Add the comment to DOM immediately with the ID
       addCommentToDOM({ id: commentDoc.id, ...commentDoc.data() });
 
-      // Update comment count
       const commentsSection = document.getElementById("comments-section");
       const commentCount = commentsSection.querySelectorAll(".comment").length;
       document.getElementById(
@@ -1046,7 +1014,6 @@ async function postComment(commentText) {
       ).textContent = `${commentCount} comment${commentCount !== 1 ? "s" : ""}`;
     }
 
-    // Clear input
     document.getElementById("comment-input").value = "";
     document.getElementById("post-comment").classList.remove("active");
 
@@ -1085,19 +1052,18 @@ async function postComment(commentText) {
 
 window.onload = fetchStoryDetails;
 
+// ******************** EVENT LISTENERS ******************* //
+
 document.addEventListener("DOMContentLoaded", () => {
-  // Add translation button event listener
-  // Replace the existing translation button event listener with this:
   document
     .getElementById("translate-toggle")
     .addEventListener("change", toggleTranslation);
 
-  // Reaction Handling
   const likeBtn = document.querySelector(".like-btn");
   const reactionOptions = document.querySelector(".reaction-options");
   let isReactionOpen = false;
   let lastClickTime = 0;
-  const doubleClickDelay = 300; // milliseconds between clicks to count as double click
+  const doubleClickDelay = 300;
   let clickTimeout;
 
   function toggleReactions(show) {
@@ -1111,50 +1077,40 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function handleSingleClick() {
-    // Only show reactions if not already open
     if (!isReactionOpen) {
       toggleReactions(true);
     }
   }
 
   function handleDoubleClick() {
-    // Clear any pending single click timeout
     clearTimeout(clickTimeout);
-    // Close reactions if they were opened by the first click
     if (isReactionOpen) {
       toggleReactions(false);
     }
-    // Perform like action
     handleReaction("like");
   }
 
-  // Unified click handler for both mobile and desktop
   likeBtn.addEventListener("click", (e) => {
     const currentTime = new Date().getTime();
     const timeSinceLastClick = currentTime - lastClickTime;
 
     if (timeSinceLastClick < doubleClickDelay && timeSinceLastClick > 0) {
-      // Double click detected
       handleDoubleClick();
       lastClickTime = 0;
     } else {
-      // First click - wait to see if it becomes a double click
       lastClickTime = currentTime;
       clickTimeout = setTimeout(() => {
-        // Only execute single click if no second click came
         handleSingleClick();
       }, doubleClickDelay);
     }
   });
 
-  // Close reactions when clicking outside
   document.addEventListener("click", (e) => {
     if (!likeBtn.contains(e.target) && !reactionOptions.contains(e.target)) {
       toggleReactions(false);
     }
   });
 
-  // Select a reaction from the options
   const reactionOptionsList = document.querySelectorAll(".reaction-option");
   reactionOptionsList.forEach((option) => {
     option.addEventListener("click", (e) => {
@@ -1165,14 +1121,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Comment button
   document.querySelector(".comment-btn").addEventListener("click", () => {
     document.getElementById("comment-input").focus();
   });
 
-  // Share button
+  // ******************** SHARE FUNCTION ******************* //
+
   document.querySelector(".share-btn").addEventListener("click", async () => {
-    // First try to use the Web Share API if available (mobile devices)
     if (navigator.share) {
       try {
         await navigator.share({
@@ -1183,11 +1138,9 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       } catch (err) {
         console.log("Web Share API not supported or share was cancelled", err);
-        // Fall through to custom share dialog
       }
     }
 
-    // Custom share dialog for browsers without Web Share API
     Swal.fire({
       title: "Share this story",
       html: `
@@ -1217,7 +1170,6 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     });
 
-    // Add event listeners for each share button
     document.querySelector(".share-facebook").addEventListener("click", () => {
       const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
         window.location.href
@@ -1259,10 +1211,10 @@ document.addEventListener("DOMContentLoaded", () => {
         Swal.fire({
           title: "Link copied to clipboard!",
           icon: "success",
-          iconColor: "#20462f", // Added icon color
+          iconColor: "#20462f",
           showConfirmButton: false,
           timer: 1500,
-          background: "#FF6F61",
+          background: "#C09779",
           color: "#20462f",
           showClass: {
             popup: "animate__animated animate__fadeIn",
@@ -1274,7 +1226,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   });
-  // Comment handling (keep existing implementation)
   const postBtn = document.getElementById("post-comment");
   const commentInput = document.getElementById("comment-input");
 

@@ -1,4 +1,4 @@
-// Change the nav background color based on scroll position
+// ******************** CHANGE NAV COLOR UPON SCROLL ******************* //
 window.addEventListener("scroll", function () {
   const nav = document.querySelector("nav");
 
@@ -13,7 +13,11 @@ let currentIndex = 0;
 const carousel = document.getElementById("carousel");
 const buttons = document.querySelectorAll(".buttons button");
 
-// Update the carousel position and active button
+
+
+
+// ******************** UPDATE CAROUSEL FUNCTION ******************* //
+
 function updateCarousel() {
   carousel.style.transform = `translateX(-${currentIndex * 100}%)`;
   buttons.forEach((btn, index) => {
@@ -21,36 +25,35 @@ function updateCarousel() {
   });
 }
 
-// Navigate to a specific slide in the carousel
 function goToSlide(index) {
   currentIndex = index;
   updateCarousel();
 }
 
-// Move to the next slide in the carousel
 function nextSlide() {
   currentIndex = (currentIndex + 1) % 3;
   updateCarousel();
 }
 
-// Automatically advance to the next slide every 3 seconds
 setInterval(nextSlide, 3000);
 
-// Open the side menu and toggle the menu icon
 function openmenu() {
   document.getElementById("sidemenu").style.right = "0";
   document.querySelector(".fa-bars").style.display = "none";
   document.querySelector(".fa-times").style.display = "block";
 }
 
-// Close the side menu and toggle the menu icon
+
+// ******************** CLOSE AND TOGGLE THE SIDE NAV MENU ******************* //
 function closemenu() {
   document.getElementById("sidemenu").style.right = "-200px";
   document.querySelector(".fa-bars").style.display = "block";
   document.querySelector(".fa-times").style.display = "none";
 }
 
-// Manual swipe support for carousel on touch devices
+
+// ******************** MANUAL SWIPE FOR CAROUSEL ******************* //
+
 let touchStartX = 0;
 let touchEndX = 0;
 
