@@ -14,43 +14,47 @@ export function renderStories(stories) {
     storiesHTML = "<p>No stories found matching your search.</p>";
   } else {
     stories.forEach((story) => {
-      let imageTag = "";
-      if (story.images) {
-        imageTag = `
+      storiesHTML += `
+        <div class="story-card" data-story-id="${story.id}">
+          <h2 class="story-title">${story.title}</h2>
           <a href="story-detail.html?storyId=${story.id}">
             <img src="${story.images}" alt="${story.title}" class="story-img" />
           </a>
           <a href="story-detail.html?storyId=${story.id}" class="read-button">Read Story</a>
-        `;
-      }
-      storiesHTML += `
-        <div class="story-card">
-          <h2>${story.title}</h2>
-          ${imageTag}
         </div>
       `;
     });
   }
 
   const storiesContainer = document.getElementById("stories-container");
-  const storyTitle = document.querySelector(".storytitle");
 
   if (storiesContainer) {
     storiesContainer.innerHTML = storiesHTML;
 
-    if (stories.length > 0) {
-      const firstStoryId = stories[0].id;
+    // Make the whole story-card and the title clickable
+    storiesContainer.querySelectorAll(".story-card").forEach((card) => {
+      const storyId = card.getAttribute("data-story-id");
 
-      if (storyTitle) {
-        storyTitle.addEventListener("click", () => {
-          window.location.href = `story-detail.html?storyId=${firstStoryId}`;
+      // Click the card
+      card.addEventListener("click", (e) => {
+        const target = e.target;
+        if (
+          !target.classList.contains("story-img") &&
+          !target.classList.contains("read-button")
+        ) {
+          window.location.href = `story-detail.html?storyId=${storyId}`;
+        }
+      });
+
+      // Click the title
+      const title = card.querySelector(".story-title");
+      if (title) {
+        title.addEventListener("click", (e) => {
+          e.stopPropagation(); // Prevent double redirection
+          window.location.href = `story-detail.html?storyId=${storyId}`;
         });
       }
-
-      storiesContainer.addEventListener("click", () => {
-        window.location.href = `story-detail.html?storyId=${firstStoryId}`;
-      });
-    }
+    });
   } else {
     console.error("Stories container element not found.");
   }
