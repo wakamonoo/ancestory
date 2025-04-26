@@ -418,19 +418,19 @@ function findTextNodeAndPosition(element, charIndex) {
 
 function scrollToHighlight(element) {
   const storyContainer = document.getElementById("storyContainer");
-  const containerRect = storyContainer.getBoundingClientRect();
-  const elementRect = element.getBoundingClientRect();
 
-  const elementTop = elementRect.top - containerRect.top;
-  const elementBottom = elementRect.bottom - containerRect.top;
-  const containerHeight = containerRect.height;
+  if (!storyContainer || !element) return;
 
-  if (elementTop < storyContainer.scrollTop) {
-    storyContainer.scrollTop = elementTop - 20;
-  } else if (elementBottom > storyContainer.scrollTop + containerHeight) {
-    storyContainer.scrollTop = elementBottom - containerHeight + 20;
-  }
+  const containerTop = storyContainer.getBoundingClientRect().top;
+  const elementTop = element.getBoundingClientRect().top;
+
+  const offsetTop = elementTop - containerTop + storyContainer.scrollTop;
+  storyContainer.scrollTo({
+    top: offsetTop - storyContainer.clientHeight / 2 + element.clientHeight / 2,
+    behavior: "smooth" 
+  });
 }
+
 
 function removeHighlighting() {
   const highlights = document.querySelectorAll(".highlight-word");

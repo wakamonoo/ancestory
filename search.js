@@ -47,7 +47,7 @@ export function renderStories(stories) {
       const title = card.querySelector(".story-title");
       if (title) {
         title.addEventListener("click", (e) => {
-          e.stopPropagation(); // Prevent double redirection
+          e.stopPropagation(); 
           window.location.href = `story-detail.html?storyId=${storyId}`;
         });
       }
