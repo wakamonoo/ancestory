@@ -37,6 +37,7 @@
 }
 
 #storyContainer {
+  position: relative;
   margin-top: -5%;
   width: 60%;
   flex-grow: 1;
@@ -46,6 +47,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  overflow-y: auto;
 }
 
 .story-title-container {
@@ -74,6 +76,7 @@
 #story-content {
   font-size: 18px;
   text-align: justify;
+  overflow-wrap: break-word;
 }
 
 .reaction-section {
