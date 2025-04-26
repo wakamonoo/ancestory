@@ -4,7 +4,7 @@ import {
   collection,
   getDocs,
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
-import { renderStories, initializeSearch } from './search.js'; // Import the functions
+import { renderStories, initializeSearch } from './search.js'; 
 
 const firebaseConfig = {
   apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
