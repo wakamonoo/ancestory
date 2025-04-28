@@ -2,7 +2,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import {
   getAuth,
   GoogleAuthProvider,
-  signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
   onAuthStateChanged,
@@ -13,7 +12,10 @@ import {
   setDoc,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// Firebase config
+// Debugging flags
+const DEBUG_MODE = true;
+const FORCE_RELOAD = true;
+
 const firebaseConfig = {
   apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
   authDomain: "ancestory-c068e.firebaseapp.com",
@@ -25,138 +27,154 @@ const firebaseConfig = {
   measurementId: "G-S5SQWC7PEM",
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const googleAuthProvider = new GoogleAuthProvider();
+const googleProvider = new GoogleAuthProvider();
 
-// Check for redirect results (important for mobile!)
-getRedirectResult(auth)
-  .then(async (result) => {
-    if (result?.user) {
-      const user = result.user;
-      const userRef = doc(db, "users", user.uid);
-      await setDoc(
-        userRef,
-        {
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-          photoURL: user.photoURL,
-        },
-        { merge: true }
-      );
-      window.location.reload();
+// Mobile detection
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+// Session management
+let authFlowInProgress = false;
+
+// Debug logger
+function log(message) {
+  if (DEBUG_MODE) console.log(`[Auth] ${message}`);
+}
+
+// Error handler
+function handleAuthError(error) {
+  log(`Error: ${error.code} - ${error.message}`);
+  sessionStorage.removeItem('authFlow');
+  showMessage(error.message, 'error');
+}
+
+// UI Feedback
+function showMessage(message, type = 'info') {
+  const colors = {
+    info: '#31708f',
+    error: '#a94442',
+    success: '#3c763d'
+  };
+  
+  const messageDiv = document.createElement('div');
+  messageDiv.style = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px;
+    color: white;
+    background: ${colors[type]};
+    border-radius: 5px;
+    z-index: 1000;
+    animation: slideIn 0.5s ease-out;
+  `;
+  
+  messageDiv.textContent = message;
+  document.body.appendChild(messageDiv);
+
+  setTimeout(() => {
+    messageDiv.style.animation = 'slideOut 0.5s ease-in';
+    setTimeout(() => messageDiv.remove(), 500);
+  }, 3000);
+}
+
+// Handle authentication redirect
+async function handleRedirect() {
+  try {
+    log('Checking for redirect result...');
+    const result = await getRedirectResult(auth);
+    
+    if (result) {
+      log('Redirect result found');
+      const { user } = result;
+      
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        lastLogin: new Date(),
+      }, { merge: true });
+
+      showMessage('Login successful!', 'success');
+      
+      if (FORCE_RELOAD || isMobile) {
+        log('Forcing page reload for mobile');
+        window.location.href = window.location.href.split('#')[0];
+      }
     }
-  })
-  .catch((error) => {
-    console.error("Google Sign-in error (redirect):", error);
-  });
+  } catch (error) {
+    handleAuthError(error);
+  } finally {
+    sessionStorage.removeItem('authFlow');
+  }
+}
 
-// LOGIN MODAL AFTER 5s DELAY
-function checkAuthAndPrompt() {
+// Authentication state observer
+function initAuthState() {
   onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      setTimeout(() => {
-        const modal = document.getElementById("loginModal");
-        if (modal) {
-          modal.style.display = "block";
-          window.addEventListener("click", (event) => {
-            if (event.target === modal) {
-              modal.style.display = "none";
-            }
-          });
-        }
-      }, 5000);
+    if (user) {
+      log(`User authenticated: ${user.email}`);
+      document.getElementById('loginModal').style.display = 'none';
+    } else {
+      log('No authenticated user');
+      if (!authFlowInProgress) {
+        setTimeout(() => {
+          if (!user) document.getElementById('loginModal').style.display = 'block';
+        }, 5000);
+      }
     }
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const googleSignInBtn = document.getElementById("google-sign-in-btn");
-  const loginModal = document.getElementById("loginModal");
-  const closeBtn = loginModal?.querySelector(".close");
-
-  checkAuthAndPrompt();
-
-  const openLoginModal = () => {
-    if (loginModal) {
-      loginModal.style.display = "block";
+// Sign-in handler
+async function handleGoogleSignIn() {
+  try {
+    authFlowInProgress = true;
+    sessionStorage.setItem('authFlow', 'google');
+    
+    if (isMobile) {
+      log('Mobile device detected, using full redirect');
+      window.location.href = `https://${firebaseConfig.authDomain}/__/auth/handler`;
+    } else {
+      await signInWithRedirect(auth, googleProvider);
     }
-  };
+  } catch (error) {
+    handleAuthError(error);
+    authFlowInProgress = false;
+  }
+}
 
-  const closeLoginModal = () => {
-    if (loginModal) {
-      loginModal.style.display = "none";
+// Initialize authentication
+document.addEventListener('DOMContentLoaded', () => {
+  // Configure the Google provider
+  googleProvider.setCustomParameters({
+    prompt: 'select_account',
+    login_hint: 'email'
+  });
+
+  // Initialize auth flow
+  handleRedirect();
+  initAuthState();
+
+  // Event listeners
+  document.getElementById('google-sign-in-btn').addEventListener('click', handleGoogleSignIn);
+  document.querySelector('.close').addEventListener('click', () => {
+    document.getElementById('loginModal').style.display = 'none';
+  });
+
+  // Cancel auth flow on page hide (for mobile)
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+      authFlowInProgress = false;
+      sessionStorage.removeItem('authFlow');
     }
-  };
-
-  const loginLinkModalTrigger = document.querySelector('nav ul#sidemenu li a[href="#"]');
-  if (loginLinkModalTrigger) {
-    loginLinkModalTrigger.addEventListener("click", (e) => {
-      e.preventDefault();
-      openLoginModal();
-    });
-  }
-
-  const loginStorySub = document.querySelector("#stories a.StorySub");
-  if (loginStorySub) {
-    loginStorySub.addEventListener("click", (event) => {
-      event.preventDefault();
-      openLoginModal();
-    });
-  }
-
-  if (closeBtn) {
-    closeBtn.addEventListener("click", closeLoginModal);
-  }
-
-  if (googleSignInBtn) {
-    googleSignInBtn.addEventListener("click", async () => {
-      try {
-        // Detect mobile
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-        if (isMobile) {
-          await signInWithRedirect(auth, googleAuthProvider);
-        } else {
-          const result = await signInWithPopup(auth, googleAuthProvider);
-          const user = result.user;
-
-          if (user) {
-            const userRef = doc(db, "users", user.uid);
-            await setDoc(
-              userRef,
-              {
-                uid: user.uid,
-                email: user.email,
-                displayName: user.displayName,
-                photoURL: user.photoURL,
-              },
-              { merge: true }
-            );
-            closeLoginModal();
-            window.location.reload();
-          }
-        }
-      } catch (error) {
-        console.error("Google Sign-in error:", error);
-      }
-    });
-  }
+  });
 });
 
-// Helper functions
-window.openLoginModal = () => {
-  const modal = document.getElementById("loginModal");
-  if (modal) {
-    modal.style.display = "block";
-  }
-};
-
-window.closeLoginModal = () => {
-  const modal = document.getElementById("loginModal");
-  if (modal) {
-    modal.style.display = "none";
-  }
-};
+// Global access
+window.auth = auth;
+window.loginWithGoogle = handleGoogleSignIn;
