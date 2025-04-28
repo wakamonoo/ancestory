@@ -3,6 +3,8 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import {
@@ -10,6 +12,8 @@ import {
   doc,
   setDoc,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+// ******************** FIREBASE CONFIG ******************* //
 
 const firebaseConfig = {
   apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
@@ -28,11 +32,9 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const googleAuthProvider = new GoogleAuthProvider();
 
+// ******************** FUNCTIONS ******************* //
 
-
-
-// ******************** LOGIN MODAL  ADTER 5S DELAY ******************* //
-
+// Check auth and show login modal if not logged in
 function checkAuthAndPrompt() {
   onAuthStateChanged(auth, (user) => {
     if (!user) {
@@ -47,15 +49,47 @@ function checkAuthAndPrompt() {
             }
           });
         }
-      }, 5000); 
+      }, 5000); // 5 seconds delay
     }
   });
 }
 
+// Save user info to Firestore
+async function saveUserInfo(user) {
+  if (user) {
+    const userRef = doc(db, "users", user.uid);
+    await setDoc(
+      userRef,
+      {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+      },
+      { merge: true }
+    );
+  }
+}
 
-// ******************** LOGIN MODAL TRIGGERS ******************* //
+// Open login modal
+window.openLoginModal = () => {
+  const modal = document.getElementById("loginModal");
+  if (modal) {
+    modal.style.display = "block";
+  }
+};
 
-document.addEventListener("DOMContentLoaded", () => {
+// Close login modal
+window.closeLoginModal = () => {
+  const modal = document.getElementById("loginModal");
+  if (modal) {
+    modal.style.display = "none";
+  }
+};
+
+// ******************** MAIN LOGIC ******************* //
+
+document.addEventListener("DOMContentLoaded", async () => {
   const googleSignInBtn = document.getElementById("google-sign-in-btn");
   const loginModal = document.getElementById("loginModal");
   const closeBtn = loginModal?.querySelector(".close");
@@ -98,22 +132,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (googleSignInBtn) {
     googleSignInBtn.addEventListener("click", async () => {
-      try {
-        const result = await signInWithPopup(auth, googleAuthProvider);
-        const user = result.user;
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-        if (user) {
-          const userRef = doc(db, "users", user.uid);
-          await setDoc(
-            userRef,
-            {
-              uid: user.uid,
-              email: user.email,
-              displayName: user.displayName,
-              photoURL: user.photoURL,
-            },
-            { merge: true }
-          );
+      try {
+        if (isMobile) {
+          await signInWithRedirect(auth, googleAuthProvider);
+        } else {
+          const result = await signInWithPopup(auth, googleAuthProvider);
+          const user = result.user;
+
+          await saveUserInfo(user);
 
           closeLoginModal();
           window.location.reload();
@@ -123,18 +151,20 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  // Handle redirect result (if user came back from Google login)
+  try {
+    const redirectResult = await getRedirectResult(auth);
+    if (redirectResult) {
+      const user = redirectResult.user;
+      if (user) {
+        await saveUserInfo(user);
+
+        closeLoginModal();
+        window.location.reload();
+      }
+    }
+  } catch (error) {
+    console.error("Google Redirect Sign-in error:", error);
+  }
 });
-
-window.openLoginModal = () => {
-  const modal = document.getElementById("loginModal");
-  if (modal) {
-    modal.style.display = "block";
-  }
-};
-
-window.closeLoginModal = () => {
-  const modal = document.getElementById("loginModal");
-  if (modal) {
-    modal.style.display = "none";
-  }
-};
