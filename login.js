@@ -4,8 +4,6 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   onAuthStateChanged,
-  setPersistence,
-  browserSessionPersistence,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import {
   getFirestore,
@@ -40,14 +38,14 @@ function checkAuthAndPrompt() {
         const modal = document.getElementById("loginModal");
         if (modal) {
           modal.style.display = "block";
-
+          
           window.addEventListener("click", (event) => {
             if (event.target === modal) {
               modal.style.display = "none";
             }
           });
         }
-      }, 5000);
+      }, 5000); 
     }
   });
 }
@@ -98,9 +96,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (googleSignInBtn) {
     googleSignInBtn.addEventListener("click", async () => {
       try {
-        // IMPORTANT: Set persistence first
-        await setPersistence(auth, browserSessionPersistence);
-
         const result = await signInWithPopup(auth, googleAuthProvider);
         const user = result.user;
 
@@ -118,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
           );
 
           closeLoginModal();
-          window.location.reload();
+          window.location.reload();  // Ensure this reload happens after the user is saved.
         }
       } catch (error) {
         console.error("Google Sign-in error:", error);
@@ -127,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// Also allow calling from other scripts
+// Allow calling from other scripts
 window.openLoginModal = () => {
   const modal = document.getElementById("loginModal");
   if (modal) {
