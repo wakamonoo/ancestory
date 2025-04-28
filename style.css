@@ -13,6 +13,7 @@ body {
   overflow-x: hidden;
   width: 100vw;
   scroll-behavior: smooth;
+  
 }
 
 body {
@@ -274,9 +275,10 @@ nav ul li a:hover {
 }
 .storytitle {
   font-size: 5vh;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   color: #20462f;
-  margin-left: 3%;
+  padding: 5%;
+  margin-left: 2%;
 }
 
 #stories-container {
@@ -296,13 +298,13 @@ nav ul li a:hover {
   width: 300px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 10;
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; 
 }
 
 .story-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-5px); 
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
+  cursor: pointer; 
 }
 .story-card h2 {
   color: #20462f;
@@ -437,23 +439,20 @@ nav ul li a:hover {
   color: #20462f;
   padding: 5%;
   margin-bottom: -5%;
-  margin-left: 5%;
+  margin-left: 8%;
 }
 
 .aboutDescription {
-  margin-left: 1%;
-  margin-right: 10%;
-  margin-bottom: 2%;
+  padding: 2%;
+  margin: 0% 10%;
   font-size: 18px;
   color: #20462f;
-  text-align: justify;
 }
 
 #aboutContainer {
   display: flex;
   flex-wrap: wrap;
-  justify-content: left;
-  margin-left: 8%;
+  justify-content: center;
   gap: 10%;
   padding: 20px;
   align-items: flex-start;
@@ -462,7 +461,6 @@ nav ul li a:hover {
 #aboutLeft {
   flex: 2 1 600px;
   max-width: 700px;
-  margin-left: 1%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -994,6 +992,9 @@ footer {
   }
 
   /*---------------StorySection---------------*/
+  .storytitle {
+    margin-left: -5%;
+  }
   #storyContent {
     padding: 2%;
   }
@@ -1016,19 +1017,18 @@ footer {
 
   /*---------------AboutSection---------------*/
   #about {
-    width: 100%;
+    width: 90%;
     margin: 0 auto;
   }
 
   .About {
-    margin-left: 6%;
+    margin-left: 0;
   }
 
   #aboutContainer {
     flex-direction: column;
     align-items: center;
     gap: 20px;
-    padding-right: 10%;
   }
 
   #aboutLeft,
@@ -1062,7 +1062,6 @@ footer {
 
   .research {
     font-size: 24px;
-    margin-left: -2%;
   }
 
   .downloadButton {
@@ -1319,7 +1318,7 @@ footer {
 
   /*---------------StorySection---------------*/
   .storytitle {
-    margin-left: 0%;
+    margin-left: -8%;
   }
   #storyContent {
     padding: 2%;
@@ -1340,44 +1339,29 @@ footer {
   .StorySub {
     font-size: 14px;
   }
+
   /*---------------AboutSection---------------*/
   .About {
-    margin-left: 5%;
+    margin-left: 0;
     margin-top: 10%;
   }
-
   #aboutContainer {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: left;
-    margin-left: 2%;
-    gap: 10%;
-    padding: 0;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
   }
 
   #aboutLeft,
   #aboutRight {
+    width: 100%;
     flex-direction: column;
     align-items: center;
-    margin-left: auto;
-    margin-right: auto;
   }
 
   #aboutRight {
-    width: 90%;
-  }
-  .researchImage {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 100%;
-    max-width: 300px;
-  }
-  #aboutRight {
     display: grid;
     justify-content: center;
-    gap: 10px;
+    gap: 20px;
     grid-template-columns: repeat(2, 1fr);
     padding: 10px;
   }
@@ -1390,36 +1374,14 @@ footer {
     align-items: center;
   }
 
-  .researchImageWrapper {
-    position: relative;
-    display: block;
-    width: 100%;
-    max-width: 300px;
-  }
-
-  .researchImage {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+  .researcherImage {
+    max-width: 200px;
     width: 100%;
     height: auto;
-    max-width: 300px;
   }
 
-  .researchImageWrapper::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 10px;
-    background-color: rgba(192, 151, 121, 0.4);
-    pointer-events: none;
-  }
   .research {
     font-size: 24px;
-    margin-left: 15%;
   }
 
   .downloadButton {
@@ -1428,20 +1390,16 @@ footer {
 
   .overviewTitle {
     font-size: 24px;
-    margin-left: 8%;
   }
 
   .aboutOverview {
     font-size: 14px;
-    width: 83%;
-    margin-left: 8%;
   }
 
   .researchersTitle {
     font-size: 24px;
     grid-column: span 2;
     text-align: left;
-    margin-left: 0;
   }
 
   .author {
@@ -1452,10 +1410,12 @@ footer {
     font-size: 14px;
     color: #20462f;
     text-align: justify;
-    margin-left: 8%;
+    margin: 0;
+    padding: 0;
     width: 100%;
     box-sizing: border-box;
   }
+
   /*---------------Footer---------------*/
   .footerclass > div,
   .foorterRight {
