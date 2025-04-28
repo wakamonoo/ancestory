@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import {
   getAuth,
   GoogleAuthProvider,
+  signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
   onAuthStateChanged,
@@ -12,11 +13,11 @@ import {
   setDoc,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
   authDomain: "ancestory-c068e.firebaseapp.com",
-  databaseURL:
-    "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL: "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "ancestory-c068e",
   storageBucket: "ancestory-c068e.appspot.com",
   messagingSenderId: "579709470015",
@@ -29,11 +30,10 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const googleAuthProvider = new GoogleAuthProvider();
 
-// Handle redirect result
-(async () => {
-  try {
-    const result = await getRedirectResult(auth);
-    if (result) {
+// Check for redirect results (important for mobile!)
+getRedirectResult(auth)
+  .then(async (result) => {
+    if (result?.user) {
       const user = result.user;
       const userRef = doc(db, "users", user.uid);
       await setDoc(
@@ -43,92 +43,120 @@ const googleAuthProvider = new GoogleAuthProvider();
           email: user.email,
           displayName: user.displayName,
           photoURL: user.photoURL,
-          lastLogin: new Date(),
         },
         { merge: true }
       );
-      
-      // Close modal if still open
-      const modal = document.getElementById("loginModal");
-      if (modal) modal.style.display = "none";
-      
-      // Refresh only if coming from redirect
-      if (sessionStorage.getItem("isRedirecting") === "true") {
-        sessionStorage.removeItem("isRedirecting");
-        window.location.reload();
-      }
+      window.location.reload();
     }
-  } catch (error) {
-    console.error("Redirect error:", error);
-    showAuthError(error.message);
-  }
-})();
+  })
+  .catch((error) => {
+    console.error("Google Sign-in error (redirect):", error);
+  });
 
-// Auth state listener
-onAuthStateChanged(auth, (user) => {
-  const authStatus = document.getElementById("authStatus");
-  if (authStatus) {
-    authStatus.textContent = user ? `Logged in as ${user.displayName}` : "Not logged in";
-  }
-});
-
-// Error handling
-function showAuthError(message) {
-  const errorDiv = document.getElementById("auth-error");
-  if (errorDiv) {
-    errorDiv.textContent = message;
-    errorDiv.style.display = "block";
-    setTimeout(() => errorDiv.style.display = "none", 5000);
-  }
+// LOGIN MODAL AFTER 5s DELAY
+function checkAuthAndPrompt() {
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      setTimeout(() => {
+        const modal = document.getElementById("loginModal");
+        if (modal) {
+          modal.style.display = "block";
+          window.addEventListener("click", (event) => {
+            if (event.target === modal) {
+              modal.style.display = "none";
+            }
+          });
+        }
+      }, 5000);
+    }
+  });
 }
 
-// Login Modal Logic
 document.addEventListener("DOMContentLoaded", () => {
   const googleSignInBtn = document.getElementById("google-sign-in-btn");
   const loginModal = document.getElementById("loginModal");
   const closeBtn = loginModal?.querySelector(".close");
 
-  // Mobile-friendly sign-in handler
-  if (googleSignInBtn) {
-    googleSignInBtn.addEventListener("click", async () => {
-      try {
-        googleSignInBtn.innerHTML = '<div class="spinner"></div> Redirecting...';
-        sessionStorage.setItem("isRedirecting", "true");
-        await signInWithRedirect(auth, googleAuthProvider);
-      } catch (error) {
-        console.error("Sign-in error:", error);
-        showAuthError(error.message);
-        googleSignInBtn.textContent = "Continue with Google";
-      }
-    });
-  }
+  checkAuthAndPrompt();
 
-  // Modal controls
-  const openLoginModal = () => loginModal && (loginModal.style.display = "block");
-  const closeLoginModal = () => loginModal && (loginModal.style.display = "none");
+  const openLoginModal = () => {
+    if (loginModal) {
+      loginModal.style.display = "block";
+    }
+  };
 
-  // Modal triggers
-  document.querySelectorAll('[data-login-trigger]').forEach(trigger => {
-    trigger.addEventListener("click", (e) => {
+  const closeLoginModal = () => {
+    if (loginModal) {
+      loginModal.style.display = "none";
+    }
+  };
+
+  const loginLinkModalTrigger = document.querySelector('nav ul#sidemenu li a[href="#"]');
+  if (loginLinkModalTrigger) {
+    loginLinkModalTrigger.addEventListener("click", (e) => {
       e.preventDefault();
       openLoginModal();
     });
-  });
+  }
 
-  // Close modal
-  if (closeBtn) closeBtn.addEventListener("click", closeLoginModal);
-  window.addEventListener("click", (e) => e.target === loginModal && closeLoginModal());
+  const loginStorySub = document.querySelector("#stories a.StorySub");
+  if (loginStorySub) {
+    loginStorySub.addEventListener("click", (event) => {
+      event.preventDefault();
+      openLoginModal();
+    });
+  }
 
-  // Auto-show modal after 5s if not logged in
-  setTimeout(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (!user && loginModal) {
-        loginModal.style.display = "block";
+  if (closeBtn) {
+    closeBtn.addEventListener("click", closeLoginModal);
+  }
+
+  if (googleSignInBtn) {
+    googleSignInBtn.addEventListener("click", async () => {
+      try {
+        // Detect mobile
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+        if (isMobile) {
+          await signInWithRedirect(auth, googleAuthProvider);
+        } else {
+          const result = await signInWithPopup(auth, googleAuthProvider);
+          const user = result.user;
+
+          if (user) {
+            const userRef = doc(db, "users", user.uid);
+            await setDoc(
+              userRef,
+              {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                photoURL: user.photoURL,
+              },
+              { merge: true }
+            );
+            closeLoginModal();
+            window.location.reload();
+          }
+        }
+      } catch (error) {
+        console.error("Google Sign-in error:", error);
       }
     });
-  }, 5000);
+  }
 });
 
-// Global functions
-window.openLoginModal = () => document.getElementById("loginModal").style.display = "block";
-window.closeLoginModal = () => document.getElementById("loginModal").style.display = "none";
+// Helper functions
+window.openLoginModal = () => {
+  const modal = document.getElementById("loginModal");
+  if (modal) {
+    modal.style.display = "block";
+  }
+};
+
+window.closeLoginModal = () => {
+  const modal = document.getElementById("loginModal");
+  if (modal) {
+    modal.style.display = "none";
+  }
+};
