@@ -4,6 +4,8 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   onAuthStateChanged,
+  setPersistence,
+  browserSessionPersistence,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import {
   getFirestore,
@@ -11,11 +13,11 @@ import {
   setDoc,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
   authDomain: "ancestory-c068e.firebaseapp.com",
-  databaseURL:
-    "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL: "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "ancestory-c068e",
   storageBucket: "ancestory-c068e.appspot.com",
   messagingSenderId: "579709470015",
@@ -23,12 +25,13 @@ const firebaseConfig = {
   measurementId: "G-S5SQWC7PEM",
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const googleAuthProvider = new GoogleAuthProvider();
 
-// ******************** LOGIN MODAL  ADTER 5S DELAY ******************* //
+// ******************** LOGIN MODAL AFTER 5S DELAY ******************* //
 
 function checkAuthAndPrompt() {
   onAuthStateChanged(auth, (user) => {
@@ -95,6 +98,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (googleSignInBtn) {
     googleSignInBtn.addEventListener("click", async () => {
       try {
+        // IMPORTANT: Set persistence first
+        await setPersistence(auth, browserSessionPersistence);
+
         const result = await signInWithPopup(auth, googleAuthProvider);
         const user = result.user;
 
@@ -121,6 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+// Also allow calling from other scripts
 window.openLoginModal = () => {
   const modal = document.getElementById("loginModal");
   if (modal) {
