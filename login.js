@@ -11,11 +11,11 @@ import {
   setDoc,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
   authDomain: "ancestory-c068e.firebaseapp.com",
-  databaseURL: "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL:
+    "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "ancestory-c068e",
   storageBucket: "ancestory-c068e.appspot.com",
   messagingSenderId: "579709470015",
@@ -23,7 +23,6 @@ const firebaseConfig = {
   measurementId: "G-S5SQWC7PEM",
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -38,7 +37,7 @@ function checkAuthAndPrompt() {
         const modal = document.getElementById("loginModal");
         if (modal) {
           modal.style.display = "block";
-          
+
           window.addEventListener("click", (event) => {
             if (event.target === modal) {
               modal.style.display = "none";
@@ -113,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
           );
 
           closeLoginModal();
-          window.location.reload();  // Ensure this reload happens after the user is saved.
+          window.location.reload();
         }
       } catch (error) {
         console.error("Google Sign-in error:", error);
@@ -122,7 +121,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// Allow calling from other scripts
 window.openLoginModal = () => {
   const modal = document.getElementById("loginModal");
   if (modal) {
