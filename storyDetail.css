@@ -655,9 +655,6 @@
 /*------------------------------1200px------------------------------*/
 @media (min-width: 601px) and (max-width: 1200px) {
   /*---------------StorySection---------------*/
-  .storytitle {
-    margin-left: -5%;
-  }
   #storyContent {
     padding: 2%;
   }
@@ -774,9 +771,6 @@
 /*------------------------------600px------------------------------*/
 @media only screen and (max-width: 600px) {
   /*---------------StorySection---------------*/
-  .storytitle {
-    margin-left: -8%;
-  }
   #storyContent {
     padding: 2%;
   }
