@@ -34,27 +34,6 @@ const googleAuthProvider = new GoogleAuthProvider();
 
 // ******************** FUNCTIONS ******************* //
 
-// Check auth and show login modal if not logged in
-function checkAuthAndPrompt() {
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      setTimeout(() => {
-        const modal = document.getElementById("loginModal");
-        if (modal) {
-          modal.style.display = "block";
-
-          window.addEventListener("click", (event) => {
-            if (event.target === modal) {
-              modal.style.display = "none";
-            }
-          });
-        }
-      }, 5000); // 5 seconds delay
-    }
-  });
-}
-
-// Save user info to Firestore
 async function saveUserInfo(user) {
   if (user) {
     const userRef = doc(db, "users", user.uid);
@@ -71,7 +50,25 @@ async function saveUserInfo(user) {
   }
 }
 
-// Open login modal
+function checkAuthAndPrompt() {
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      setTimeout(() => {
+        const modal = document.getElementById("loginModal");
+        if (modal) {
+          modal.style.display = "block";
+
+          window.addEventListener("click", (event) => {
+            if (event.target === modal) {
+              modal.style.display = "none";
+            }
+          });
+        }
+      }, 5000); // 5s delay
+    }
+  });
+}
+
 window.openLoginModal = () => {
   const modal = document.getElementById("loginModal");
   if (modal) {
@@ -79,7 +76,6 @@ window.openLoginModal = () => {
   }
 };
 
-// Close login modal
 window.closeLoginModal = () => {
   const modal = document.getElementById("loginModal");
   if (modal) {
@@ -87,9 +83,24 @@ window.closeLoginModal = () => {
   }
 };
 
-// ******************** MAIN LOGIC ******************* //
+// ******************** IMMEDIATE HANDLE REDIRECT RESULT ******************* //
 
-document.addEventListener("DOMContentLoaded", async () => {
+getRedirectResult(auth)
+  .then(async (result) => {
+    if (result && result.user) {
+      await saveUserInfo(result.user);
+
+      closeLoginModal();
+      window.location.reload();
+    }
+  })
+  .catch((error) => {
+    console.error("Redirect sign-in error:", error);
+  });
+
+// ******************** PAGE READY ******************* //
+
+document.addEventListener("DOMContentLoaded", () => {
   const googleSignInBtn = document.getElementById("google-sign-in-btn");
   const loginModal = document.getElementById("loginModal");
   const closeBtn = loginModal?.querySelector(".close");
@@ -150,21 +161,5 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error("Google Sign-in error:", error);
       }
     });
-  }
-
-  // Handle redirect result (if user came back from Google login)
-  try {
-    const redirectResult = await getRedirectResult(auth);
-    if (redirectResult) {
-      const user = redirectResult.user;
-      if (user) {
-        await saveUserInfo(user);
-
-        closeLoginModal();
-        window.location.reload();
-      }
-    }
-  } catch (error) {
-    console.error("Google Redirect Sign-in error:", error);
   }
 });
