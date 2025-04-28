@@ -96,6 +96,10 @@ document.addEventListener("DOMContentLoaded", () => {
         timestamp: serverTimestamp(),
       });
 
+      // Close modal and reset form BEFORE showing SweetAlert
+      closeModal(submitStoryModal);
+      storyForm.reset();
+
       await Swal.fire({
         title: "Success!",
         text: "Story submitted successfully!",
@@ -109,9 +113,8 @@ document.addEventListener("DOMContentLoaded", () => {
         hideClass: { popup: "animate__animated animate__fadeOutUp" },
       });
 
-      closeModal(submitStoryModal);
-      storyForm.reset();
       window.location.reload();
+      
     } catch (err) {
       console.error("Story submission failed:", err);
       Swal.fire({
@@ -224,7 +227,6 @@ document.addEventListener("DOMContentLoaded", () => {
   onAuthStateChanged(auth, (user) => {
     updateUI(user);
 
-    // Always update the behavior of Submit Story button dynamically
     if (submitStoryLink) {
       submitStoryLink.addEventListener("click", (e) => {
         e.preventDefault();
