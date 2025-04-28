@@ -13,11 +13,11 @@ import {
   serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
   authDomain: "ancestory-c068e.firebaseapp.com",
-  databaseURL:
-    "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL: "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "ancestory-c068e",
   storageBucket: "ancestory-c068e.appspot.com",
   messagingSenderId: "579709470015",
@@ -25,6 +25,7 @@ const firebaseConfig = {
   measurementId: "G-S5SQWC7PEM",
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -55,7 +56,9 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       await signOut(auth);
       console.log("User signed out");
-      updateUI(null); // Update the UI when logged out
+      setTimeout(() => {
+        window.location.reload();
+      }, 500); // reload after signout
     } catch (err) {
       console.error("Sign out error:", err);
     }
@@ -113,6 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (user) {
       console.log("✅ Logged in:", user);
+
       if (isAdmin) {
         window.location.href = "admin.html";
         return;
@@ -167,17 +171,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
         console.log("User signed in:", user);
-        updateUI(user); // Update the UI after successful login
+        updateUI(user);
       } catch (err) {
         console.error("Google Sign In Error:", err);
       }
     });
   }
 
-  // Handle Auth State Change
+  // Monitor Auth State
   onAuthStateChanged(auth, updateUI);
 
-  // Story Modal Close Button
+  // Handle Close button on Submit Story Modal
   const closeSubmitStoryModalBtn = submitStoryModal.querySelector(".close");
   if (closeSubmitStoryModalBtn) {
     closeSubmitStoryModalBtn.addEventListener("click", () => closeModal(submitStoryModal));
