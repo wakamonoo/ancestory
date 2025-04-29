@@ -134,48 +134,73 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ******************** Facebook Sign-In ******************* //
-  if (facebookSignInBtn) {
-    facebookSignInBtn.addEventListener("click", async () => {
-      if (isLoginInProgress) return;
-      isLoginInProgress = true;
+  // ******************** Facebook Sign-In ******************* //
+if (facebookSignInBtn) {
+  facebookSignInBtn.addEventListener("click", async () => {
+    if (isLoginInProgress) return;
+    isLoginInProgress = true;
 
-      try {
-        const result = await signInWithPopup(auth, facebookAuthProvider);
-        const user = result.user;
+    try {
+      const result = await signInWithPopup(auth, facebookAuthProvider);
+      const user = result.user;
 
-        if (user) {
-          // Get Facebook provider data
-          const facebookProviderData = user.providerData.find(
-            (provider) => provider.providerId === FacebookAuthProvider.PROVIDER_ID
-          );
+      if (user) {
+        console.group("[Facebook Debug]");
+        console.log("Full user object:", user);
+        
+        // Inspect provider data
+        const facebookProviderData = user.providerData.find(
+          (provider) => provider.providerId === FacebookAuthProvider.PROVIDER_ID
+        );
+        console.log("Facebook provider data:", facebookProviderData);
+
+        // Get Facebook UID
+        const facebookUID = facebookProviderData?.uid;
+        console.log("Facebook UID:", facebookUID || "Not found");
+
+        // Construct photo URL
+        let facebookPhotoURL;
+        if (facebookUID) {
+          facebookPhotoURL = `https://graph.facebook.com/${facebookUID}/picture?type=large`;
+          console.log("Constructed Facebook URL:", facebookPhotoURL);
           
-          // Construct proper Facebook photo URL
-          const facebookPhotoURL = facebookProviderData?.uid
-            ? `https://graph.facebook.com/${facebookProviderData.uid}/picture?type=large`
-            : "images/user.png"; // Fallback to local image
-
-          const userRef = doc(db, "users", user.uid);
-          await setDoc(
-            userRef,
-            {
-              uid: user.uid,
-              email: user.email,
-              displayName: user.displayName,
-              photoURL: facebookPhotoURL,
-            },
-            { merge: true }
-          );
-
-          closeLoginModal();
-          window.location.reload();
+          // Test image loading
+          const testImage = new Image();
+          testImage.onload = () => console.log("Image loads successfully");
+          testImage.onerror = () => console.error("Image failed to load");
+          testImage.src = facebookPhotoURL;
+        } else {
+          facebookPhotoURL = "images/user.png";
+          console.warn("Using fallback image:", facebookPhotoURL);
         }
-      } catch (error) {
-        console.error("Facebook Sign-in error:", error);
-      } finally {
-        isLoginInProgress = false;
+
+        console.groupEnd();
+
+        const userRef = doc(db, "users", user.uid);
+        await setDoc(
+          userRef,
+          {
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: facebookPhotoURL,
+          },
+          { merge: true }
+        );
+
+        closeLoginModal();
+        window.location.reload();
       }
-    });
-  }
+    } catch (error) {
+      console.error("Facebook Sign-in error:", error);
+      if (error.code === 'auth/account-exists-with-different-credential') {
+        console.error("Email conflict - user might already exist with Google provider");
+      }
+    } finally {
+      isLoginInProgress = false;
+    }
+  });
+}
 });
 
 window.openLoginModal = () => {
