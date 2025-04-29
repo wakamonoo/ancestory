@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginModal = document.getElementById("loginModal");
   const closeBtn = loginModal?.querySelector(".close");
 
-  let isLoginInProgress = false; // Flag to prevent multiple login attempts
+  let isLoginInProgress = false;
 
   checkAuthAndPrompt();
 
@@ -99,10 +99,10 @@ document.addEventListener("DOMContentLoaded", () => {
     closeBtn.addEventListener("click", closeLoginModal);
   }
 
-  // --- Google Sign-In --- //
+  // ******************** Google Sign-In ******************* //
   if (googleSignInBtn) {
     googleSignInBtn.addEventListener("click", async () => {
-      if (isLoginInProgress) return; // Prevent multiple logins
+      if (isLoginInProgress) return;
       isLoginInProgress = true;
 
       try {
@@ -128,21 +128,21 @@ document.addEventListener("DOMContentLoaded", () => {
       } catch (error) {
         console.error("Google Sign-in error:", error);
       } finally {
-        isLoginInProgress = false; // Reset after the login attempt
+        isLoginInProgress = false;
       }
     });
   }
 
-  // --- Facebook Sign-In --- //
+  // ******************** Facebook Sign-In ******************* //
   if (facebookSignInBtn) {
     facebookSignInBtn.addEventListener("click", async () => {
       if (isLoginInProgress) return;
       isLoginInProgress = true;
-
+  
       try {
         const result = await signInWithPopup(auth, facebookAuthProvider);
         const user = result.user;
-
+  
         if (user) {
           const userRef = doc(db, "users", user.uid);
           await setDoc(
@@ -157,16 +157,17 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             { merge: true }
           );
-
+  
           closeLoginModal();
           window.location.reload();
         }
       } catch (error) {
-        // ... error handling ...
+        console.error("Facebook Sign-in error:", error);
+      } finally {
+        isLoginInProgress = false;
       }
     });
   }
-});
 
 window.openLoginModal = () => {
   const modal = document.getElementById("loginModal");
