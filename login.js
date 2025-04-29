@@ -15,10 +15,13 @@ import {
 const firebaseConfig = {
   apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
   authDomain: "ancestory-c068e.firebaseapp.com",
+  databaseURL:
+    "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "ancestory-c068e",
   storageBucket: "ancestory-c068e.appspot.com",
   messagingSenderId: "579709470015",
   appId: "1:579709470015:web:adbbc5cba7f4e53f617f8a",
+  measurementId: "G-S5SQWC7PEM",
 };
 
 const app = initializeApp(firebaseConfig);
@@ -29,79 +32,181 @@ const googleAuthProvider = new GoogleAuthProvider();
 const facebookAuthProvider = new FacebookAuthProvider();
 facebookAuthProvider.addScope("public_profile");
 
+// ******************** LOGIN MODAL AFTER 5S DELAY ******************* //
+
+function checkAuthAndPrompt() {
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      setTimeout(() => {
+        const modal = document.getElementById("loginModal");
+        if (modal) {
+          modal.style.display = "block";
+
+          window.addEventListener("click", (event) => {
+            if (event.target === modal) {
+              modal.style.display = "none";
+            }
+          });
+        }
+      }, 5000);
+    }
+  });
+}
+
+// ******************** LOGIN MODAL TRIGGERS ******************* //
+
 document.addEventListener("DOMContentLoaded", () => {
-  const googleBtn = document.getElementById("google-sign-in-btn");
-  const fbBtn = document.getElementById("facebook-sign-in-btn");
+  const googleSignInBtn = document.getElementById("google-sign-in-btn");
+  const facebookSignInBtn = document.getElementById("facebook-sign-in-btn");
+  const loginModal = document.getElementById("loginModal");
+  const closeBtn = loginModal?.querySelector(".close");
 
   let isLoginInProgress = false;
 
-  // Auth observer with debug
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      console.log("[Auth Debug] User logged in:", user.displayName);
-      const displayNameEl = document.querySelector(".display-name");
-      const profilePhotoEl = document.querySelector(".profile-photo");
+  checkAuthAndPrompt();
 
-      if (displayNameEl) displayNameEl.textContent = user.displayName;
-      if (profilePhotoEl) profilePhotoEl.src = user.photoURL;
-    } else {
-      console.log("[Auth Debug] No user is logged in.");
+  const openLoginModal = () => {
+    if (loginModal) {
+      loginModal.style.display = "block";
     }
-  });
+  };
 
-  // Google Sign-In
-  googleBtn?.addEventListener("click", async () => {
-    if (isLoginInProgress) return;
-    isLoginInProgress = true;
-
-    try {
-      const result = await signInWithPopup(auth, googleAuthProvider);
-      const user = result.user;
-      console.log("[Google Sign-In] Success:", user);
-
-      await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-      }, { merge: true });
-
-      console.log("[Google Sign-In] User document updated.");
-      window.location.reload();
-    } catch (error) {
-      console.error("[Google Sign-In] Error:", error);
-    } finally {
-      isLoginInProgress = false;
+  const closeLoginModal = () => {
+    if (loginModal) {
+      loginModal.style.display = "none";
     }
-  });
+  };
 
-  // Facebook Sign-In
-  fbBtn?.addEventListener("click", async () => {
-    if (isLoginInProgress) return;
-    isLoginInProgress = true;
+  const loginLinkModalTrigger = document.querySelector(
+    'nav ul#sidemenu li a[href="#"]'
+  );
+  if (loginLinkModalTrigger) {
+    loginLinkModalTrigger.addEventListener("click", (e) => {
+      e.preventDefault();
+      openLoginModal();
+    });
+  }
 
-    try {
-      const result = await signInWithPopup(auth, facebookAuthProvider);
-      const user = result.user;
-      console.log("[Facebook Sign-In] Success:", user);
+  const loginStorySub = document.querySelector("#stories a.StorySub");
+  if (loginStorySub) {
+    loginStorySub.addEventListener("click", (event) => {
+      event.preventDefault();
+      openLoginModal();
+    });
+  }
 
-      await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-      }, { merge: true });
+  if (closeBtn) {
+    closeBtn.addEventListener("click", closeLoginModal);
+  }
 
-      console.log("[Facebook Sign-In] User document updated.");
-      window.location.reload();
-    } catch (error) {
-      console.error("[Facebook Sign-In] Error:", error);
-    } finally {
-      isLoginInProgress = false;
-    }
-  });
+  // ******************** Google Sign-In ******************* //
+  if (googleSignInBtn) {
+    googleSignInBtn.addEventListener("click", async () => {
+      if (isLoginInProgress) return;
+      isLoginInProgress = true;
+
+      try {
+        const result = await signInWithPopup(auth, googleAuthProvider);
+        const user = result.user;
+
+        if (user) {
+          console.log("[Google] Profile photo URL:", user.photoURL);
+          const userRef = doc(db, "users", user.uid);
+          await setDoc(
+            userRef,
+            {
+              uid: user.uid,
+              email: user.email,
+              displayName: user.displayName,
+              photoURL: user.photoURL,
+            },
+            { merge: true }
+          );
+
+          closeLoginModal();
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error("Google Sign-in error:", error);
+      } finally {
+        isLoginInProgress = false;
+      }
+    });
+  }
+
+  // ******************** Facebook Sign-In ******************* //
+  if (facebookSignInBtn) {
+    facebookSignInBtn.addEventListener("click", async () => {
+      if (isLoginInProgress) return;
+      isLoginInProgress = true;
+
+      try {
+        const result = await signInWithPopup(auth, facebookAuthProvider);
+        const user = result.user;
+
+        if (user) {
+          console.groupCollapsed("[Facebook Debug]");
+          console.log("Full user object:", user);
+
+          const facebookProviderData = user.providerData.find(
+            (provider) =>
+              provider.providerId === FacebookAuthProvider.PROVIDER_ID
+          );
+          console.log("Facebook provider data:", facebookProviderData);
+
+          const facebookUID = facebookProviderData?.uid;
+          console.log("Facebook UID:", facebookUID || "Not found");
+
+          let facebookPhotoURL;
+          if (facebookUID) {
+            facebookPhotoURL = `https://graph.facebook.com/${facebookUID}/picture?type=large`;
+            console.log("Constructed Facebook URL:", facebookPhotoURL);
+
+            const testImage = new Image();
+            testImage.onload = () => console.log("Image loads successfully");
+            testImage.onerror = (e) => console.error("Image load error:", e);
+            testImage.src = facebookPhotoURL;
+          } else {
+            facebookPhotoURL = "images/user.png";
+            console.warn("Using fallback image:", facebookPhotoURL);
+
+            const fallbackTest = new Image();
+            fallbackTest.onload = () => console.log("Fallback image exists");
+            fallbackTest.onerror = (e) =>
+              console.error("Fallback image missing:", e);
+            fallbackTest.src = facebookPhotoURL;
+          }
+
+          console.groupEnd();
+
+          const userRef = doc(db, "users", user.uid);
+          await setDoc(
+            userRef,
+            {
+              uid: user.uid,
+              email: user.email,
+              displayName: user.displayName,
+              photoURL: facebookPhotoURL,
+            },
+            { merge: true }
+          );
+
+          closeLoginModal();
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error("Facebook Sign-in error:", error);
+        if (error.code === "auth/account-exists-with-different-credential") {
+          console.error(
+            "Email conflict - existing account with different provider"
+          );
+        }
+      } finally {
+        isLoginInProgress = false;
+      }
+    });
+  }
 });
-
 
 window.openLoginModal = () => {
   const modal = document.getElementById("loginModal");
