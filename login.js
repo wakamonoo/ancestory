@@ -144,18 +144,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const user = result.user;
 
         if (user) {
-          console.log("Facebook Photo URL before processing:", user.photoURL);
+          console.log("Facebook Photo URL from provider:", user.photoURL); // Debugging log
 
-          let facebookPhotoURL = user.photoURL;
-          if (facebookPhotoURL) {
-            // Ensure we get a decent size image
-            facebookPhotoURL = `${facebookPhotoURL}?type=large`;
-            console.log("Facebook Photo URL after adding type=large:", facebookPhotoURL);
-          } else {
-            facebookPhotoURL =
-              "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
-            console.log("Facebook Photo URL is null, using default:", facebookPhotoURL);
-          }
+          const facebookPhotoURL = user.photoURL
+            ? `${user.photoURL}?type=large`
+            : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
+
+          console.log("Facebook Photo URL being saved:", facebookPhotoURL); // Debugging log
 
           const userRef = doc(db, "users", user.uid);
           await setDoc(
