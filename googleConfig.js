@@ -2,8 +2,6 @@ import {
   getAuth,
   onAuthStateChanged,
   signOut,
-  FacebookAuthProvider,
-  signInWithPopup,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
@@ -222,33 +220,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   };
-
-  // Facebook login handling
-  const facebookLogin = async () => {
-    const provider = new FacebookAuthProvider();
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-
-      // Update UI with user information
-      updateUI(user);
-    } catch (error) {
-      console.error("Facebook login error:", error);
-      Swal.fire({
-        title: "Login Failed",
-        text: "There was an error logging in with Facebook.",
-        icon: "error",
-        iconColor: "#20462f",
-        confirmButtonText: "Try Again",
-        confirmButtonColor: "#C09779",
-        background: "#D29F80",
-        color: "#20462f",
-      });
-    }
-  };
-
-  // Attach the Facebook login function to your login button
-  document.getElementById("facebook-login").addEventListener("click", facebookLogin);
 
   onAuthStateChanged(auth, (user) => {
     updateUI(user);
