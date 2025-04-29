@@ -110,6 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const user = result.user;
 
         if (user) {
+          console.log("[Google] Profile photo URL:", user.photoURL);
           const userRef = doc(db, "users", user.uid);
           await setDoc(
             userRef,
@@ -134,73 +135,78 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ******************** Facebook Sign-In ******************* //
-  // ******************** Facebook Sign-In ******************* //
-if (facebookSignInBtn) {
-  facebookSignInBtn.addEventListener("click", async () => {
-    if (isLoginInProgress) return;
-    isLoginInProgress = true;
+  if (facebookSignInBtn) {
+    facebookSignInBtn.addEventListener("click", async () => {
+      if (isLoginInProgress) return;
+      isLoginInProgress = true;
 
-    try {
-      const result = await signInWithPopup(auth, facebookAuthProvider);
-      const user = result.user;
+      try {
+        const result = await signInWithPopup(auth, facebookAuthProvider);
+        const user = result.user;
 
-      if (user) {
-        console.group("[Facebook Debug]");
-        console.log("Full user object:", user);
-        
-        // Inspect provider data
-        const facebookProviderData = user.providerData.find(
-          (provider) => provider.providerId === FacebookAuthProvider.PROVIDER_ID
-        );
-        console.log("Facebook provider data:", facebookProviderData);
-
-        // Get Facebook UID
-        const facebookUID = facebookProviderData?.uid;
-        console.log("Facebook UID:", facebookUID || "Not found");
-
-        // Construct photo URL
-        let facebookPhotoURL;
-        if (facebookUID) {
-          facebookPhotoURL = `https://graph.facebook.com/${facebookUID}/picture?type=large`;
-          console.log("Constructed Facebook URL:", facebookPhotoURL);
+        if (user) {
+          console.groupCollapsed("[Facebook Debug]");
+          console.log("Full user object:", user);
           
-          // Test image loading
-          const testImage = new Image();
-          testImage.onload = () => console.log("Image loads successfully");
-          testImage.onerror = () => console.error("Image failed to load");
-          testImage.src = facebookPhotoURL;
-        } else {
-          facebookPhotoURL = "images/user.png";
-          console.warn("Using fallback image:", facebookPhotoURL);
+          // Get Facebook provider data
+          const facebookProviderData = user.providerData.find(
+            (provider) => provider.providerId === FacebookAuthProvider.PROVIDER_ID
+          );
+          console.log("Facebook provider data:", facebookProviderData);
+
+          // Get Facebook UID
+          const facebookUID = facebookProviderData?.uid;
+          console.log("Facebook UID:", facebookUID || "Not found");
+
+          // Construct photo URL
+          let facebookPhotoURL;
+          if (facebookUID) {
+            facebookPhotoURL = `https://graph.facebook.com/${facebookUID}/picture?type=large`;
+            console.log("Constructed Facebook URL:", facebookPhotoURL);
+            
+            // Test image loading
+            const testImage = new Image();
+            testImage.onload = () => console.log("Image loads successfully");
+            testImage.onerror = (e) => console.error("Image load error:", e);
+            testImage.src = facebookPhotoURL;
+          } else {
+            facebookPhotoURL = "images/user.png";
+            console.warn("Using fallback image:", facebookPhotoURL);
+            
+            // Verify fallback path
+            const fallbackTest = new Image();
+            fallbackTest.onload = () => console.log("Fallback image exists");
+            fallbackTest.onerror = (e) => console.error("Fallback image missing:", e);
+            fallbackTest.src = facebookPhotoURL;
+          }
+
+          console.groupEnd();
+
+          const userRef = doc(db, "users", user.uid);
+          await setDoc(
+            userRef,
+            {
+              uid: user.uid,
+              email: user.email,
+              displayName: user.displayName,
+              photoURL: facebookPhotoURL,
+            },
+            { merge: true }
+          );
+
+          closeLoginModal();
+          window.location.reload();
         }
-
-        console.groupEnd();
-
-        const userRef = doc(db, "users", user.uid);
-        await setDoc(
-          userRef,
-          {
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName,
-            photoURL: facebookPhotoURL,
-          },
-          { merge: true }
-        );
-
-        closeLoginModal();
-        window.location.reload();
+      } catch (error) {
+        console.error("Facebook Sign-in error:", error);
+        if (error.code === 'auth/account-exists-with-different-credential') {
+          console.error("Email conflict - existing account with different provider");
+        }
+      } finally {
+        isLoginInProgress = false;
       }
-    } catch (error) {
-      console.error("Facebook Sign-in error:", error);
-      if (error.code === 'auth/account-exists-with-different-credential') {
-        console.error("Email conflict - user might already exist with Google provider");
-      }
-    } finally {
-      isLoginInProgress = false;
-    }
-  });
-}
+    });
+  }
 });
 
 window.openLoginModal = () => {
