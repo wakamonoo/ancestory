@@ -59,6 +59,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginModal = document.getElementById("loginModal");
   const closeBtn = loginModal?.querySelector(".close");
 
+  let isLoginInProgress = false; // Flag to prevent multiple login attempts
+
   checkAuthAndPrompt();
 
   const openLoginModal = () => {
@@ -95,9 +97,12 @@ document.addEventListener("DOMContentLoaded", () => {
     closeBtn.addEventListener("click", closeLoginModal);
   }
 
-  // --- Google Sign-In ---
+  // --- Google Sign-In --- //
   if (googleSignInBtn) {
     googleSignInBtn.addEventListener("click", async () => {
+      if (isLoginInProgress) return; // Prevent multiple logins
+      isLoginInProgress = true;
+
       try {
         const result = await signInWithPopup(auth, googleAuthProvider);
         const user = result.user;
@@ -120,13 +125,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       } catch (error) {
         console.error("Google Sign-in error:", error);
+      } finally {
+        isLoginInProgress = false; // Reset after the login attempt
       }
     });
   }
 
-  // --- Facebook Sign-In ---
+  // --- Facebook Sign-In --- //
   if (facebookSignInBtn) {
     facebookSignInBtn.addEventListener("click", async () => {
+      if (isLoginInProgress) return; // Prevent multiple logins
+      isLoginInProgress = true;
+
       try {
         const result = await signInWithPopup(auth, facebookAuthProvider);
         const user = result.user;
@@ -148,7 +158,13 @@ document.addEventListener("DOMContentLoaded", () => {
           window.location.reload();
         }
       } catch (error) {
-        console.error("Facebook Sign-in error:", error);
+        if (error.code === 'auth/cancelled-popup-request') {
+          console.log('Login popup was closed by the user.');
+        } else {
+          console.error("Facebook Sign-in error:", error);
+        }
+      } finally {
+        isLoginInProgress = false; // Reset after the login attempt
       }
     });
   }
