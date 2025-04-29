@@ -147,24 +147,21 @@ document.addEventListener("DOMContentLoaded", () => {
         if (user) {
           console.groupCollapsed("[Facebook Debug]");
           console.log("Full user object:", user);
-          
-          // Get Facebook provider data
+
           const facebookProviderData = user.providerData.find(
-            (provider) => provider.providerId === FacebookAuthProvider.PROVIDER_ID
+            (provider) =>
+              provider.providerId === FacebookAuthProvider.PROVIDER_ID
           );
           console.log("Facebook provider data:", facebookProviderData);
 
-          // Get Facebook UID
           const facebookUID = facebookProviderData?.uid;
           console.log("Facebook UID:", facebookUID || "Not found");
 
-          // Construct photo URL
           let facebookPhotoURL;
           if (facebookUID) {
             facebookPhotoURL = `https://graph.facebook.com/${facebookUID}/picture?type=large`;
             console.log("Constructed Facebook URL:", facebookPhotoURL);
-            
-            // Test image loading
+
             const testImage = new Image();
             testImage.onload = () => console.log("Image loads successfully");
             testImage.onerror = (e) => console.error("Image load error:", e);
@@ -172,11 +169,11 @@ document.addEventListener("DOMContentLoaded", () => {
           } else {
             facebookPhotoURL = "images/user.png";
             console.warn("Using fallback image:", facebookPhotoURL);
-            
-            // Verify fallback path
+
             const fallbackTest = new Image();
             fallbackTest.onload = () => console.log("Fallback image exists");
-            fallbackTest.onerror = (e) => console.error("Fallback image missing:", e);
+            fallbackTest.onerror = (e) =>
+              console.error("Fallback image missing:", e);
             fallbackTest.src = facebookPhotoURL;
           }
 
@@ -199,8 +196,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       } catch (error) {
         console.error("Facebook Sign-in error:", error);
-        if (error.code === 'auth/account-exists-with-different-credential') {
-          console.error("Email conflict - existing account with different provider");
+        if (error.code === "auth/account-exists-with-different-credential") {
+          console.error(
+            "Email conflict - existing account with different provider"
+          );
         }
       } finally {
         isLoginInProgress = false;
