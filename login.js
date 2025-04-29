@@ -32,8 +32,6 @@ const googleAuthProvider = new GoogleAuthProvider();
 const facebookAuthProvider = new FacebookAuthProvider();
 facebookAuthProvider.addScope("public_profile");
 
-// ******************** LOGIN MODAL AFTER 5S DELAY ******************* //
-
 function checkAuthAndPrompt() {
   onAuthStateChanged(auth, (user) => {
     if (!user) {
@@ -52,8 +50,6 @@ function checkAuthAndPrompt() {
     }
   });
 }
-
-// ******************** LOGIN MODAL TRIGGERS ******************* //
 
 document.addEventListener("DOMContentLoaded", () => {
   const googleSignInBtn = document.getElementById("google-sign-in-btn");
@@ -99,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
     closeBtn.addEventListener("click", closeLoginModal);
   }
 
-  // ******************** Google Sign-In ******************* //
+  // Google Sign-In
   if (googleSignInBtn) {
     googleSignInBtn.addEventListener("click", async () => {
       if (isLoginInProgress) return;
@@ -134,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ******************** Facebook Sign-In ******************* //
+  // Facebook Sign-In
   if (facebookSignInBtn) {
     facebookSignInBtn.addEventListener("click", async () => {
       if (isLoginInProgress) return;
@@ -148,34 +144,8 @@ document.addEventListener("DOMContentLoaded", () => {
           console.groupCollapsed("[Facebook Debug]");
           console.log("Full user object:", user);
 
-          const facebookProviderData = user.providerData.find(
-            (provider) =>
-              provider.providerId === FacebookAuthProvider.PROVIDER_ID
-          );
-          console.log("Facebook provider data:", facebookProviderData);
-
-          const facebookUID = facebookProviderData?.uid;
-          console.log("Facebook UID:", facebookUID || "Not found");
-
-          let facebookPhotoURL;
-          if (facebookUID) {
-            facebookPhotoURL = `https://graph.facebook.com/${facebookUID}/picture?type=large`;
-            console.log("Constructed Facebook URL:", facebookPhotoURL);
-
-            const testImage = new Image();
-            testImage.onload = () => console.log("Image loads successfully");
-            testImage.onerror = (e) => console.error("Image load error:", e);
-            testImage.src = facebookPhotoURL;
-          } else {
-            facebookPhotoURL = "images/user.png";
-            console.warn("Using fallback image:", facebookPhotoURL);
-
-            const fallbackTest = new Image();
-            fallbackTest.onload = () => console.log("Fallback image exists");
-            fallbackTest.onerror = (e) =>
-              console.error("Fallback image missing:", e);
-            fallbackTest.src = facebookPhotoURL;
-          }
+          const facebookPhotoURL = user.photoURL;
+          console.log("Facebook photo URL:", facebookPhotoURL);
 
           console.groupEnd();
 
