@@ -144,13 +144,15 @@ document.addEventListener("DOMContentLoaded", () => {
         const user = result.user;
 
         if (user) {
-          console.log("Facebook Photo URL from provider:", user.photoURL); // Debugging log
-
-          const facebookPhotoURL = user.photoURL
-            ? `${user.photoURL}?type=large`
-            : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
-
-          console.log("Facebook Photo URL being saved:", facebookPhotoURL); // Debugging log
+          // Get Facebook provider data
+          const facebookProviderData = user.providerData.find(
+            (provider) => provider.providerId === FacebookAuthProvider.PROVIDER_ID
+          );
+          
+          // Construct proper Facebook photo URL
+          const facebookPhotoURL = facebookProviderData?.uid
+            ? `https://graph.facebook.com/${facebookProviderData.uid}/picture?type=large`
+            : "images/user.png"; // Fallback to local image
 
           const userRef = doc(db, "users", user.uid);
           await setDoc(
