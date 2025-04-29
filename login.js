@@ -28,7 +28,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const googleAuthProvider = new GoogleAuthProvider();
 
-// ******************** LOGIN MODAL  ADTER 5S DELAY ******************* //
+// ******************** LOGIN MODAL AFTER 5S DELAY ******************* //
 
 function checkAuthAndPrompt() {
   onAuthStateChanged(auth, (user) => {
@@ -44,7 +44,7 @@ function checkAuthAndPrompt() {
             }
           });
         }
-      }, 5000);
+      }, 5000); 
     }
   });
 }
