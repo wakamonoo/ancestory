@@ -11,11 +11,17 @@ import {
   doc,
   setDoc,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
   authDomain: "ancestory-c068e.firebaseapp.com",
-  databaseURL: "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL:
+    "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "ancestory-c068e",
   storageBucket: "ancestory-c068e.appspot.com",
   messagingSenderId: "579709470015",
@@ -29,6 +35,8 @@ const db = getFirestore(app);
 
 const googleAuthProvider = new GoogleAuthProvider();
 const facebookAuthProvider = new FacebookAuthProvider();
+// Add Facebook profile picture scope
+facebookAuthProvider.addScope("public_profile");
 
 // ******************** LOGIN MODAL AFTER 5S DELAY ******************* //
 
@@ -134,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- Facebook Sign-In --- //
   if (facebookSignInBtn) {
     facebookSignInBtn.addEventListener("click", async () => {
-      if (isLoginInProgress) return; // Prevent multiple logins
+      if (isLoginInProgress) return;
       isLoginInProgress = true;
 
       try {
@@ -149,7 +157,10 @@ document.addEventListener("DOMContentLoaded", () => {
               uid: user.uid,
               email: user.email,
               displayName: user.displayName,
-              photoURL: user.photoURL,
+              // Profile picture from Facebook
+              photoURL:
+                user.photoURL ||
+                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
             },
             { merge: true }
           );
@@ -158,13 +169,13 @@ document.addEventListener("DOMContentLoaded", () => {
           window.location.reload();
         }
       } catch (error) {
-        if (error.code === 'auth/cancelled-popup-request') {
-          console.log('Login popup was closed by the user.');
+        if (error.code === "auth/cancelled-popup-request") {
+          console.log("Login popup was closed by the user.");
         } else {
           console.error("Facebook Sign-in error:", error);
         }
       } finally {
-        isLoginInProgress = false; // Reset after the login attempt
+        isLoginInProgress = false;
       }
     });
   }
