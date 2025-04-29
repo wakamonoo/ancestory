@@ -138,12 +138,25 @@ document.addEventListener("DOMContentLoaded", () => {
     facebookSignInBtn.addEventListener("click", async () => {
       if (isLoginInProgress) return;
       isLoginInProgress = true;
-  
+
       try {
         const result = await signInWithPopup(auth, facebookAuthProvider);
         const user = result.user;
-  
+
         if (user) {
+          console.log("Facebook Photo URL before processing:", user.photoURL);
+
+          let facebookPhotoURL = user.photoURL;
+          if (facebookPhotoURL) {
+            // Ensure we get a decent size image
+            facebookPhotoURL = `${facebookPhotoURL}?type=large`;
+            console.log("Facebook Photo URL after adding type=large:", facebookPhotoURL);
+          } else {
+            facebookPhotoURL =
+              "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
+            console.log("Facebook Photo URL is null, using default:", facebookPhotoURL);
+          }
+
           const userRef = doc(db, "users", user.uid);
           await setDoc(
             userRef,
@@ -151,13 +164,11 @@ document.addEventListener("DOMContentLoaded", () => {
               uid: user.uid,
               email: user.email,
               displayName: user.displayName,
-              photoURL: user.photoURL
-                ? `${user.photoURL}?type=large`
-                : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+              photoURL: facebookPhotoURL,
             },
             { merge: true }
           );
-  
+
           closeLoginModal();
           window.location.reload();
         }
@@ -168,6 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+});
 
 window.openLoginModal = () => {
   const modal = document.getElementById("loginModal");
