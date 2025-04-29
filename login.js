@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import {
   getAuth,
   GoogleAuthProvider,
+  FacebookAuthProvider,
   signInWithPopup,
   onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -14,8 +15,7 @@ import {
 const firebaseConfig = {
   apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
   authDomain: "ancestory-c068e.firebaseapp.com",
-  databaseURL:
-    "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL: "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "ancestory-c068e",
   storageBucket: "ancestory-c068e.appspot.com",
   messagingSenderId: "579709470015",
@@ -26,7 +26,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
 const googleAuthProvider = new GoogleAuthProvider();
+const facebookAuthProvider = new FacebookAuthProvider();
 
 // ******************** LOGIN MODAL AFTER 5S DELAY ******************* //
 
@@ -44,7 +46,7 @@ function checkAuthAndPrompt() {
             }
           });
         }
-      }, 5000); 
+      }, 5000);
     }
   });
 }
@@ -53,6 +55,7 @@ function checkAuthAndPrompt() {
 
 document.addEventListener("DOMContentLoaded", () => {
   const googleSignInBtn = document.getElementById("google-sign-in-btn");
+  const facebookSignInBtn = document.getElementById("facebook-sign-in-btn");
   const loginModal = document.getElementById("loginModal");
   const closeBtn = loginModal?.querySelector(".close");
 
@@ -92,6 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
     closeBtn.addEventListener("click", closeLoginModal);
   }
 
+  // --- Google Sign-In ---
   if (googleSignInBtn) {
     googleSignInBtn.addEventListener("click", async () => {
       try {
@@ -116,6 +120,35 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       } catch (error) {
         console.error("Google Sign-in error:", error);
+      }
+    });
+  }
+
+  // --- Facebook Sign-In ---
+  if (facebookSignInBtn) {
+    facebookSignInBtn.addEventListener("click", async () => {
+      try {
+        const result = await signInWithPopup(auth, facebookAuthProvider);
+        const user = result.user;
+
+        if (user) {
+          const userRef = doc(db, "users", user.uid);
+          await setDoc(
+            userRef,
+            {
+              uid: user.uid,
+              email: user.email,
+              displayName: user.displayName,
+              photoURL: user.photoURL,
+            },
+            { merge: true }
+          );
+
+          closeLoginModal();
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error("Facebook Sign-in error:", error);
       }
     });
   }
