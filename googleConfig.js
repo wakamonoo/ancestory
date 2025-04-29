@@ -14,8 +14,7 @@ import {
 const firebaseConfig = {
   apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
   authDomain: "ancestory-c068e.firebaseapp.com",
-  databaseURL:
-    "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL: "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "ancestory-c068e",
   storageBucket: "ancestory-c068e.appspot.com",
   messagingSenderId: "579709470015",
@@ -26,8 +25,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-
-
 
 // ******************** LINKS/BUTTONS REDIRECTION ******************* //
 
@@ -85,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
         color: "#20462f",
         showClass: { popup: "animate__animated animate__headShake" },
         hideClass: { popup: "animate__animated animate__fadeOutUp" },
-      });      
+      });
     }
 
     try {
@@ -97,6 +94,9 @@ document.addEventListener("DOMContentLoaded", () => {
         userName: displayName || "Anonymous",
         timestamp: serverTimestamp(),
       });
+
+      closeModal(submitStoryModal);
+      storyForm.reset();
 
       await Swal.fire({
         title: "Success!",
@@ -110,11 +110,9 @@ document.addEventListener("DOMContentLoaded", () => {
         showClass: { popup: "animate__animated animate__fadeInDown" },
         hideClass: { popup: "animate__animated animate__fadeOutUp" },
       });
-      
 
-      closeModal(submitStoryModal);
-      storyForm.reset();
       window.location.reload();
+      
     } catch (err) {
       console.error("Story submission failed:", err);
       Swal.fire({
@@ -128,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
         color: "#20462f",
         showClass: { popup: "animate__animated animate__shakeX" },
         hideClass: { popup: "animate__animated animate__fadeOutUp" },
-      });      
+      });
     }
   };
 
@@ -223,12 +221,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  onAuthStateChanged(auth, updateUI);
+  onAuthStateChanged(auth, (user) => {
+    updateUI(user);
+
+    if (submitStoryLink) {
+      submitStoryLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (user) {
+          openModal(submitStoryModal);
+        } else {
+          openModal(loginModal);
+        }
+      });
+    }
+  });
 
   if (closeSubmitStoryModalBtn) {
-    closeSubmitStoryModalBtn.addEventListener("click", () =>
-      closeModal(submitStoryModal)
-    );
+    closeSubmitStoryModalBtn.addEventListener("click", () => closeModal(submitStoryModal));
   }
 
   if (storyForm) {
