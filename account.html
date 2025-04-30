@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Account Settings</title>
     <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="account.css">
+    <link rel="stylesheet" href="account.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
@@ -15,7 +15,6 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"
     />
-    <link rel="stylesheet" href="account.css">
   </head>
   <body>
     <div class="account-container">
@@ -42,7 +41,6 @@
             </button>
             <button class="tab-btn" data-tab="reactions">Your Reactions</button>
           </div>
-
           <div class="activity-content">
             <div id="commentsTab" class="tab-content active">
               <div id="userComments" class="activity-list">
@@ -56,14 +54,12 @@
                 </div>
               </div>
             </div>
-
             <div id="reactionsTab" class="tab-content">
               <div id="userReactions" class="activity-list"></div>
             </div>
           </div>
         </div>
 
-        <!-- Replace the delete-account-section div with this -->
         <div class="delete-account-section">
           <h2><i class="fas fa-exclamation-triangle"></i> Delete Account</h2>
           <p>
@@ -74,9 +70,22 @@
             <i class="fas fa-trash-alt"></i> Delete My Account
           </button>
         </div>
+
+        <div class="legal-links-container">
+          <a href="#" onclick="showModal('privacy')">Privacy Policy</a>
+          <a href="#" onclick="showModal('terms')">Terms of Service</a>
+          <a href="#" onclick="showModal('deletion')">Data Deletion</a>
+        </div>
+      </div>
+    </div>
+
+    <div id="modalOverlay" class="modal-overlay-custom">
+      <div class="modal-content-custom" id="modalContent">
+        <button class="modal-close-custom" onclick="closeModal()">Close</button>
       </div>
     </div>
 
     <script type="module" src="accountSettings.js"></script>
+    <script src="legalServices.js"></script>
   </body>
 </html>
