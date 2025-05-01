@@ -7,11 +7,15 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile,
+  sendEmailVerification,
+  deleteUser,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import {
   getFirestore,
   doc,
   setDoc,
+  getDoc,
+  deleteDoc,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -29,21 +33,38 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const googleAuthProvider = new GoogleAuthProvider();
+const VERIFICATION_TIMEOUT = 180000; // 3 minutes
 
 // ******************** AUTH STATE MANAGEMENT ******************* //
 function checkAuthAndPrompt() {
-  onAuthStateChanged(auth, (user) => {
-    console.log("Auth state changed:", user ? "Logged in" : "Logged out");
+  onAuthStateChanged(auth, async (user) => {
     if (user) {
-      console.log("User profile:", {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-      });
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      const signupTime = userDoc.data()?.signupTime;
+      
+      if (!user.emailVerified) {
+        if (signupTime && Date.now() - signupTime > VERIFICATION_TIMEOUT) {
+          await deleteUnverifiedUser(user);
+          return;
+        }
+        
+        showVerificationReminder(user.email);
+        await auth.signOut();
+      }
     }
   });
 }
+
+// ******************** USER MANAGEMENT ******************* //
+const deleteUnverifiedUser = async (user) => {
+  try {
+    await deleteDoc(doc(db, "users", user.uid));
+    await deleteUser(user);
+    showAuthError(false, new Error('Verification window expired. Account deleted.'));
+  } catch (error) {
+    console.error('Error deleting unverified user:', error);
+  }
+};
 
 // ******************** EMAIL/PASSWORD AUTH HANDLERS ******************* //
 const handleEmailAuth = async (
@@ -67,56 +88,77 @@ const handleEmailAuth = async (
         throw new Error("Password must be at least 6 characters");
       }
 
-      // Create user
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
 
-      // Set default profile picture
       const photoURL = "images/users.png";
+      await updateProfile(userCredential.user, { displayName, photoURL });
 
-      // Update user profile
-      await updateProfile(userCredential.user, {
+      const userRef = doc(db, "users", userCredential.user.uid);
+      await setDoc(userRef, {
+        uid: userCredential.user.uid,
+        email: userCredential.user.email,
         displayName,
         photoURL,
-      });
+        signupTime: Date.now(),
+        emailVerified: false,
+        createdAt: new Date().toISOString(),
+      }, { merge: true });
 
-      // Create user document
-      const userRef = doc(db, "users", userCredential.user.uid);
-      await setDoc(
-        userRef,
-        {
-          uid: userCredential.user.uid,
-          email: userCredential.user.email,
-          displayName,
-          photoURL,
-          createdAt: new Date().toISOString(),
-        },
-        { merge: true }
-      );
+      await sendEmailVerification(userCredential.user);
+      await auth.signOut();
 
-      return { success: true, user: userCredential.user };
+      return { success: true, needsVerification: true };
     } else {
-      // Handle login
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
+      
+      const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+      const signupTime = userDoc.data()?.signupTime;
+
+      if (!userCredential.user.emailVerified) {
+        if (Date.now() - signupTime > VERIFICATION_TIMEOUT) {
+          await deleteUnverifiedUser(userCredential.user);
+          throw new Error('Verification window expired');
+        }
+        await auth.signOut();
+        throw new Error("auth/email-not-verified");
+      }
+
       return { success: true, user: userCredential.user };
     }
   } catch (error) {
-    console.error(`${isSignup ? "Signup" : "Login"} Error:`, error);
     return { success: false, error };
   }
 };
 
 // ******************** UI HANDLERS ******************* //
+
+const showVerificationReminder = (email) => {
+  Swal.fire({
+    title: 'Verify Your Email',
+    html: `We've sent a verification email to <b>${email}</b>. 
+          You have 3 minutes to verify your account.<br><br>
+          <a href="#" onclick="resendVerification()">Resend Email</a>`,
+    icon: 'warning',
+    confirmButtonText: 'OK',
+    confirmButtonColor: '#C09779',
+    background: '#D29F80',
+    color: '#20462f',
+    allowOutsideClick: false
+  });
+};
 const showAuthError = (isSignup, error) => {
   let errorMessage = error.message;
   const errorCodes = {
+    "auth/email-not-verified": "Verify your email first",
+    "auth/verification-expired": "Verification window expired. Sign up again",
     "auth/invalid-email": "Invalid email address",
     "auth/user-disabled": "Account disabled",
     "auth/user-not-found": "Account not found",
@@ -125,6 +167,8 @@ const showAuthError = (isSignup, error) => {
     "auth/operation-not-allowed": "Operation not allowed",
     "auth/weak-password": "Password must be at least 6 characters",
     "auth/invalid-login-credentials": "Invalid email or password",
+    "auth/too-many-requests": "Too many attempts. Try again later or reset password",
+    "auth/email-not-verified": "Please verify your email first"
   };
 
   errorMessage = errorCodes[error.code] || errorMessage;
@@ -157,7 +201,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const authForm = document.getElementById("authForm");
   let isSignup = false;
 
-  // Form mode toggle
   document.getElementById("toggleAuthMode")?.addEventListener("click", (e) => {
     e.preventDefault();
     isSignup = !isSignup;
@@ -175,7 +218,6 @@ document.addEventListener("DOMContentLoaded", () => {
       : 'Need an account? <a href="#">Sign Up</a>';
   });
 
-  // Form submission
   authForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = document.getElementById("authEmail").value.trim();
@@ -203,14 +245,25 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     if (success) {
-      console.log("Authentication successful:", user);
-      window.location.reload();
+      if (isSignup) {
+        Swal.fire({
+          title: 'Verify Your Email!',
+          html: `We've sent a verification link to <b>${email}</b>. 
+                Please check your inbox and verify your email address.`,
+          icon: 'success',
+          confirmButtonColor: '#C09779',
+          background: '#D29F80',
+          color: '#20462f',
+        });
+        closeLoginModal();
+      } else {
+        window.location.reload();
+      }
     } else {
       showAuthError(isSignup, error);
     }
   });
 
-  // ******************** GOOGLE AUTH HANDLER ******************* //
   document
     .getElementById("google-sign-in-btn")
     ?.addEventListener("click", async () => {
@@ -228,6 +281,7 @@ document.addEventListener("DOMContentLoaded", () => {
             photoURL: user.photoURL,
             provider: "google",
             lastLogin: new Date().toISOString(),
+            emailVerified: user.emailVerified,
           },
           { merge: true }
         );
@@ -239,12 +293,28 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-  // ******************** MODAL CONTROLS ******************* //
   checkAuthAndPrompt();
   document.querySelector(".close")?.addEventListener("click", () => {
     document.getElementById("loginModal").style.display = "none";
   });
 });
+
+// ******************** VERIFICATION CHECKER ******************* //
+window.checkVerifiedUser = () => {
+  const user = auth.currentUser;
+  if (!user?.emailVerified) {
+    Swal.fire({
+      title: 'Verification Required',
+      text: 'You must verify your email to perform this action',
+      icon: 'warning',
+      confirmButtonColor: '#C09779',
+      background: '#D29F80',
+      color: '#20462f',
+    });
+    return false;
+  }
+  return true;
+};
 
 // ******************** GLOBAL EXPORTS ******************* //
 window.openLoginModal = () => {
