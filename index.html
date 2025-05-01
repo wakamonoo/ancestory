@@ -235,12 +235,19 @@
     <div id="loginModal" class="modal">
       <div class="modal-content">
         <span class="close" onclick="closeLoginModal()">&times;</span>
-        <h2>Login to AnceStory</h2>
-        <form>
-          <input type="email" placeholder="Email" required />
-          <input type="password" placeholder="Password" required />
+        <h2 id="modalTitle">Login to AnceStory</h2>
+        <form id="authForm">
+          <input type="email" id="authEmail" placeholder="Email" required />
+          <input type="password" id="authPassword" placeholder="Password" required />
+          <div id="signupFields" style="display: none;">
+            <input type="password" id="authConfirmPassword" placeholder="Confirm Password" required />
+            <input type="text" id="authDisplayName" placeholder="Display Name" required />
+          </div>
           <button type="submit" class="login-btn">Login</button>
         </form>
+        <div class="toggle-mode">
+          <p>Don't have an account? <a href="#" id="toggleAuthMode">Sign up here.</a></p>
+        </div>
         <div class="or-separator">or</div>
         <div class="social-buttons">
           <button id="google-sign-in-btn" class="google-btn">
