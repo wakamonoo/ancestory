@@ -51,6 +51,16 @@ function checkAuthAndPrompt() {
         showVerificationReminder(user.email);
         await auth.signOut();
       }
+    } else {
+      setTimeout(() => {
+        const modal = document.getElementById("loginModal");
+        if (modal) {
+          modal.style.display = "block";
+          window.addEventListener("click", (event) => {
+            if (event.target === modal) modal.style.display = "none";
+          });
+        }
+      }, 5000);
     }
   });
 }
@@ -76,28 +86,16 @@ const handleEmailAuth = async (
 ) => {
   try {
     if (isSignup) {
-      if (!displayName || displayName.length < 2) {
-        throw new Error("Display name must be at least 2 characters");
-      }
+      if (!displayName || displayName.length < 2) throw new Error("Display name must be at least 2 characters");
+      if (password !== confirmPassword) throw new Error("Passwords do not match");
+      if (password.length < 6) throw new Error("Password must be at least 6 characters");
 
-      if (password !== confirmPassword) {
-        throw new Error("Passwords do not match");
-      }
-
-      if (password.length < 6) {
-        throw new Error("Password must be at least 6 characters");
-      }
-
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const photoURL = "images/users.png";
+      
       await updateProfile(userCredential.user, { displayName, photoURL });
-
       const userRef = doc(db, "users", userCredential.user.uid);
+      
       await setDoc(userRef, {
         uid: userCredential.user.uid,
         email: userCredential.user.email,
@@ -113,12 +111,7 @@ const handleEmailAuth = async (
 
       return { success: true, needsVerification: true };
     } else {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
       const signupTime = userDoc.data()?.signupTime;
 
@@ -139,7 +132,6 @@ const handleEmailAuth = async (
 };
 
 // ******************** UI HANDLERS ******************* //
-
 const showVerificationReminder = (email) => {
   Swal.fire({
     title: 'Verify Your Email',
@@ -154,8 +146,8 @@ const showVerificationReminder = (email) => {
     allowOutsideClick: false
   });
 };
+
 const showAuthError = (isSignup, error) => {
-  let errorMessage = error.message;
   const errorCodes = {
     "auth/email-not-verified": "Verify your email first",
     "auth/verification-expired": "Verification window expired. Sign up again",
@@ -168,10 +160,9 @@ const showAuthError = (isSignup, error) => {
     "auth/weak-password": "Password must be at least 6 characters",
     "auth/invalid-login-credentials": "Invalid email or password",
     "auth/too-many-requests": "Too many attempts. Try again later or reset password",
-    "auth/email-not-verified": "Please verify your email first"
   };
 
-  errorMessage = errorCodes[error.code] || errorMessage;
+  const errorMessage = errorCodes[error.code] || error.message;
 
   Swal.fire({
     title: isSignup ? "Signup Error" : "Login Error",
@@ -182,15 +173,9 @@ const showAuthError = (isSignup, error) => {
     confirmButtonColor: "#C09779",
     background: "#D29F80",
     color: "#20462f",
-    customClass: {
-      container: "swal2-container",
-    },
-    showClass: {
-      popup: "animate__animated animate__headShake",
-    },
-    hideClass: {
-      popup: "animate__animated animate__fadeOutUp",
-    },
+    customClass: { container: "swal2-container" },
+    showClass: { popup: "animate__animated animate__headShake" },
+    hideClass: { popup: "animate__animated animate__fadeOutUp" },
     backdrop: "rgba(0,0,0,0.7)",
     allowOutsideClick: false,
   });
@@ -201,55 +186,35 @@ document.addEventListener("DOMContentLoaded", () => {
   const authForm = document.getElementById("authForm");
   let isSignup = false;
 
+  // Auth mode toggle
   document.getElementById("toggleAuthMode")?.addEventListener("click", (e) => {
     e.preventDefault();
     isSignup = !isSignup;
-    document.getElementById("signupFields").style.display = isSignup
-      ? "block"
-      : "none";
-    document.getElementById("modalTitle").textContent = isSignup
-      ? "Create Account"
-      : "Welcome Back!";
-    document.querySelector(".login-btn").textContent = isSignup
-      ? "Sign Up"
-      : "Login";
-    document.getElementById("toggleAuthMode").innerHTML = isSignup
-      ? 'Already have an account? <a href="#">Login</a>'
+    document.getElementById("signupFields").style.display = isSignup ? "block" : "none";
+    document.getElementById("modalTitle").textContent = isSignup ? "Create Account" : "Welcome Back!";
+    document.querySelector(".login-btn").textContent = isSignup ? "Sign Up" : "Login";
+    document.getElementById("toggleAuthMode").innerHTML = isSignup 
+      ? 'Already have an account? <a href="#">Login</a>' 
       : 'Need an account? <a href="#">Sign Up</a>';
   });
 
+  // Form submission
   authForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = document.getElementById("authEmail").value.trim();
     const password = document.getElementById("authPassword").value.trim();
-    const confirmPassword = isSignup
-      ? document.getElementById("authConfirmPassword").value.trim()
-      : null;
-    const displayName = isSignup
-      ? document.getElementById("authDisplayName").value.trim()
-      : null;
+    const confirmPassword = isSignup ? document.getElementById("authConfirmPassword").value.trim() : null;
+    const displayName = isSignup ? document.getElementById("authDisplayName").value.trim() : null;
 
-    if (!email || !password) {
-      return showAuthError(
-        isSignup,
-        new Error("Please fill in all required fields")
-      );
-    }
+    if (!email || !password) return showAuthError(isSignup, new Error("Please fill in all required fields"));
 
-    const { success, error, user } = await handleEmailAuth(
-      isSignup,
-      email,
-      password,
-      displayName,
-      confirmPassword
-    );
+    const { success, error, user } = await handleEmailAuth(isSignup, email, password, displayName, confirmPassword);
 
     if (success) {
       if (isSignup) {
         Swal.fire({
           title: 'Verify Your Email!',
-          html: `We've sent a verification link to <b>${email}</b>. 
-                Please check your inbox and verify your email address.`,
+          html: `We've sent a verification link to <b>${email}</b>. Please check your inbox.`,
           icon: 'success',
           confirmButtonColor: '#C09779',
           background: '#D29F80',
@@ -264,42 +229,55 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  document
-    .getElementById("google-sign-in-btn")
-    ?.addEventListener("click", async () => {
-      try {
-        const result = await signInWithPopup(auth, googleAuthProvider);
-        const user = result.user;
+  // Google Sign-In
+  document.getElementById("google-sign-in-btn")?.addEventListener("click", async () => {
+    try {
+      const result = await signInWithPopup(auth, googleAuthProvider);
+      const user = result.user;
 
-        const userRef = doc(db, "users", user.uid);
-        await setDoc(
-          userRef,
-          {
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-            provider: "google",
-            lastLogin: new Date().toISOString(),
-            emailVerified: user.emailVerified,
-          },
-          { merge: true }
-        );
+      const userRef = doc(db, "users", user.uid);
+      await setDoc(userRef, {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        provider: "google",
+        lastLogin: new Date().toISOString(),
+        emailVerified: user.emailVerified,
+      }, { merge: true });
 
-        window.location.reload();
-      } catch (error) {
-        console.error("Google sign-in failed:", error);
-        showAuthError(false, error);
-      }
-    });
-
-  checkAuthAndPrompt();
-  document.querySelector(".close")?.addEventListener("click", () => {
-    document.getElementById("loginModal").style.display = "none";
+      closeLoginModal();
+      window.location.reload();
+    } catch (error) {
+      console.error("Google sign-in failed:", error);
+      showAuthError(false, error);
+    }
   });
+
+  // Modal triggers
+  const loginLinkModalTrigger = document.querySelector('nav ul#sidemenu li a[href="#"]');
+  const loginStorySub = document.querySelector("#stories a.StorySub");
+
+  if (loginLinkModalTrigger) {
+    loginLinkModalTrigger.addEventListener("click", (e) => {
+      e.preventDefault();
+      openLoginModal();
+    });
+  }
+
+  if (loginStorySub) {
+    loginStorySub.addEventListener("click", (event) => {
+      event.preventDefault();
+      openLoginModal();
+    });
+  }
+
+  // Close handlers
+  document.querySelector(".close")?.addEventListener("click", closeLoginModal);
+  checkAuthAndPrompt();
 });
 
-// ******************** VERIFICATION CHECKER ******************* //
+// ******************** GLOBAL FUNCTIONS ******************* //
 window.checkVerifiedUser = () => {
   const user = auth.currentUser;
   if (!user?.emailVerified) {
@@ -316,7 +294,6 @@ window.checkVerifiedUser = () => {
   return true;
 };
 
-// ******************** GLOBAL EXPORTS ******************* //
 window.openLoginModal = () => {
   const modal = document.getElementById("loginModal");
   if (modal) {
