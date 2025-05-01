@@ -664,10 +664,6 @@ nav ul li a:hover {
   background-color: rgba(0, 0, 0, 0.4);
 }
 
-.loginAnces {
-  margin-bottom: 5%;
-}
-
 .modal-content {
   background-color: #c09779;
   padding: 2rem;
@@ -690,9 +686,35 @@ nav ul li a:hover {
   cursor: pointer;
 }
 
+.modal-content input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: #f1d1b5;
+  box-sizing: border-box;
+}
+
+.login-btn {
+  width: 100%;
+  margin-top: 16px;
+  background-color: #d29f80;
+  color: #20462f;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.login-btn:hover {
+  background-color: #d5c7a3;
+}
+
 .or-separator {
   text-align: center;
-  margin: 0.5rem 0;
+  margin: 1rem 0;
   color: #20462f;
   font-weight: bold;
 }
@@ -719,18 +741,6 @@ nav ul li a:hover {
   background-color: #d5c7a3;
   color: #20462f;
 }
-
-.facebook-btn {
-  background-color: #d29f80;
-  color: #20462f;
-  border: 2px solid #d29f80;
-}
-
-.facebook-btn:hover {
-  background-color: #d5c7a3;
-  color: #20462f;
-}
-
 .social-buttons i {
   margin-right: 10px;
 }

@@ -14,8 +14,7 @@ import {
 const firebaseConfig = {
   apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
   authDomain: "ancestory-c068e.firebaseapp.com",
-  databaseURL:
-    "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL: "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "ancestory-c068e",
   storageBucket: "ancestory-c068e.appspot.com",
   messagingSenderId: "579709470015",
@@ -113,6 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       window.location.reload();
+      
     } catch (err) {
       console.error("Story submission failed:", err);
       Swal.fire({
@@ -237,9 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   if (closeSubmitStoryModalBtn) {
-    closeSubmitStoryModalBtn.addEventListener("click", () =>
-      closeModal(submitStoryModal)
-    );
+    closeSubmitStoryModalBtn.addEventListener("click", () => closeModal(submitStoryModal));
   }
 
   if (storyForm) {
