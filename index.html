@@ -121,7 +121,7 @@
 
     <div id="user-profile" class="user-profile">
       <img
-        src="images/user.png"
+        src="images/email-user.png"
         alt="Profile Photo"
         class="profile-photo"
         width="80"
@@ -238,17 +238,34 @@
         <h2 id="modalTitle">Login to AnceStory</h2>
         <form id="authForm">
           <input type="email" id="authEmail" placeholder="Email" required />
-          <input type="password" id="authPassword" placeholder="Password" required />
-          <div id="signupFields" style="display: none;">
-            <input type="password" id="authConfirmPassword" placeholder="Confirm Password" required />
-            <input type="text" id="authDisplayName" placeholder="Display Name" required />
+          <input
+            type="password"
+            id="authPassword"
+            placeholder="Password"
+            required
+          />
+
+          <div id="signupFields" style="display: none">
+            <input
+              type="password"
+              id="authConfirmPassword"
+              placeholder="Confirm Password"
+            />
+            <input
+              type="text"
+              id="authDisplayName"
+              placeholder="Display Name"
+            />
           </div>
+
           <button type="submit" class="login-btn">Login</button>
         </form>
+
         <div class="toggle-mode">
-          <p>Don't have an account? <a href="#" id="toggleAuthMode">Sign up here.</a></p>
+          <p id="toggleAuthMode">Need an account? <a href="#">Sign Up</a></p>
         </div>
-        <div class="or-separator">or</div>
+
+        <div class="or-separator">recommended:</div>
         <div class="social-buttons">
           <button id="google-sign-in-btn" class="google-btn">
             <i class="fab fa-google"></i> Continue with Google

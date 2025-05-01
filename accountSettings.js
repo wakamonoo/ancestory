@@ -98,7 +98,6 @@ function handleAuthStateChange(user) {
 }
 
 // ******************** USER PROFILE ******************* //
-
 async function loadUserProfile() {
   if (!currentUser) return;
   const userDoc = await getDoc(doc(db, "users", currentUser.uid));
@@ -110,17 +109,21 @@ async function loadUserProfile() {
     userNameDisplay.textContent = displayName;
   }
 
-  const photoURL = currentUser.photoURL || userDoc.data()?.photoURL;
   const profilePicture = document.getElementById("profilePicture");
   if (profilePicture) {
-    if (photoURL) {
-      profilePicture.src = photoURL;
-    } else {
-      profilePicture.src = "https://via.placeholder.com/150";
-    }
+    // Check if user is email/password authenticated
+    const isEmailUser = currentUser.providerData.some(
+      provider => provider.providerId === "password"
+    );
+    
+    // Use default image for email users, existing URL for others
+    const photoURL = isEmailUser 
+      ? "images/email-user.png" 
+      : currentUser.photoURL || userDoc.data()?.photoURL;
+
+    profilePicture.src = photoURL || "https://via.placeholder.com/150";
   }
 }
-
 
 // ******************** USER COMMENTS ******************* //
 async function loadUserComments() {

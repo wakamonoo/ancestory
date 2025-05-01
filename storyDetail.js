@@ -872,7 +872,9 @@ function addCommentToDOM(comment) {
   commentEl.className = "comment";
   commentEl.dataset.commentId = comment.id;
 
-  const avatarContent = comment.userPhoto
+  const avatarContent = comment.userPhoto?.includes('users.png') 
+  ? `<img src="images/email-user.png" alt="User Avatar" class="comment-avatar-img">`
+  : comment.userPhoto 
     ? `<img src="${comment.userPhoto}" alt="User Avatar" class="comment-avatar-img">`
     : `<i class="fas fa-user-circle" style="font-size: 32px; color: #20462f;"></i>`;
 

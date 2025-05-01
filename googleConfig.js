@@ -14,7 +14,8 @@ import {
 const firebaseConfig = {
   apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
   authDomain: "ancestory-c068e.firebaseapp.com",
-  databaseURL: "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL:
+    "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "ancestory-c068e",
   storageBucket: "ancestory-c068e.appspot.com",
   messagingSenderId: "579709470015",
@@ -112,7 +113,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       window.location.reload();
-      
     } catch (err) {
       console.error("Story submission failed:", err);
       Swal.fire({
@@ -155,8 +155,20 @@ document.addEventListener("DOMContentLoaded", () => {
         userProfileSection.style.display = "block";
         const nameEl = userProfileSection.querySelector(".display-name");
         const photoEl = userProfileSection.querySelector(".profile-photo");
+
         if (nameEl) nameEl.textContent = user.displayName || "User";
-        if (photoEl && user.photoURL) photoEl.src = user.photoURL;
+
+        if (photoEl) {
+          // Check if user logged in with email/password
+          const isEmailUser = user.providerData.some(
+            (provider) => provider.providerId === "password"
+          );
+
+          // Use default image for email users, otherwise use provider's image
+          photoEl.src = isEmailUser
+            ? "images/email-user.png"
+            : user.photoURL || "images/email-user.png";
+        }
       }
 
       if (submitStoryLink) {
@@ -237,7 +249,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   if (closeSubmitStoryModalBtn) {
-    closeSubmitStoryModalBtn.addEventListener("click", () => closeModal(submitStoryModal));
+    closeSubmitStoryModalBtn.addEventListener("click", () =>
+      closeModal(submitStoryModal)
+    );
   }
 
   if (storyForm) {
