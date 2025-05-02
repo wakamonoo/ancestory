@@ -210,7 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (userProfileSection) userProfileSection.style.display = "none";
 
       if (submitStoryLink) {
-        submitStoryLink.textContent = "Wanna Submit a Story?";
+        submitStoryLink.textContent = "Want to Submit a Story?";
         submitStoryLink.href = "#";
         submitStoryLink.style.display = "block";
 
