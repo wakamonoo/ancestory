@@ -33,7 +33,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const googleAuthProvider = new GoogleAuthProvider();
-const VERIFICATION_TIMEOUT = 180000; // 3 minutes
+const VERIFICATION_TIMEOUT = 180000; 
 
 // ******************** AUTH STATE MANAGEMENT ******************* //
 function checkAuthAndPrompt() {
