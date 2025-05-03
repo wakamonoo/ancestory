@@ -159,12 +159,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (nameEl) nameEl.textContent = user.displayName || "User";
 
         if (photoEl) {
-          // Check if user logged in with email/password
           const isEmailUser = user.providerData.some(
             (provider) => provider.providerId === "password"
           );
 
-          // Use default image for email users, otherwise use provider's image
           photoEl.src = isEmailUser
             ? "images/email-user.png"
             : user.photoURL || "images/email-user.png";

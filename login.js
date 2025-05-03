@@ -185,7 +185,7 @@ const showAuthError = (isSignup, error) => {
 document.addEventListener("DOMContentLoaded", () => {
   const authForm = document.getElementById("authForm");
   let isSignup = false;
-  
+
   document.getElementById("toggleAuthMode")?.addEventListener("click", (e) => {
     e.preventDefault();
     isSignup = !isSignup;
@@ -197,7 +197,6 @@ document.addEventListener("DOMContentLoaded", () => {
       : 'Need an account? <a href="#">Sign Up</a>';
   });
 
-  // Form submission
   authForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = document.getElementById("authEmail").value.trim();
@@ -228,7 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Google Sign-In
+  // ******************** Google-Sigin ******************* //
   document.getElementById("google-sign-in-btn")?.addEventListener("click", async () => {
     try {
       const result = await signInWithPopup(auth, googleAuthProvider);
@@ -253,7 +252,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Modal triggers
+  // ******************** Modal Triggers ******************* //
   const loginLinkModalTrigger = document.querySelector('nav ul#sidemenu li a[href="#"]');
   const loginStorySub = document.querySelector("#stories a.StorySub");
 
@@ -271,7 +270,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Close handlers
   document.querySelector(".close")?.addEventListener("click", closeLoginModal);
   checkAuthAndPrompt();
 });
