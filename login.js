@@ -185,8 +185,7 @@ const showAuthError = (isSignup, error) => {
 document.addEventListener("DOMContentLoaded", () => {
   const authForm = document.getElementById("authForm");
   let isSignup = false;
-
-  // Auth mode toggle
+  
   document.getElementById("toggleAuthMode")?.addEventListener("click", (e) => {
     e.preventDefault();
     isSignup = !isSignup;
