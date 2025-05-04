@@ -35,6 +35,7 @@ const db = getFirestore(app);
 const googleAuthProvider = new GoogleAuthProvider();
 const VERIFICATION_TIMEOUT = 180000; 
 
+
 // ******************** AUTH STATE MANAGEMENT ******************* //
 function checkAuthAndPrompt() {
   onAuthStateChanged(auth, async (user) => {
