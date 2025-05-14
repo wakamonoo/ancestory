@@ -111,12 +111,11 @@ async function loadUserProfile() {
 
   const profilePicture = document.getElementById("profilePicture");
   if (profilePicture) {
-    // Check if user is email/password authenticated
+    
     const isEmailUser = currentUser.providerData.some(
       provider => provider.providerId === "password"
     );
-    
-    // Use default image for email users, existing URL for others
+  
     const photoURL = isEmailUser 
       ? "images/email-user.png" 
       : currentUser.photoURL || userDoc.data()?.photoURL;
