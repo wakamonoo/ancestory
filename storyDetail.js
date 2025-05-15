@@ -817,6 +817,7 @@ async function handleReaction(reactionType) {
 }
 
 // ******************** REACTION USER VIEW FUNCTION ******************* //
+
 document
   .querySelector(".reaction-stats")
   .addEventListener("click", async () => {
@@ -844,10 +845,12 @@ async function showReactionUsers() {
       const name = userDoc.exists()
         ? userDoc.data().displayName || "Anonymous"
         : "Unknown User";
+      const photoUrl = userDoc.exists() ? userDoc.data().photoURL || "" : "";
 
       userReactions.push({
         name: name,
         reactionType: data.reactionType,
+        photoURL: photoUrl,
       });
     }
 
@@ -859,19 +862,41 @@ async function showReactionUsers() {
 }
 
 function displayReactionUsers(userReactions) {
-  let content = "";
+  let content = "<div style='text-align: left;'>";
 
-  const grouped = userReactions.reduce((acc, { name, reactionType }) => {
-    if (!acc[reactionType]) acc[reactionType] = [];
-    acc[reactionType].push(name);
-    return acc;
-  }, {});
+  const grouped = userReactions.reduce(
+    (acc, { name, reactionType, photoURL }) => {
+      if (!acc[reactionType]) acc[reactionType] = [];
+      acc[reactionType].push({ name, photoURL });
+      return acc;
+    },
+    {}
+  );
 
-  for (const [type, names] of Object.entries(grouped)) {
+  for (const [type, users] of Object.entries(grouped)) {
     const displayName = getReactionDisplayName(type);
-    content += `<strong>${displayName} (${names.length})</strong><br>`;
-    content += names.map((n) => `• ${n}`).join("<br>") + "<br><br>";
+    content += `<div style='margin: 15px 0;'><strong>${displayName} (${users.length})</strong>`;
+
+    users.forEach(({ name, photoURL }) => {
+      const imageUrl =
+        photoURL && !photoURL.includes("users.png")
+          ? photoURL
+          : "images/email-user.png";
+
+      content += `
+        <div style="display: flex; align-items: center; gap: 8px; margin: 8px 0;">
+          <img src="${imageUrl}" 
+               alt="${name}" 
+               style="width:30px;height:30px;border-radius:50%;object-fit: cover;">
+          <span>${name}</span>
+        </div>
+      `;
+    });
+
+    content += "</div>";
   }
+
+  content += "</div>";
 
   Swal.fire({
     title: "Users Who Reacted",
@@ -881,6 +906,9 @@ function displayReactionUsers(userReactions) {
     color: "#000",
     confirmButtonText: "Close",
     confirmButtonColor: "#C09779",
+    customClass: {
+      popup: "left-aligned-popup",
+    },
   });
 }
 
