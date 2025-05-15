@@ -166,7 +166,6 @@ function setupSpeechUI() {
   });
 }
 
-
 function toggleSpeech() {
   if (speechSynthesizer.isSpeaking) {
     speechSynthesizer.pauseSpeech();
@@ -432,7 +431,6 @@ function scrollToHighlight(element) {
   }
 }
 
-
 function removeHighlighting() {
   const highlights = document.querySelectorAll(".highlight-word");
   highlights.forEach((highlight) => {
@@ -660,7 +658,7 @@ function updateReactionUI(reactions) {
         }
       });
 
-      likeCountElement.textContent = `${totalReactions}  reactions`;
+      likeCountElement.textContent = `${totalReactions} reactions`;
     }
   }
 }
@@ -818,6 +816,74 @@ async function handleReaction(reactionType) {
   }
 }
 
+// ******************** REACTION USER VIEW FUNCTION ******************* //
+document
+  .querySelector(".reaction-stats")
+  .addEventListener("click", async () => {
+    await showReactionUsers();
+  });
+
+async function showReactionUsers() {
+  try {
+    const reactionsRef = collection(db, "reactions");
+    const q = query(reactionsRef, where("storyId", "==", currentStoryId));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      Swal.fire("No reactions yet!", "", "info");
+      return;
+    }
+
+    const userReactions = [];
+
+    for (const docSnap of querySnapshot.docs) {
+      const data = docSnap.data();
+      const userDocRef = doc(db, "users", data.userId);
+      const userDoc = await getDoc(userDocRef);
+
+      const name = userDoc.exists()
+        ? userDoc.data().displayName || "Anonymous"
+        : "Unknown User";
+
+      userReactions.push({
+        name: name,
+        reactionType: data.reactionType,
+      });
+    }
+
+    displayReactionUsers(userReactions);
+  } catch (error) {
+    console.error("Error fetching reaction users:", error);
+    Swal.fire("Error", "Could not load reaction details.", "error");
+  }
+}
+
+function displayReactionUsers(userReactions) {
+  let content = "";
+
+  const grouped = userReactions.reduce((acc, { name, reactionType }) => {
+    if (!acc[reactionType]) acc[reactionType] = [];
+    acc[reactionType].push(name);
+    return acc;
+  }, {});
+
+  for (const [type, names] of Object.entries(grouped)) {
+    const displayName = getReactionDisplayName(type);
+    content += `<strong>${displayName} (${names.length})</strong><br>`;
+    content += names.map((n) => `• ${n}`).join("<br>") + "<br><br>";
+  }
+
+  Swal.fire({
+    title: "Users Who Reacted",
+    html: content,
+    width: 500,
+    background: "#fff",
+    color: "#000",
+    confirmButtonText: "Close",
+    confirmButtonColor: "#C09779",
+  });
+}
+
 // ******************** COMMENT FUNCTION ******************* //
 
 async function deleteComment(commentId) {
@@ -872,9 +938,9 @@ function addCommentToDOM(comment) {
   commentEl.className = "comment";
   commentEl.dataset.commentId = comment.id;
 
-  const avatarContent = comment.userPhoto?.includes('users.png') 
-  ? `<img src="images/email-user.png" alt="User Avatar" class="comment-avatar-img">`
-  : comment.userPhoto 
+  const avatarContent = comment.userPhoto?.includes("users.png")
+    ? `<img src="images/email-user.png" alt="User Avatar" class="comment-avatar-img">`
+    : comment.userPhoto
     ? `<img src="${comment.userPhoto}" alt="User Avatar" class="comment-avatar-img">`
     : `<i class="fas fa-user-circle" style="font-size: 32px; color: #20462f;"></i>`;
 
