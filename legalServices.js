@@ -9,7 +9,7 @@ function showModal(type) {
       <div class="modal-ancestory-content">
         <h2>Privacy Policy</h2>
         <p>Last updated: April 30, 2025</p>
-        <p>Ancestory ("me") is committed to protecting your privacy. When you log in via Facebook or Google, we collect only the following data:</p>
+        <p>Ancestory is committed to protecting your privacy. When you log in via Email or Google, we collect only the following data:</p>
         <ul>
           <li>Your full name</li>
           <li>Email address</li>
@@ -33,7 +33,7 @@ function showModal(type) {
         <p>Last updated: April 30, 2025</p>
         <p>By accessing or using Ancestory, you agree to these Terms of Service:</p>
         <ul>
-          <li>You must log in through a valid Facebook or Google account.</li>
+          <li>You must log in through a valid Email or Google account.</li>
           <li>You are responsible for any activity on your account.</li>
           <li>You may not use Ancestory for illegal, abusive, or disruptive behavior.</li>
           <li>We reserve the right to suspend or terminate accounts violating these terms.</li>
