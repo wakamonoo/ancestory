@@ -42,7 +42,7 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 let currentUser = null;
-let isAccountBeingDeleted = false; 
+let isAccountBeingDeleted = false;
 
 // ******************** PAGE INITIALIZATION ******************* //
 document.addEventListener("DOMContentLoaded", () => {
@@ -72,9 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-
-
-// ******************** ACCOUNT DELETION ******************* //
+  // ******************** ACCOUNT DELETION ******************* //
 
   const deleteAccountBtn = document.getElementById("deleteAccountBtn");
   if (deleteAccountBtn) {
@@ -111,13 +109,12 @@ async function loadUserProfile() {
 
   const profilePicture = document.getElementById("profilePicture");
   if (profilePicture) {
-    
     const isEmailUser = currentUser.providerData.some(
-      provider => provider.providerId === "password"
+      (provider) => provider.providerId === "password"
     );
-  
-    const photoURL = isEmailUser 
-      ? "images/email-user.png" 
+
+    const photoURL = isEmailUser
+      ? "images/email-user.png"
       : currentUser.photoURL || userDoc.data()?.photoURL;
 
     profilePicture.src = photoURL || "https://via.placeholder.com/150";
@@ -212,7 +209,6 @@ async function loadUserComments() {
   });
 }
 
-
 // ******************** DELETE COMMENT ******************* //
 
 async function deleteComment(commentId) {
@@ -221,12 +217,12 @@ async function deleteComment(commentId) {
       title: "Delete Comment?",
       text: "This action cannot be undone!",
       icon: "warning",
-      iconColor: "#20462f", 
+      iconColor: "#20462f",
       background: "#D29F80",
-      color: "#20462f", 
+      color: "#20462f",
       showCancelButton: true,
-      confirmButtonColor: "#C09779", 
-      cancelButtonColor: "#F1D1B5", 
+      confirmButtonColor: "#C09779",
+      cancelButtonColor: "#F1D1B5",
       confirmButtonText: "Yes, delete it!",
     });
 
@@ -241,7 +237,7 @@ async function deleteComment(commentId) {
         color: "#20462f",
         confirmButtonColor: "#C09779",
       });
-      loadUserComments(); 
+      loadUserComments();
     }
   } catch (error) {
     console.error("Error deleting comment:", error);
@@ -256,7 +252,6 @@ async function deleteComment(commentId) {
     });
   }
 }
-
 
 // ******************** USER REACTIONS ******************* //
 
@@ -349,8 +344,6 @@ async function loadUserReactions() {
   });
 }
 
-
-
 // ******************** DELETE REACTIONS ******************* //
 
 async function deleteReaction(reactionId) {
@@ -367,7 +360,7 @@ async function deleteReaction(reactionId) {
       cancelButtonColor: "#F1D1B5",
       confirmButtonText: "Yes, remove it!",
     });
-  
+
     if (result.isConfirmed) {
       await deleteDoc(doc(db, "reactions", reactionId));
       Swal.fire({
@@ -377,7 +370,7 @@ async function deleteReaction(reactionId) {
         iconColor: "#20462f",
         background: "#D29F80",
         color: "#20462f",
-        confirmButtonColor: "#C09779"
+        confirmButtonColor: "#C09779",
       });
       loadUserReactions();
     }
@@ -390,8 +383,8 @@ async function deleteReaction(reactionId) {
       iconColor: "#20462f",
       background: "#D29F80",
       color: "#20462f",
-      confirmButtonColor: "#C09779"
-      });
+      confirmButtonColor: "#C09779",
+    });
   }
 }
 
@@ -440,7 +433,6 @@ async function handleAccountDeletion() {
       background: "#D29F80",
       color: "#20462f",
     });
-    
 
     if (!firstConfirm.isConfirmed) {
       isAccountBeingDeleted = false;
@@ -464,7 +456,7 @@ async function handleAccountDeletion() {
         inputValidator: (value) => (value ? null : "Password is required"),
         background: "#D29F80",
         color: "#20462f",
-      });      
+      });
 
       if (!password) {
         isAccountBeingDeleted = false;
@@ -491,7 +483,6 @@ async function handleAccountDeletion() {
       background: "#D29F80",
       color: "#20462f",
     });
-    
 
     if (!finalConfirm.isConfirmed) {
       isAccountBeingDeleted = false;
@@ -513,7 +504,7 @@ async function handleAccountDeletion() {
       background: "#D29F80",
       color: "#20462f",
     });
-    
+
     try {
       await deleteUser(currentUser);
       document.querySelector(".progress-fill").style.width = "50%";
@@ -531,9 +522,9 @@ async function handleAccountDeletion() {
         confirmButtonText: "Continue",
         background: "#D29F80",
         color: "#20462f",
-        confirmButtonColor: "#C09779"
+        confirmButtonColor: "#C09779",
       });
-      
+
       window.location.href = "index.html";
     } catch (error) {
       isAccountBeingDeleted = false;
@@ -547,9 +538,8 @@ async function handleAccountDeletion() {
         confirmButtonText: "OK",
         background: "#D29F80",
         color: "#20462f",
-        confirmButtonColor: "#C09779"
+        confirmButtonColor: "#C09779",
       });
-      
     }
   } catch (error) {
     isAccountBeingDeleted = false;
@@ -562,12 +552,10 @@ async function handleAccountDeletion() {
       confirmButtonText: "OK",
       background: "#D29F80",
       color: "#20462f",
-      confirmButtonColor: "#C09779"
-    });    
+      confirmButtonColor: "#C09779",
+    });
   }
 }
-
-
 
 // ******************** DELETE USER DATA ******************* //
 
@@ -596,8 +584,6 @@ async function deleteUserData(uid) {
     console.log("User data deleted successfully.");
   } catch (error) {
     console.error("Error deleting user data:", error);
-    throw error; 
+    throw error;
   }
 }
-
-

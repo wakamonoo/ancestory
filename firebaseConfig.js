@@ -5,7 +5,8 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth
 const firebaseConfig = {
   apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
   authDomain: "ancestory-c068e.firebaseapp.com",
-  databaseURL: "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL:
+    "https://ancestory-c068e-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "ancestory-c068e",
   storageBucket: "ancestory-c068e.appspot.com",
   messagingSenderId: "579709470015",

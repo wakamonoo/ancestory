@@ -38,9 +38,6 @@ const editModal = document.getElementById("admin-edit-modal");
 const editForm = document.getElementById("admin-edit-form");
 const closeModalBtn = document.querySelector(".admin-edit-modal-close");
 
-
-
-
 // ******************** CHECK AUTH STATE ******************* //
 
 onAuthStateChanged(auth, (user) => {
@@ -50,8 +47,6 @@ onAuthStateChanged(auth, (user) => {
   }
   loadStories();
 });
-
-
 
 // ******************** LOGOUT ******************* //
 
@@ -64,7 +59,6 @@ logoutBtn.addEventListener("click", () => {
       console.error("Logout error:", error);
     });
 });
-
 
 // ******************** ADD NEW STORY FUNCTION ******************* //
 
@@ -88,7 +82,7 @@ storyForm.addEventListener("submit", async (e) => {
       confirmButtonColor: "#FF9A8B",
     });
     return;
-  }  
+  }
 
   try {
     await addDoc(collection(db, "Stories"), {
@@ -108,7 +102,6 @@ storyForm.addEventListener("submit", async (e) => {
     showError("Error adding story. Please try again.");
   }
 });
-
 
 // ******************** LOAD STORIES FUNCTION ******************* //
 
@@ -178,7 +171,6 @@ async function loadStories() {
   }
 }
 
-
 // ******************** DELETE STORY FUNCTION ******************* //
 
 async function deleteStory(storyId) {
@@ -192,7 +184,6 @@ async function deleteStory(storyId) {
     showError("Error deleting story. Please try again.");
   }
 }
-
 
 // ******************** EDIT STORIES FUNCTION ******************* //
 
@@ -230,9 +221,6 @@ window.addEventListener("click", (e) => {
     editModal.style.display = "none";
   }
 });
-
-
-
 
 // ******************** SAVE EDITED STORIES FUNCTION ******************* //
 
