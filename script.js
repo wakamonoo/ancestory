@@ -13,9 +13,6 @@ let currentIndex = 0;
 const carousel = document.getElementById("carousel");
 const buttons = document.querySelectorAll(".buttons button");
 
-
-
-
 // ******************** UPDATE CAROUSEL FUNCTION ******************* //
 
 function updateCarousel() {
@@ -43,14 +40,12 @@ function openmenu() {
   document.querySelector(".fa-times").style.display = "block";
 }
 
-
 // ******************** CLOSE AND TOGGLE THE SIDE NAV MENU ******************* //
 function closemenu() {
   document.getElementById("sidemenu").style.right = "-200px";
   document.querySelector(".fa-bars").style.display = "block";
   document.querySelector(".fa-times").style.display = "none";
 }
-
 
 // ******************** MANUAL SWIPE FOR CAROUSEL ******************* //
 

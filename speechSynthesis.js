@@ -29,10 +29,16 @@ class StorySpeechSynthesis {
       const aName = a.name.toLowerCase();
       const bName = b.name.toLowerCase();
 
-      const isAPreferred = aName.includes("angelo") || aName.includes("blessica") ||
-        aName.includes("andrew") || aName.includes("emma");
-      const isBPreferred = bName.includes("angelo") || bName.includes("blessica") ||
-        bName.includes("andrew") || bName.includes("emma");
+      const isAPreferred =
+        aName.includes("angelo") ||
+        aName.includes("blessica") ||
+        aName.includes("andrew") ||
+        aName.includes("emma");
+      const isBPreferred =
+        bName.includes("angelo") ||
+        bName.includes("blessica") ||
+        bName.includes("andrew") ||
+        bName.includes("emma");
 
       if (isAPreferred && !isBPreferred) return -1;
       if (!isAPreferred && isBPreferred) return 1;

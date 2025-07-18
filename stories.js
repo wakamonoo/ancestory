@@ -4,7 +4,7 @@ import {
   collection,
   getDocs,
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
-import { renderStories, initializeSearch } from './search.js'; 
+import { renderStories, initializeSearch } from "./search.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAy4tekaIpT8doUUP0xA2oHeI9n6JgbybU",
@@ -20,7 +20,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-let allStories = []; 
+let allStories = [];
 
 async function fetchStories() {
   try {
@@ -29,8 +29,8 @@ async function fetchStories() {
       id: doc.id,
       ...doc.data(),
     }));
-    renderStories(allStories); 
-    initializeSearch(allStories); 
+    renderStories(allStories);
+    initializeSearch(allStories);
   } catch (error) {
     console.error("Error fetching stories: ", error);
     document.getElementById("stories-container").innerHTML =

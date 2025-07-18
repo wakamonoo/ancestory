@@ -267,7 +267,8 @@
   margin-bottom: 5px;
 }
 
-.delete-comment-btn, .delete-reaction-btn {
+.delete-comment-btn,
+.delete-reaction-btn {
   background: none;
   border: none;
   color: #f33e58;
@@ -277,7 +278,8 @@
   transition: color 0.2s;
 }
 
-.delete-comment-btn, .delete-reaction-btn:hover {
+.delete-comment-btn,
+.delete-reaction-btn:hover {
   color: #d11a2d;
 }
 
@@ -363,7 +365,7 @@
   align-items: center;
   justify-content: center;
   --hue: 220deg;
-  --width: 7rem; 
+  --width: 7rem;
   --accent-hue: 22deg;
   --duration: 0.6s;
   --easing: cubic-bezier(0, 0, 0, 1);
@@ -381,9 +383,8 @@
   width: var(--width);
   height: calc(var(--width) / 2.5);
   border-radius: var(--width);
-  background-color: #f1d1b5; 
-  box-shadow: inset 5px 5px 8px #e3c3a9,
-  inset -5px -5px 8px #fce9d7;
+  background-color: #f1d1b5;
+  box-shadow: inset 5px 5px 8px #e3c3a9, inset -5px -5px 8px #fce9d7;
 }
 
 .indicator {

@@ -4,7 +4,6 @@ export function initializeSearch(storiesArray) {
   allStories = storiesArray;
 }
 
-
 // ******************** SEARCH FUNCTION ******************* //
 
 export function renderStories(stories) {
@@ -47,7 +46,7 @@ export function renderStories(stories) {
       const title = card.querySelector(".story-title");
       if (title) {
         title.addEventListener("click", (e) => {
-          e.stopPropagation(); 
+          e.stopPropagation();
           window.location.href = `story-detail.html?storyId=${storyId}`;
         });
       }
@@ -57,7 +56,6 @@ export function renderStories(stories) {
   }
 }
 
-
 function filterStories(searchTerm) {
   return allStories.filter(
     (story) =>
@@ -66,39 +64,35 @@ function filterStories(searchTerm) {
   );
 }
 
-
-
 // ******************** OPEN OR CLOSE MODAL ******************* //
 
-window.openAnceStorySearchModal = function() {
+window.openAnceStorySearchModal = function () {
   const modal = document.getElementById("anceStorySearchModal");
   modal.style.display = "block";
 };
 
-window.closeAnceStorySearchModal = function() {
+window.closeAnceStorySearchModal = function () {
   const modal = document.getElementById("anceStorySearchModal");
   modal.style.display = "none";
 };
 
-
 // ******************** PERFORM SEARCH ******************* //
 
-window.performModalSearch = function() {
+window.performModalSearch = function () {
   const searchInput = document.getElementById("modalSearchInput");
   if (searchInput) {
     const searchTerm = searchInput.value.toLowerCase().trim();
     const filteredResults = filterStories(searchTerm);
     renderStories(filteredResults);
-    closeAnceStorySearchModal(); 
-    window.location.href = "#stories"; 
+    closeAnceStorySearchModal();
+    window.location.href = "#stories";
   }
 };
 
-
 // ******************** CLOSE THE MODAL ******************* //
 
-window.addEventListener('click', function(event) {
-  const modal = document.getElementById('anceStorySearchModal');
+window.addEventListener("click", function (event) {
+  const modal = document.getElementById("anceStorySearchModal");
   if (event.target === modal) {
     closeAnceStorySearchModal();
   }
