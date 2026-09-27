@@ -1,0 +1,108 @@
+"use client";
+import { useEffect, useRef, useState } from "react";
+import {
+  FaPenFancy,
+  FaPlus,
+  FaSignInAlt,
+  FaSignOutAlt,
+  FaUser,
+} from "react-icons/fa";
+import AddStoryModal from "../modals/addStoryModal";
+import { useUser } from "@/context/userContext";
+import MenuButton from "../buttons/menuButton";
+
+type MaxMenuProps = {
+  setShowMaxMenu: (value: boolean) => void;
+  maxMenuButtonRef: React.RefObject<HTMLButtonElement | null>;
+  setShowAddStoryModal: (value: boolean) => void;
+};
+
+export default function MaxMenu({
+  setShowMaxMenu,
+  maxMenuButtonRef,
+  setShowAddStoryModal,
+}: MaxMenuProps) {
+  const { user, setShowSignInModal } = useUser();
+  const divRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    function handleOutClick(e: PointerEvent) {
+      if (
+        divRef.current &&
+        !divRef.current.contains(e.target as Node) &&
+        maxMenuButtonRef.current &&
+        !maxMenuButtonRef.current.contains(e.target as Node)
+      ) {
+        setShowMaxMenu(false);
+      }
+    }
+    document.addEventListener("pointerdown", handleOutClick);
+    return () => {
+      document.removeEventListener("pointerdown", handleOutClick);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={divRef}
+      className="absolute top-12 right-0 bg-brand h-fit w-[20vw] p-4 rounded-lg shadow-md z-150"
+    >
+      <div className="flex flex-col gap-4">
+        {user && (
+          <>
+            <div className="flex gap-2 items-center">
+              <img
+                src={user?.picture}
+                alt={user?.name}
+                className="w-12 h-12 object-cover rounded-full"
+              />
+              <div className="flex flex-col">
+                <p className="text-base">{user?.name}</p>
+                <p className="text-xs text-muted">{user?.email}</p>
+              </div>
+            </div>
+            <div className="w-full h-px bg-panel" />
+          </>
+        )}
+
+        <div className="flex-col gap-2 hidden">
+          <MenuButton>
+            <FaUser className="text-sm" />
+            <p className="text-sm">Profile</p>
+          </MenuButton>
+          <MenuButton>
+            <FaPenFancy className="text-sm" />
+            <p className="text-sm">My Stories</p>
+          </MenuButton>
+        </div>
+        <div className="w-full h-px bg-panel" />
+        <div className="flex flex-col gap-2">
+          <MenuButton
+            onClick={() => {
+              if (user) {
+                setShowMaxMenu(false);
+                setShowAddStoryModal(true);
+              } else {
+                setShowSignInModal(true);
+              }
+            }}
+          >
+            <FaPlus className="text-sm" />
+            <p className="text-sm">Add a Story</p>
+          </MenuButton>
+          {user ? (
+            <MenuButton onClick={() => setShowSignInModal(true)}>
+              <FaSignOutAlt className="text-sm" />
+              <p className="text-sm">Sign out</p>
+            </MenuButton>
+          ) : (
+            <MenuButton onClick={() => setShowSignInModal(true)}>
+              <FaSignInAlt className="text-sm" />
+              <p className="text-sm">Sign In</p>
+            </MenuButton>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

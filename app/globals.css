@@ -1,0 +1,180 @@
+/* ———————————————————————————————————— google fonts ——— */
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Anton&family=Orbitron&family=Roboto:wght@400;700&display=swap");
+
+/* ———————————————————————————————————— tailwind ——— */
+@import "tailwindcss";
+
+/* ———————————————————————————————————— base layer ——— */
+@layer base {
+  :root {
+    --color-bg: #f4f1e9; /* ———————————————————————————————————— primary bg (warm paper) ——— */
+    --color-accent: #9a5c45; /* ———————————————————————————————————— terracotta accent ——— */
+    --color-text: #252421; /* ———————————————————————————————————— normal text ——— */
+    --color-panel: #faf8f2; /* ———————————————————————————————————— panel bg ——— */
+    --color-secondary: #ddd8ca; /* ———————————————————————————————————— secondary bg ——— */
+    --color-muted: #77736a; /* ———————————————————————————————————— muted text ——— */
+    --color-border: #d8d2c5; /* ———————————————————————————————————— dividers ——— */
+    --color-olive: #66664b; /* ———————————————————————————————————— olive ——— */
+    --color-brown: #765746; /* ———————————————————————————————————— brown accent ——— */
+    --color-accent-dark: #7d4937; /* ———————————————————————————————————— hover ——— */
+
+    --font-heading:
+      "Cormorant Garamond", sans-serif; /* ———————————————————————————————————— headings ——— */
+    --font-body:
+      "Inter", sans-serif; /* ———————————————————————————————————— normal text ——— */
+    --font-alt:
+      "DM Dans", sans-serif; /* ———————————————————————————————————— meta ——— */
+    --font-tall:
+      "Playfair Display", sans-serif; /* ———————————————————————————————————— large story titles ——— */
+  }
+
+  body {
+    @apply bg-(--color-bg) text-(--color-text);
+    font-family: var(--font-body);
+  }
+
+  h1,
+  h3,
+  h4 {
+    font-family: var(--font-heading);
+    letter-spacing: 1px;
+  }
+
+  p,
+  h2,
+  span,
+  li {
+    font-family: var(--font-body);
+  }
+
+  button {
+    font-family: var(--font-heading);
+  }
+}
+
+/* ———————————————————————————————————— utilities layer ——— */
+@layer utilities {
+  .bg-brand {
+    background-color: var(--color-bg);
+  }
+
+  .bg-panel {
+    background-color: var(--color-panel);
+  }
+
+  .bg-second {
+    background-color: var(--color-secondary);
+  }
+
+  .bg-accent {
+    background-color: var(--color-accent);
+  }
+
+  .bg-muted {
+    background-color: var(--color-muted);
+  }
+
+  .bg-olive {
+    background-color: var(--color-olive);
+  }
+
+  .bg-brown {
+    background-color: var(--color-brown);
+  }
+
+  .bg-text {
+    background-color: var(--color-text);
+  }
+
+  .text-brand {
+    color: var(--color-bg);
+  }
+
+  .text-accent {
+    color: var(--color-accent);
+  }
+
+  .text-normal {
+    color: var(--color-text);
+  }
+
+  .text-muted {
+    color: var(--color-muted);
+  }
+
+  .text-olive {
+    color: var(--color-olive);
+  }
+
+  .text-brown {
+    color: var(--color-brown);
+  }
+
+  .font-heading {
+    font-family: var(--font-heading);
+  }
+
+  .font-normal {
+    font-family: var(--font-body);
+  }
+
+  .font-alt {
+    font-family: var(--font-alt);
+  }
+
+  .font-tall {
+    font-family: var(--font-tall);
+  }
+
+  .border-accent {
+    border-color: var(--color-accent);
+  }
+
+  .border-panel {
+    border-color: var(--color-panel);
+  }
+}
+
+/* ———————————————————————————————————— scrollbars ——— */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+  scrollbar-gutter: stable;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.custom-scroll {
+  overflow-y: auto;
+  scroll-bar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.custom-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-panel);
+  border-radius: 8px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.custom-scroll:hover::-webkit-scrollbar-thumb {
+  opacity: 1;
+}
+
+.custom-scroll {
+  overflow-y: auto;
+}
+
+.custom-scroll:hover {
+  scrollbar-color: var(--color-panel) transparent;
+}
