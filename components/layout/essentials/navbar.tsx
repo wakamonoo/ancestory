@@ -86,7 +86,7 @@ export default function NavBar() {
             >
               {isLogged ? (
                 <img
-                  src={user?.picture}
+                  src={user?.profilePicture}
                   alt={user?.name}
                   loading="lazy"
                   decoding="async"

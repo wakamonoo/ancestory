@@ -74,7 +74,7 @@ export default function MinMenu({
             <>
               <div className="flex gap-2 items-center">
                 <img
-                  src={user?.picture}
+                  src={user?.profilePicture}
                   alt={user?.name}
                   className="w-12 h-12 object-cover rounded-full"
                 />
@@ -86,14 +86,10 @@ export default function MinMenu({
               <div className="w-full h-px bg-panel" />
             </>
           )}
-          <div className="ml-10 mt-2 flex-col gap-2 hidden">
+          <div className="flex ml-10 mt-2 flex-col gap-2">
             <MenuButton>
               <FaUser className="text-sm" />
               <p className="text-sm">Profile</p>
-            </MenuButton>
-            <MenuButton>
-              <FaPenFancy className="text-sm" />
-              <p className="text-sm">My Stories</p>
             </MenuButton>
             <MenuButton
               onClick={() => {

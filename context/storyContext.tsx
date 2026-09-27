@@ -6,26 +6,12 @@ import {
   type ReactNode,
   useContext,
 } from "react";
-
-type Story = {
-  storyId: string;
-  userId: string;
-  title: string;
-  place: string;
-  location: {
-    latitude: number;
-    longitude: number;
-  };
-  poster: string;
-  story: string;
-  categories: string[];
-  source?: string;
-  readingTime: number;
-  createdAt: string;
-};
+import { useUser } from "./userContext";
+import { Story } from "@/types/story";
 
 type StoryContextType = {
   stories: Story[];
+  userStories: Story[];
 };
 
 export const StoryContext = createContext<StoryContextType | undefined>(
@@ -44,6 +30,8 @@ export const useStory = () => {
 
 export const StoryProvider = ({ children }: { children: ReactNode }) => {
   const [stories, setStories] = useState<Story[]>([]);
+  const [userStories, setUserStories] = useState<Story[]>([]);
+  const { user } = useUser();
 
   useEffect(() => {
     const handleGetStories = async () => {
@@ -63,8 +51,29 @@ export const StoryProvider = ({ children }: { children: ReactNode }) => {
     handleGetStories();
   }, []);
 
+  useEffect(() => {
+    const getStory = async () => {
+      try {
+        const res = await fetch(`/api/stories/getStories/user/${user?.uid}`);
+
+        if (!res.ok) {
+          throw new Error("failed to fetch story");
+        }
+
+        const data = await res.json();
+
+        setUserStories(data.story);
+      } catch (err) {
+        console.error(err);
+        setUserStories([]);
+      }
+    };
+
+    getStory();
+  }, [user?.uid]);
+
   return (
-    <StoryContext.Provider value={{ stories }}>
+    <StoryContext.Provider value={{ stories, userStories }}>
       {children}
     </StoryContext.Provider>
   );

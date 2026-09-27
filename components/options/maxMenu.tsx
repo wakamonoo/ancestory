@@ -10,6 +10,8 @@ import {
 import AddStoryModal from "../modals/addStoryModal";
 import { useUser } from "@/context/userContext";
 import MenuButton from "../buttons/menuButton";
+import { useRouter } from "next/navigation";
+import { useLoader } from "@/context/loaderContext";
 
 type MaxMenuProps = {
   setShowMaxMenu: (value: boolean) => void;
@@ -23,7 +25,9 @@ export default function MaxMenu({
   setShowAddStoryModal,
 }: MaxMenuProps) {
   const { user, setShowSignInModal } = useUser();
+  const { setIsLoading } = useLoader();
   const divRef = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     function handleOutClick(e: PointerEvent) {
@@ -52,7 +56,7 @@ export default function MaxMenu({
           <>
             <div className="flex gap-2 items-center">
               <img
-                src={user?.picture}
+                src={user?.profilePicture}
                 alt={user?.name}
                 className="w-12 h-12 object-cover rounded-full"
               />
@@ -65,14 +69,20 @@ export default function MaxMenu({
           </>
         )}
 
-        <div className="flex-col gap-2 hidden">
-          <MenuButton>
+        <div className="flex flex-col gap-2">
+          <MenuButton
+            onClick={() => {
+              if (user) {
+                setIsLoading(true);
+                setShowMaxMenu(false);
+                router.push(`/profile/${user?.uid}}`);
+              } else {
+                setShowSignInModal(true);
+              }
+            }}
+          >
             <FaUser className="text-sm" />
             <p className="text-sm">Profile</p>
-          </MenuButton>
-          <MenuButton>
-            <FaPenFancy className="text-sm" />
-            <p className="text-sm">My Stories</p>
           </MenuButton>
         </div>
         <div className="w-full h-px bg-panel" />

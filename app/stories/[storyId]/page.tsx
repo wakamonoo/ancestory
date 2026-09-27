@@ -2,6 +2,7 @@
 import { useLoader } from "@/context/loaderContext";
 import { useStory } from "@/context/storyContext";
 import { useUser } from "@/context/userContext";
+import { Story } from "@/types/story";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BiArrowBack, BiArrowToRight } from "react-icons/bi";
@@ -10,19 +11,6 @@ import { FaUser } from "react-icons/fa";
 import { FaPerson } from "react-icons/fa6";
 import { GoPerson } from "react-icons/go";
 import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
-
-type Story = {
-  storyId: string;
-  userId: string;
-  title: string;
-  place: string;
-  poster: string;
-  story: string;
-  categories: string[];
-  source?: string;
-  readingTime: number;
-  createdAt: string;
-};
 
 type StoryNav = {
   storyId: string;
@@ -47,7 +35,7 @@ export default function StoryPage() {
   useEffect(() => {
     const getStory = async () => {
       try {
-        const res = await fetch(`/api/stories/getStories/${storyId}`);
+        const res = await fetch(`/api/stories/getStories/story/${storyId}`);
 
         if (!res.ok) {
           throw new Error("failed to fetch story");

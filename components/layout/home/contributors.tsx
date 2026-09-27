@@ -25,7 +25,7 @@ export default function Contributors() {
             >
               <div className="w-24 h-24 shrink-0">
                 <img
-                  src={contributor.picture}
+                  src={contributor.profilePicture}
                   alt={contributor.name}
                   loading="lazy"
                   decoding="async"

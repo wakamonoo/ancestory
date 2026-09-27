@@ -1,13 +1,14 @@
 import admin from "@/lib/firebase/admin";
 import clientPromise from "@/lib/mongodb";
 
-export async function POST(request: Request) {
-  const { token } = await request.json();
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ uid: string }> },
+) {
+  const { uid } = await params;
+  const { name, profilePicture, coverPhoto, bio } = await request.json();
 
   try {
-    const decoded = await admin.auth().verifyIdToken(token);
-    const { uid, email, name, picture } = decoded;
-
     const client = await clientPromise;
     const mongodb = process.env.MONGODB;
     const db = client.db(mongodb);
@@ -17,16 +18,14 @@ export async function POST(request: Request) {
         uid,
       },
       {
-        $setOnInsert: {
-          email,
+        $set: {
           name,
-          profilePicture: picture,
-          coverPhoto: "",
-          bio: "",
-          createdAt: new Date(),
+          profilePicture,
+          coverPhoto,
+          bio,
+          updatedAt: new Date(),
         },
       },
-      { upsert: true },
     );
 
     return Response.json({

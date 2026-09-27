@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 import RoundedButton from "../buttons/roundedButton";
 
 export default function SignInModal() {
-  const { isLogged, fetchUserData, setShowSignInModal } = useUser();
+  const { isLogged, setShowSignInModal } = useUser();
 
   const handleSignIn = async () => {
     if (isLogged) {
@@ -60,7 +60,6 @@ export default function SignInModal() {
             }),
           });
           setShowSignInModal(false);
-          await fetchUserData(user.uid);
           Swal.fire({
             toast: true,
             position: "bottom-start",

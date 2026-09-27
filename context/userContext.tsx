@@ -12,22 +12,24 @@ import {
 } from "react";
 import SignInModal from "@/components/modals/signInModal";
 
-type UserData = {
+type User = {
   uid: string;
-  email?: string;
-  name?: string;
-  picture?: string;
-  role?: string;
+  email: string;
+  name: string;
+  profilePicture: string;
+  coverPhoto: string;
+  bio: string;
+  createdAt: string;
 };
 
 type UserContextType = {
-  user: UserData | null;
-  fetchUserData: (uid: string) => Promise<void>;
+  user: User | null;
+  fetchUser: (uid: string) => Promise<void>;
   firebaseUser: FirebaseUser | null;
   isLogged: boolean;
   isLoading: boolean;
   setShowSignInModal: Dispatch<SetStateAction<boolean>>;
-  allUsers: UserData[];
+  allUsers: User[];
   allUsersLoading: boolean;
 };
 
@@ -46,15 +48,15 @@ export const useUser = () => {
 };
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<UserData | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [isLogged, setIsLogged] = useState<boolean>(false);
   const [showSignInModal, setShowSignInModal] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [allUsers, setAllUsers] = useState<UserData[]>([]);
+  const [allUsers, setAllUsers] = useState<User[]>([]);
   const [allUsersLoading, setAllUsersLoading] = useState<boolean>(true);
 
-  const fetchUserData = async (uid: string) => {
+  const fetchUser = async (uid: string) => {
     try {
       const res = await fetch(`/api/users/userGet/${uid}`);
 
@@ -78,7 +80,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         setIsLoading(true);
         if (firebaseUser) {
           setFirebaseUser(firebaseUser);
-          await fetchUserData(firebaseUser.uid);
+          await fetchUser(firebaseUser.uid);
         } else {
           setUser(null);
           setIsLogged(false);
@@ -117,7 +119,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     <UserContext.Provider
       value={{
         user,
-        fetchUserData,
+        fetchUser,
         firebaseUser,
         isLogged,
         isLoading,

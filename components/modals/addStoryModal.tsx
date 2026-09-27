@@ -5,11 +5,11 @@ import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 import { useUser } from "@/context/userContext";
 import { useLoader } from "@/context/loaderContext";
-import LocationPicker from "./locationPicker";
+import LocationPicker from "./locationPickerModal";
 import SecondaryButton from "../buttons/secondaryButton";
 import TertiaryButton from "../buttons/tertiaryButton";
 
-type AddStoryModal = {
+type AddStoryModalProps = {
   setShowAddStoryModal: (value: boolean) => void;
 };
 
@@ -18,7 +18,7 @@ type Location = {
   longitude: number;
 };
 
-export default function AddStoryModal({ setShowAddStoryModal }: AddStoryModal) {
+export default function AddStoryModal({ setShowAddStoryModal }: AddStoryModalProps) {
   const { user } = useUser();
   const [title, setTitle] = useState<string>("");
   const [place, setPlace] = useState<string>("");
@@ -79,7 +79,7 @@ export default function AddStoryModal({ setShowAddStoryModal }: AddStoryModal) {
 
       formData.append("file", file);
 
-      const uploadRes = await fetch("/api/uploads/titlePoster", {
+      const uploadRes = await fetch("/api/uploads/storyPosters", {
         method: "POST",
         body: formData,
       });
@@ -167,6 +167,7 @@ export default function AddStoryModal({ setShowAddStoryModal }: AddStoryModal) {
       setIsLoading(false);
     }
   };
+  
   return (
     <>
       <div
