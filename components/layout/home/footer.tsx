@@ -35,7 +35,7 @@ export default function Footer() {
     script.onload = () => {
       if (window.kofiwidget2) {
         window.kofiwidget2.init(
-          "support AnceStory on kofi",
+          "Support AnceStory on Ko-fi",
           "#9a5c45",
           "U5F225NGUC",
         );

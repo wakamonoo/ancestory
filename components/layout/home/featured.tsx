@@ -1,5 +1,5 @@
 "use client";
-import { FaArrowRight } from "react-icons/fa";
+import { FaArrowRight, FaBookOpen } from "react-icons/fa";
 import { LuBookOpen, LuMapPin } from "react-icons/lu";
 import mayon from "@/assets/mayon.webp";
 import Image from "next/image";
@@ -9,18 +9,9 @@ import SecondaryButton from "@/components/buttons/secondaryButton";
 import { useLoader } from "@/context/loaderContext";
 import EmptyStories from "@/components/fallbacks/emptyStories";
 import FeaturedStoryLoader from "@/components/loaders/featuredStoryLoader";
-
-type Story = {
-  storyId: string;
-  userId: string;
-  title: string;
-  place: string;
-  poster: string;
-  story: string;
-  categories: string[];
-  source?: string;
-  createdAt: string;
-};
+import RegularButton from "@/components/buttons/regularButton";
+import { BsClock } from "react-icons/bs";
+import { Story } from "@/types/story";
 
 export default function Featured() {
   const [featuredStory, setFeaturedStory] = useState<Story | null>(null);
@@ -48,54 +39,57 @@ export default function Featured() {
 
   return (
     <div className="py-8">
+      <p className="font-alt font-semibold uppercase text-base text-brown">
+        Featured Story
+      </p>
       {featuredLoading ? (
         <FeaturedStoryLoader />
       ) : !featuredStory ? (
         <EmptyStories />
       ) : (
-        <div className="flex w-full items-stretch gap-8">
-          <div className="hidden md:block md:w-2/5 lg:w-1/3">
+        <div className="grid grid-cols-1 md:grid-cols-[2.5fr_1.5fr] w-full gap-2 md:gap-8 md:items-center mt-4">
+          <div className="w-full aspect-21/9">
             <img
               src={featuredStory.poster}
               alt={featuredStory.title}
               className="w-full h-full object-cover"
             />
           </div>
-          <div className="w-full md:w-3/5 lg:w-2/3 flex flex-col gap-2">
-            <p className="font-alt font-semibold uppercase text-base text-muted">
-              Featured Story
-            </p>
-            <div className="w-full flex gap-2">
-              {featuredStory.categories?.map((category, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  {index > 0 && <span className="text-muted">·</span>}
-                  <p className="text-brown text-sm uppercase font-alt">
-                    {category}
-                  </p>
-                </div>
-              ))}
+          <div className="w-full flex flex-col">
+            <div className="my-2">
+              <h1 className="text-4xl font-bold">{featuredStory.title}</h1>
             </div>
-            <h1 className="text-4xl font-bold">{featuredStory.title}</h1>
-            <div className="flex items-center gap-2">
-              <LuMapPin className="text-base text-muted shrink-0" />
-              <p className="text-sm text-brown font-alt">
-                {featuredStory.place}
-              </p>
-            </div>
-            <p className="text-base text-muted leading-tight line-clamp-3 lg:line-clamp-5 mt-2">
+
+            <p className="text-base text-muted leading-tight line-clamp-3 lg:line-clamp-5 my-4">
               {featuredStory.story}
             </p>
-            <div className="mt-4">
+            <div className="mt-8 flex flex-wrap gap-x-8 gap-y-2">
+              <div className="flex items-center gap-2">
+                <LuMapPin className="text-sm text-muted shrink-0" />
+                <p className="text-sm text-muted font-alt">
+                  {featuredStory.place}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <BsClock className="text-sm text-muted shrink-0" />
+                <p className="text-sm text-muted">
+                  {featuredStory.readingTime > 1
+                    ? `${featuredStory.readingTime} mins read`
+                    : `${featuredStory.readingTime} min read`}
+                </p>
+              </div>
+            </div>
+            <div className="mt-8">
               <SecondaryButton
                 onClick={() => {
                   setIsLoading(true);
                   router.push(`/stories/${featuredStory.storyId}`);
                 }}
               >
-                <p className="text-brown text-base font-bold uppercase transition-all duration-200 group-hover:text-(--color-muted)">
+                <p className="text-brown text-sm font-bold uppercase transition-all duration-200 group-hover:text-(--color-muted)">
                   Read Story
                 </p>
-                <FaArrowRight className="text-brown text-base shrink-0 transition-all duration-200 group-hover:text-(--color-muted)" />
+                <FaArrowRight className="text-brown text-sm shrink-0 transition-all duration-200 group-hover:text-(--color-muted)/80" />
               </SecondaryButton>
             </div>
           </div>

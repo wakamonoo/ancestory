@@ -10,7 +10,7 @@ import { BsClock, BsPerson } from "react-icons/bs";
 import { FaUser } from "react-icons/fa";
 import { FaPerson } from "react-icons/fa6";
 import { GoPerson } from "react-icons/go";
-import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
+import { LuArrowLeft, LuArrowRight, LuMapPin } from "react-icons/lu";
 
 type StoryNav = {
   storyId: string;
@@ -66,62 +66,65 @@ export default function StoryPage() {
   ).length;
 
   return (
-    <div className="w-full py-16">
-      <div className="flex items-center gap-4">
-        <button
-          onClick={() => router.back()}
-          className="cursor-pointer group rounded-full p-2 transition-all duration-200 hover:bg-(--color-muted) active:bg-(--color-muted)"
-        >
-          <LuArrowLeft className="text-xs text-muted  transition-all duration-200 group-hover:text-(--color-secondary) group-active:text-(--color-secondary) shrink-0" />
-        </button>
-        <p className="text-xs text-muted uppercase">Back</p>
-      </div>
-      <div className="py-4">
-        <div className="flex flex-wrap items-center gap-2">
-          {story.categories?.map((category, index) => (
-            <div key={index} className="flex items-center gap-2">
-              {index > 0 && <span className="text-muted">·</span>}
-              <p className="text-brown text-sm font-alt uppercase">
-                {category}
+    <div className="w-full py-16 grid grid-cols-1 lg:grid-cols-[2.5fr_1.5fr] lg:gap-8 items-start">
+      <div>
+        <div className="relative w-full aspect-video">
+          <img
+            src={story.poster}
+            alt={story.title}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
+            <button
+              onClick={() => router.back()}
+              className="cursor-pointer group rounded-full p-2 transition-all duration-200 hover:bg-(--color-muted) active:bg-(--color-muted)"
+            >
+              <LuArrowLeft className="text-xs text-brand transition-all duration-200 group-hover:text-(--color-secondary) group-active:text-(--color-secondary) shrink-0" />
+            </button>
+            <p className="text-xs text-brand uppercase">Back</p>
+          </div>
+        </div>
+        <div className="p-4">
+          <div className="flex flex-wrap items-center gap-2">
+            {story.categories?.map((category, index) => (
+              <div key={index} className="flex items-center gap-2">
+                {index > 0 && <span className="text-muted">·</span>}
+                <p className="text-brown text-xs font-semibold font-alt uppercase">
+                  {category}
+                </p>
+              </div>
+            ))}
+          </div>
+          <div className="my-4">
+            <h1 className="text-4xl font-bold">{story.title}</h1>
+          </div>
+          <div className="flex flex-wrap items-center gap-x-4">
+            <div className="flex items-center gap-2">
+              <LuMapPin className="text-sm text-muted shrink-0" />
+              <p className="text-sm text-muted">{story.place}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <BsClock className="text-sm text-muted shrink-0" />
+              <p className="text-sm text-muted">
+                {story.readingTime > 1
+                  ? `${story.readingTime} mins read`
+                  : `${story.readingTime} min read`}
               </p>
             </div>
-          ))}
-          <span className="text-sm text-muted">|</span>
-          <p className="text-sm text-brown font-alt uppercase">{story.place}</p>
-        </div>
-        {story.source && (
-          <p className="text-xs text-muted">From: {story.source}</p>
-        )}
-        <h1 className="text-4xl font-bold my-4">{story.title}</h1>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <BsClock className="text-sm text-muted" />
-            <p className="text-sm text-muted">
-              {" "}
-              {story.readingTime > 1
-                ? `${story.readingTime} mins read`
-                : `${story.readingTime} min read`}
-            </p>
+            <div className="flex items-center gap-2">
+              <GoPerson className="text-sm text-muted shrink-0" />
+              <p className="text-sm text-muted">{contributor?.name}</p>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <GoPerson className="text-sm text-muted" />
-            <p className="text-sm text-muted">{contributor?.name}</p>
-          </div>
-        </div>
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 my-4">
-          <div className="w-full aspect-16/8 md:aspect-16/12">
-            <img
-              src={story.poster}
-              alt={story.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div>
-            <p className="text-base leading-tight text-justify text-muted whitespace-pre-line">
+
+          <div className="my-8">
+            <p className="story-content text-base leading-loose whitespace-pre-line text-left">
               {story.story}
             </p>
           </div>
         </div>
+      </div>
+      <div>
         <div className="my-4 flex gap-4 items-center border-y border-panel py-4">
           <div className="w-24 h-24 rounded-full overflow-hidden">
             <img

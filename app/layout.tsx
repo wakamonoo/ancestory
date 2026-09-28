@@ -53,7 +53,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <LoaderProvider>
               <NavigationProvider>
                 <NavBar />
-                <main className="px-8 md:px-16">{children}</main>
+                <main className="px-4 md:px-8 lg:px-16">{children}</main>
               </NavigationProvider>
             </LoaderProvider>
           </StoryProvider>
