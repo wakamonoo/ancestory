@@ -34,7 +34,7 @@ export default function Contributors() {
                     loading="lazy"
                     decoding="async"
                     className="w-full h-full object-cover rounded-full"
-                  />
+                  />sdf
                 </div>
                 <div className="flex flex-col items-start lg:items-center">
                   <p className="text-base font-semibold">{contributor.name}</p>
