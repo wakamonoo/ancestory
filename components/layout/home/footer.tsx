@@ -54,7 +54,7 @@ export default function Footer() {
 
   return (
     <div className="mt-16 py-4">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-4">
         <div className="flex flex-col sm:flex-row items-start md:items-center gap-8 md:gap-16 lg:gap-24">
           <button
             onClick={handleHomeClick}
@@ -66,7 +66,7 @@ export default function Footer() {
               className="w-full h-full shrink-0 object-contain"
             />
           </button>
-          <div className="flex flex-col md:flex-row gap-2 md:gap-8 lg:gap-16">
+          <div className="flex flex-col items-start md:flex-row gap-2 md:gap-8 lg:gap-16">
             <button
               onClick={handleStoriesClick}
               className="cursor-pointer group"
@@ -93,14 +93,12 @@ export default function Footer() {
             </button>
           </div>
         </div>
-        <div className="flex items-center gap-4 shrink-0">
+        <div className="flex flex-col xl:flex-row gap-2 xl:gap-4 items-start xl:items-center shrink-0">
           <h1 className="text-sm font-bold text-muted whitespace-nowrap">
             Ancestral stories, local people.
           </h1>
 
-          <div className="flex min-w-32 flex-col items-center">
-            <div id="kofi-widget" />
-          </div>
+          <div id="kofi-widget" />
         </div>
       </div>
     </div>
