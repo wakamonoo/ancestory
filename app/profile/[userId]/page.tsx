@@ -13,10 +13,13 @@ import { FaPencil } from "react-icons/fa6";
 import RegularButton from "@/components/buttons/regularButton";
 import ActionButton from "@/components/buttons/actionButton";
 import EditProfileModal from "@/components/modals/editProfileModal";
+import Cover from "@/assets/cover.png";
+import EmptyUserStories from "@/components/fallbacks/emptyUserStories";
+import StoryCardLoader from "@/components/loaders/storyCardLoader";
 
 export default function UserProfile() {
   const { user } = useUser();
-  const { userStories } = useStory();
+  const { userStories, userStoriesLoading } = useStory();
   const { setIsLoading } = useLoader();
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
 
@@ -30,7 +33,7 @@ export default function UserProfile() {
         <div className="relative">
           <div className="relative min-h-72 overflow-hidden">
             <img
-              src={user?.coverPhoto}
+              src={user?.coverPhoto || Cover.src}
               alt={user?.name}
               className="absolute inset-0 w-full h-full object-cover"
             />
@@ -76,6 +79,7 @@ export default function UserProfile() {
             <h1 className="text-base font-bold text-muted">
               Your Curated Stories
             </h1>
+
             <UserStories />
           </div>
           <div>

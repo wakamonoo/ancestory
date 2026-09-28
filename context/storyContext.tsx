@@ -12,6 +12,8 @@ import { Story } from "@/types/story";
 type StoryContextType = {
   stories: Story[];
   userStories: Story[];
+  storiesLoading: boolean;
+  userStoriesLoading: boolean;
 };
 
 export const StoryContext = createContext<StoryContextType | undefined>(
@@ -30,11 +32,14 @@ export const useStory = () => {
 
 export const StoryProvider = ({ children }: { children: ReactNode }) => {
   const [stories, setStories] = useState<Story[]>([]);
+  const [storiesLoading, setStoriesLoading] = useState(false);
   const [userStories, setUserStories] = useState<Story[]>([]);
+  const [userStoriesLoading, setUserStoriesLoading] = useState(false);
   const { user } = useUser();
 
   useEffect(() => {
     const handleGetStories = async () => {
+      setStoriesLoading(true);
       try {
         const res = await fetch("/api/stories/getStories", {
           method: "GET",
@@ -45,6 +50,8 @@ export const StoryProvider = ({ children }: { children: ReactNode }) => {
       } catch (err) {
         console.error("failed to fetch stories", err);
         setStories([]);
+      } finally {
+        setStoriesLoading(false);
       }
     };
 
@@ -53,6 +60,7 @@ export const StoryProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const getStory = async () => {
+      setUserStoriesLoading(true);
       try {
         const res = await fetch(`/api/stories/getStories/user/${user?.uid}`);
 
@@ -66,6 +74,8 @@ export const StoryProvider = ({ children }: { children: ReactNode }) => {
       } catch (err) {
         console.error(err);
         setUserStories([]);
+      } finally {
+        setUserStoriesLoading(false);
       }
     };
 
@@ -73,7 +83,9 @@ export const StoryProvider = ({ children }: { children: ReactNode }) => {
   }, [user?.uid]);
 
   return (
-    <StoryContext.Provider value={{ stories, userStories }}>
+    <StoryContext.Provider
+      value={{ stories, userStories, storiesLoading, userStoriesLoading }}
+    >
       {children}
     </StoryContext.Provider>
   );
