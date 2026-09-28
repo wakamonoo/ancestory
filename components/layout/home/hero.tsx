@@ -6,14 +6,14 @@ import { FaArrowRight } from "react-icons/fa";
 
 export default function Hero() {
   return (
-    <div className="w-full pb-8 pt-24 md:pb-0 md:pt-0 md:min-h-screen md:flex md:items-center">
+    <div className="w-full py-16 md:min-h-screen md:flex md:items-center">
       <div className="flex flex-col md:flex-row md:items-stretch md:gap-16 w-full">
-        <div className="flex flex-col justify-center gap-8 w-full md:w-2/5">
+        <div className="flex flex-col justify-center gap-4 w-full md:w-2/5">
           <p className="font-alt font-semibold text-muted uppercase text-base">
             Local Stories. Lasting Impressions.
           </p>
-          <h1 className="font-bold text-5xl leading-none">
-            preserving the stories that might otherwise disappear.
+          <h1 className="text-4xl leading-none">
+            Preserving the stories that might otherwise disappear.
           </h1>
           <p className="text-base text-muted font-semibold">
             AnceStory is a growing collection of local stories, folklore,
@@ -28,10 +28,10 @@ export default function Hero() {
                   ?.scrollIntoView({ behavior: "smooth" });
               }}
             >
-              <p className="text-brand font-bold uppercase">
+              <p className="text-brand text-sm font-semibold font-alt uppercase">
                 Explore the archive
               </p>
-              <FaArrowRight className="text-base text-brand shrink-0" />
+              <FaArrowRight className="text-sm text-brand shrink-0" />
             </RegularButton>
           </div>
         </div>

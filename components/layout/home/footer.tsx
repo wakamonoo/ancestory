@@ -93,13 +93,15 @@ export default function Footer() {
             </button>
           </div>
         </div>
-        <div className="flex flex-col xl:flex-row gap-2 xl:gap-4 items-start xl:items-center shrink-0">
-          <h1 className="text-sm font-bold text-muted whitespace-nowrap">
-            Ancestral stories, local people.
-          </h1>
 
+        <div className="min-w-32">
           <div id="kofi-widget" />
         </div>
+      </div>
+      <div className="h-px w-full bg-(--color-accent)/10 my-4" />
+      <div className="flex flex-col sm:flex-row sm:justify-between gap-2">
+        <h4 className="text-xs text-muted">Ancestral Stories, Local People.</h4>
+        <p className="text-xs text-muted">{`© ${new Date().getFullYear()} AnceStory. All rights reserved.`}</p>
       </div>
     </div>
   );

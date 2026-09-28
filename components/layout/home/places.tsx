@@ -61,13 +61,13 @@ export default function Places() {
   }, [stories]);
 
   return (
-    <div id="places" className="w-full gap-2 py-8">
+    <div id="places" className="w-full gap-2 py-16">
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_2fr]">
         <div className="flex flex-col">
-          <p className="font-alt font-semibold uppercase text-base text-muted">
+          <p className="font-alt font-semibold uppercase text-base text-brown">
             Explore by place
           </p>
-          <h1 className="text-2xl font-bold">Find stories from these places</h1>
+          <h1 className="text-2xl">Find stories from these places</h1>
           <p className="text-base text-muted mt-2">
             Each place has its own rhythm, people, and stories. Explore what
             makes them unique through the voices of those who call them home.

@@ -40,10 +40,10 @@ export default function Discover() {
   }, []);
 
   return (
-    <div id="discover" className="w-full gap-2 py-8">
+    <div id="discover" className="w-full gap-2 py-16">
       <div className="flex flex-col">
-        <div className="flex flex-col md:flex-row gap-4 w-full md:justify-between">
-          <p className="font-alt font-semibold uppercase text-base text-brown">
+        <div className="w-full flex justify-between">
+         <p className="font-alt font-semibold uppercase text-base text-brown">
             From the archive
           </p>
           {stories.length > 0 && (
@@ -54,7 +54,7 @@ export default function Discover() {
               }}
             >
               <p className="text-brown font-bold uppercase text-sm transition-all duration-200 group-hover:text-(--color-muted)">
-                View all stories
+                View all
               </p>
               <FaArrowRight className="text-brown text-sm transition-all duration-200 group-hover:text-(--color-muted)" />
             </SecondaryButton>

@@ -16,15 +16,17 @@ export default function Page() {
   }, []);
 
   return (
-    <div className="divide-y-4 divide-(--color-panel)">
-      <Hero />
-      <Featured />
-      <Discover />
-      <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-16">
-        <Places />
-        <Contributors />
+    <>
+      <div className="mt-8 md:mt-0 divide-y divide-(--color-accent)/10">
+        <Hero />
+        <Featured />
+        <Discover />
+        <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-16">
+          <Places />
+          <Contributors />
+        </div>
       </div>
       <Footer />
-    </div>
+    </>
   );
 }

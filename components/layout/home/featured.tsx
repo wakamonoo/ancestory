@@ -38,7 +38,7 @@ export default function Featured() {
   }, []);
 
   return (
-    <div className="py-8">
+    <div className="py-16">
       <p className="font-alt font-semibold uppercase text-base text-brown">
         Featured Story
       </p>
@@ -57,13 +57,13 @@ export default function Featured() {
           </div>
           <div className="w-full flex flex-col">
             <div className="my-2">
-              <h1 className="text-4xl font-bold">{featuredStory.title}</h1>
+              <h1 className="text-4xl text-normal">{featuredStory.title}</h1>
             </div>
 
             <p className="text-base text-muted leading-tight line-clamp-3 lg:line-clamp-5 my-4">
               {featuredStory.story}
             </p>
-            <div className="mt-8 flex flex-wrap gap-x-8 gap-y-2">
+            <div className="mt-4 flex flex-wrap gap-x-8 gap-y-2">
               <div className="flex items-center gap-2">
                 <LuMapPin className="text-sm text-muted shrink-0" />
                 <p className="text-sm text-muted font-alt">

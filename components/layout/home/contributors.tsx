@@ -8,11 +8,11 @@ export default function Contributors() {
   const { stories } = useStory();
 
   return (
-    <div id="contributors" className="w-full gap-2 py-8">
-      <p className="font-alt font-semibold uppercase text-base text-muted">
+    <div id="contributors" className="w-full gap-2 py-16">
+      <p className="font-alt font-semibold uppercase text-base text-brown">
         Our Contributors
       </p>
-      <h1 className="text-2xl font-bold">Real people. Shared stories.</h1>
+      <h1 className="text-2xl">Real people. Shared stories.</h1>
       {allUsers.length === 0 ? (
         <EmptyContributors />
       ) : (

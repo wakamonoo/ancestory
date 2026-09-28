@@ -76,16 +76,15 @@ export default function UserProfile() {
         </div>
         <div className="mt-4 grid grid-cols-1 lg:grid-cols-[3fr_1fr] items-stretch gap-4 lg:gap-8">
           <div>
-            <h1 className="text-base font-bold text-muted">
+            <p className="font-alt font-semibold uppercase text-base text-brown">
               Your Curated Stories
-            </h1>
-
+            </p>
             <UserStories />
           </div>
           <div>
-            <h1 className="text-base font-bold text-muted">
+            <p className="font-alt font-semibold uppercase text-base text-brown">
               Your AnceStory Map
-            </h1>
+            </p>
             <UserPlaces />
           </div>
         </div>

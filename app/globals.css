@@ -19,7 +19,7 @@
     --color-accent-dark: #7d4937; /* ———————————————————————————————————— hover ——— */
 
     --font-heading:
-      "Cormorant Garamond", sans-serif; /* ———————————————————————————————————— headings ——— */
+      "Lora", sans-serif; /* ———————————————————————————————————— headings ——— */
     --font-body:
       "Inter", sans-serif; /* ———————————————————————————————————— normal text ——— */
     --font-alt:
@@ -184,7 +184,7 @@
   float: left;
   font-family: var(--font-heading), serif;
   font-size: 4rem;
-  font-weight: 500;
+  font-weight: 200;
   line-weight: 0.75;
   line-height: 0.08;
   padding-right: 0.12em;

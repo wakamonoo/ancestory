@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import {
-  Cormorant_Garamond,
+  Lora,
   Inter,
   DM_Sans,
   Playfair_Display,
@@ -12,7 +12,7 @@ import NavBar from "@/components/layout/essentials/navbar";
 import { LoaderProvider } from "@/context/loaderContext";
 import { NavigationProvider } from "@/context/navigationContext";
 
-const cormorant = Cormorant_Garamond({
+const lora = Lora({
   variable: "--font-heading",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -45,7 +45,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${inter.variable} ${dmsans.variable} ${playfair.variable} scroll-smooth`}
+      className={`${lora.variable} ${inter.variable} ${dmsans.variable} ${playfair.variable} scroll-smooth`}
     >
       <body className="min-h-full flex flex-col">
         <UserProvider>
