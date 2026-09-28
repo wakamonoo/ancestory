@@ -41,7 +41,7 @@ export default function NavBar() {
               onClick={handleStoriesClick}
               className="cursor-pointer group"
             >
-              <p className="text-sm font-semibold transition-all duration-200 group-hover:text-(--color-muted)">
+              <p className="text-sm font-semibold transition-all duration-200 text-muted group-hover:text-(--color-normal)">
                 Stories
               </p>
             </button>
@@ -49,7 +49,7 @@ export default function NavBar() {
               onClick={handlePlacesClick}
               className="cursor-pointer group"
             >
-              <p className="text-sm font-semibold transition-all duration-200 group-hover:text-(--color-muted)">
+              <p className="text-sm font-semibold transition-all duration-200 text-muted group-hover:text-(--color-normal)">
                 Places
               </p>
             </button>
@@ -57,7 +57,7 @@ export default function NavBar() {
               onClick={handleContributorsClick}
               className="cursor-pointer group"
             >
-              <p className="text-sm font-semibold transition-all duration-200 group-hover:text-(--color-muted)">
+              <p className="text-sm font-semibold transition-all duration-200 text-muted group-hover:text-(--color-normal)">
                 Contributors
               </p>
             </button>

@@ -49,27 +49,10 @@ export default function MaxMenu({
   return (
     <div
       ref={divRef}
-      className="absolute top-12 right-0 bg-brand h-fit w-[20vw] p-4 rounded-lg shadow-md z-150"
+      className="absolute top-12 right-0 bg-brand h-fit w-[20vw] p-4 rounded-lg shadow-2xl z-150"
     >
       <div className="flex flex-col gap-4">
-        {user && (
-          <>
-            <div className="flex gap-2 items-center">
-              <img
-                src={user?.profilePicture}
-                alt={user?.name}
-                className="w-12 h-12 object-cover rounded-full"
-              />
-              <div className="flex flex-col">
-                <p className="text-base">{user?.name}</p>
-                <p className="text-xs text-muted">{user?.email}</p>
-              </div>
-            </div>
-            <div className="w-full h-px bg-panel" />
-          </>
-        )}
-
-        <div className="flex flex-col gap-2">
+        {user ? (
           <MenuButton
             onClick={() => {
               if (user) {
@@ -81,10 +64,22 @@ export default function MaxMenu({
               }
             }}
           >
-            <FaUser className="text-sm" />
-            <p className="text-sm">Profile</p>
+            <img
+              src={user?.profilePicture}
+              alt={user?.name}
+              className="w-12 h-12 object-cover rounded-full"
+            />
+            <div className="flex flex-col items-start">
+              <p className="text-base">{user?.name}</p>
+              <p className="text-xs text-muted">{user?.email}</p>
+            </div>
           </MenuButton>
-        </div>
+        ) : (
+          <MenuButton onClick={() => setShowSignInModal(true)}>
+            <FaUser className="text-base shrink-0" />
+            <p className="text-base text-normal">Profile</p>
+          </MenuButton>
+        )}
         <div className="w-full h-px bg-panel" />
         <div className="flex flex-col gap-2">
           <MenuButton

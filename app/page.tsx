@@ -2,6 +2,7 @@
 import Contributors from "@/components/layout/home/contributors";
 import Discover from "@/components/layout/home/discover";
 import Featured from "@/components/layout/home/featured";
+import Footer from "@/components/layout/home/footer";
 import Hero from "@/components/layout/home/hero";
 import Places from "@/components/layout/home/places";
 import { useLoader } from "@/context/loaderContext";
@@ -23,6 +24,7 @@ export default function Page() {
         <Places />
         <Contributors />
       </div>
+      <Footer />
     </div>
   );
 }

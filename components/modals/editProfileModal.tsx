@@ -15,7 +15,7 @@ export default function EditProfileModal({
   setShowEditProfileModal,
 }: EditProfileModalProps) {
   const { user } = useUser();
-  const [userName, setUserName] = useState(user?.name);
+  const [userName, setUserName] = useState(user?.name ?? "");
   const [userProfilePicture, setuserProfilePicture] = useState<string | File>(
     user?.profilePicture ?? "",
   );
@@ -26,6 +26,12 @@ export default function EditProfileModal({
   const profilePictureBtnRef = useRef<HTMLInputElement>(null);
   const coverPhotoBtnRef = useRef<HTMLInputElement>(null);
   const { setIsLoading } = useLoader();
+
+  const hasChanges =
+    userName !== user?.name ||
+    userProfilePicture !== user?.profilePicture ||
+    userCoverPhoto !== user?.coverPhoto ||
+    userBio !== user?.bio;
 
   const handleProfileChange = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -290,7 +296,11 @@ export default function EditProfileModal({
           </form>
         </div>
         <div className="flex flex-col md:flex-row md:gap-2 border-t border-panel p-4">
-          <RegularButton type="submit" form="edit-profile-form">
+          <RegularButton
+            type="submit"
+            disabled={!hasChanges}
+            form="edit-profile-form"
+          >
             <p className="font-bold text-normal text-base">Submit changes</p>
           </RegularButton>
         </div>

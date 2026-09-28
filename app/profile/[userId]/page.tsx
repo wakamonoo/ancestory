@@ -58,7 +58,7 @@ export default function UserProfile() {
                   </div>
                   <div className="h-8 w-px bg-panel" />
                   <p className="text-sm text-normal font-semibold">
-                    Joined {new Date(user?.createdAt).getFullYear()}
+                    Joined {new Date(user?.createdAt ?? "").getFullYear()}
                   </p>
                 </div>
               </div>
@@ -71,7 +71,7 @@ export default function UserProfile() {
             </ActionButton>
           </div>
         </div>
-        <div className="mt-4 grid grid-cols-1 lg:grid-cols-[3fr_1fr] items-stretch gap-4">
+        <div className="mt-4 grid grid-cols-1 lg:grid-cols-[3fr_1fr] items-stretch gap-4 lg:gap-8">
           <div>
             <h1 className="text-base font-bold text-muted">
               Your Curated Stories
