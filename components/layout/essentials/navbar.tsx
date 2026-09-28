@@ -28,7 +28,7 @@ export default function NavBar() {
 
   return (
     <>
-      <div className="fixed z-9999 w-full flex justify-between items-center py-4 px-8 md:px-16 h-14 bg-brand">
+      <div className="fixed z-9999 w-full flex justify-between items-center py-4 px-4 md:px-8 lg:px-16 h-14 bg-brand">
         <button onClick={handleHomeClick} className="cursor-pointer">
           <div className="w-32 h-auto">
             <Image src={logo} alt="AnceStory" />

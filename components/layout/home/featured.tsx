@@ -47,7 +47,7 @@ export default function Featured() {
       ) : !featuredStory ? (
         <EmptyStories />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-[2.5fr_1.5fr] w-full gap-2 md:gap-8 md:items-center mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-[2.5fr_1.5fr] items-start w-full gap-2 md:gap-8 mt-4">
           <div className="w-full aspect-21/9">
             <img
               src={featuredStory.poster}

@@ -25,7 +25,7 @@ export default function StoryCard({ story }: StoryCardProps) {
         alt={story.title}
         className="w-1/2 md:w-full aspect-3/2 object-cover"
       />
-      <div className="min-w-0 w-full px-2 flex flex-col gap-2">
+      <div className="min-w-0 w-full p-2 flex flex-col gap-2">
         <h4 className=" text-2xl">{story.title}</h4>
         <div className="flex items-center gap-2">
           <LuMapPin className="text-sm text-muted shrink-0" />
