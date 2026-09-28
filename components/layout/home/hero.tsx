@@ -15,7 +15,7 @@ export default function Hero() {
           <h1 className="text-4xl leading-none">
             Preserving the stories that might otherwise disappear.
           </h1>
-          <p className="text-base text-muted font-semibold">
+          <p className="text-base text-muted">
             AnceStory is a growing collection of local stories, folklore,
             memories, and history told by the people who lived them, and the
             ones who still remember.
