@@ -16,7 +16,7 @@ export default function Page() {
   }, []);
 
   return (
-    <div className="divide-y-4 divide-(--color-panel)">
+    <div className="home-sections">
       <Hero />
       <Featured />
       <Discover />

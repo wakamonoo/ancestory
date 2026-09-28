@@ -1,11 +1,10 @@
 "use client";
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { useStory } from "@/context/storyContext";
 import { useEffect, useRef } from "react";
 
 export default function Places() {
-  const { stories } = useStory();
+  const { stories, storiesLoading } = useStory();
   const mapRef = useRef<HTMLDivElement>(null);
   const leafletMapRef = useRef<any>(null);
 
@@ -73,7 +72,7 @@ export default function Places() {
             makes them unique through the voices of those who call them home.
           </p>
         </div>
-        <div ref={mapRef} className="h-[40vh] lg:h-[30vh] w-full mt-4" />
+        {storiesLoading ? <div className="skeleton mt-4 h-[40vh] w-full rounded-sm lg:h-[30vh]" aria-label="Loading story map" /> : <div ref={mapRef} className="mt-4 h-[40vh] w-full overflow-hidden rounded-sm lg:h-[30vh]" />}
       </div>
     </div>
   );

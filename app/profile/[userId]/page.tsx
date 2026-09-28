@@ -1,25 +1,19 @@
 "use client";
 import { useStory } from "@/context/storyContext";
 import { useUser } from "@/context/userContext";
-import mayon from "@/assets/mayon.webp";
-import { LuMapPin } from "react-icons/lu";
 import { useLoader } from "@/context/loaderContext";
-import { useRouter } from "next/navigation";
 import UserPlaces from "@/components/layout/profile/usePlaces";
 import UserStories from "@/components/layout/profile/userStories";
 import { useEffect, useState } from "react";
-import SecondaryButton from "@/components/buttons/secondaryButton";
 import { FaPencil } from "react-icons/fa6";
-import RegularButton from "@/components/buttons/regularButton";
 import ActionButton from "@/components/buttons/actionButton";
 import EditProfileModal from "@/components/modals/editProfileModal";
 import Cover from "@/assets/cover.png";
-import EmptyUserStories from "@/components/fallbacks/emptyUserStories";
-import StoryCardLoader from "@/components/loaders/storyCardLoader";
+import PageSkeleton from "@/components/loaders/pageSkeleton";
 
 export default function UserProfile() {
-  const { user } = useUser();
-  const { userStories, userStoriesLoading } = useStory();
+  const { user, isLoading: userLoading } = useUser();
+  const { userStories } = useStory();
   const { setIsLoading } = useLoader();
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
 
@@ -27,11 +21,13 @@ export default function UserProfile() {
     setIsLoading(false);
   }, []);
 
+  if (userLoading && !user) return <PageSkeleton variant="profile" />;
+
   return (
     <>
-      <div className="w-full py-16">
+      <div className="w-full py-12 md:py-16">
         <div className="relative">
-          <div className="relative min-h-72 overflow-hidden">
+          <div className="profile-cover relative min-h-72 overflow-hidden rounded-sm">
             <img
               src={user?.coverPhoto || Cover.src}
               alt={user?.name}
@@ -39,8 +35,8 @@ export default function UserProfile() {
             />
 
             <div className="absolute inset-0 bg-linear-to-r from-(--color-bg) via-(--color-bg)/80 to-transparent" />
-            <div className="relative flex items-center gap-4 min-h-72 px-8">
-              <div className="w-32 h-32 shrink-0 rounded-full overflow-hidden">
+            <div className="relative flex items-center gap-5 min-h-72 px-6 md:px-10">
+              <div className="w-24 h-24 md:w-32 md:h-32 shrink-0 rounded-full overflow-hidden ring-4 ring-(--color-bg)">
                 <img
                   src={user?.profilePicture}
                   alt={user?.name}
@@ -48,7 +44,7 @@ export default function UserProfile() {
                 />
               </div>
               <div className="flex flex-col">
-                <p className="text-base text-normal font-bold">{user?.name}</p>
+                <h1 className="text-3xl md:text-4xl text-normal font-bold">{user?.name || "Your profile"}</h1>
                 {user?.bio && (
                   <p className="text-sm text-muted italic">{user?.bio}</p>
                 )}
@@ -60,9 +56,7 @@ export default function UserProfile() {
                     <span className="text-xs text-muted">Stories</span>
                   </div>
                   <div className="h-8 w-px bg-panel" />
-                  <p className="text-sm text-normal font-semibold">
-                    Joined {new Date(user?.createdAt ?? "").getFullYear()}
-                  </p>
+                  {user?.createdAt && <p className="text-sm text-normal font-semibold">Joined {new Date(user.createdAt).getFullYear()}</p>}
                 </div>
               </div>
             </div>

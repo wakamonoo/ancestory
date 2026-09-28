@@ -1,6 +1,4 @@
 /* ———————————————————————————————————— google fonts ——— */
-@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Anton&family=Orbitron&family=Roboto:wght@400;700&display=swap");
-
 /* ———————————————————————————————————— tailwind ——— */
 @import "tailwindcss";
 
@@ -23,14 +21,21 @@
     --font-body:
       "Inter", sans-serif; /* ———————————————————————————————————— normal text ——— */
     --font-alt:
-      "DM Dans", sans-serif; /* ———————————————————————————————————— meta ——— */
+      "DM Sans", sans-serif; /* ———————————————————————————————————— meta ——— */
     --font-tall:
       "Playfair Display", sans-serif; /* ———————————————————————————————————— large story titles ——— */
+  }
+
+  :root {
+    --color-surface: #fffdf8;
+    --shadow-soft: 0 14px 40px rgb(48 39 29 / 8%);
   }
 
   body {
     @apply bg-(--color-bg) text-(--color-text);
     font-family: var(--font-body);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
   }
 
   h1,
@@ -50,6 +55,41 @@
   button {
     font-family: var(--font-heading);
   }
+}
+
+@layer components {
+  .eyebrow { letter-spacing: .16em; }
+  .home-sections > section,
+  .home-sections > div { border-bottom: 1px solid var(--color-border); }
+  .home-sections > :last-child { border-bottom: 0; }
+  .hero-image img { border-radius: 3px; }
+  .skeleton {
+    background: linear-gradient(100deg, #e7e1d5 20%, #f3eee4 42%, #e7e1d5 64%);
+    background-size: 220% 100%;
+    animation: skeleton-shimmer 1.6s ease-in-out infinite;
+  }
+  .story-card {
+    background: var(--color-panel);
+    border: 1px solid rgb(216 210 197 / 65%);
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .story-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-soft); border-color: var(--color-border); }
+  .page-intro { border-bottom: 1px solid var(--color-border); padding-bottom: 1.5rem; }
+  .profile-cover { box-shadow: var(--shadow-soft); }
+  .profile-cover > img { filter: saturate(.72); }
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -120% 0; }
+}
+
+.navigation-progress { position: fixed; inset: 0 0 auto; height: 2px; z-index: 10000; background: rgb(154 92 69 / 14%); overflow: hidden; }
+.navigation-progress span { display: block; width: 35%; height: 100%; background: var(--color-accent); animation: route-progress 1.15s ease-in-out infinite; }
+@keyframes route-progress { 0% { transform: translateX(-110%); } 100% { transform: translateX(400%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
 
 /* ———————————————————————————————————— utilities layer ——— */
@@ -175,6 +215,6 @@
   overflow-y: auto;
 }
 
-.custom-scroll:hover {
+  .custom-scroll:hover {
   scrollbar-color: var(--color-panel) transparent;
 }

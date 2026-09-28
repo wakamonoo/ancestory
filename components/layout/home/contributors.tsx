@@ -4,7 +4,7 @@ import { useStory } from "@/context/storyContext";
 import { useUser } from "@/context/userContext";
 
 export default function Contributors() {
-  const { allUsers } = useUser();
+  const { allUsers, allUsersLoading } = useUser();
   const { stories } = useStory();
 
   return (
@@ -13,7 +13,11 @@ export default function Contributors() {
         Our Contributors
       </p>
       <h1 className="text-2xl font-bold">Real people. Shared stories.</h1>
-      {allUsers.length === 0 ? (
+      {allUsersLoading ? (
+        <div className="mt-6 flex gap-5 overflow-hidden" aria-label="Loading contributors">
+          {Array.from({ length: 5 }, (_, index) => <div key={index} className="flex shrink-0 flex-col items-center gap-3 animate-pulse"><div className="h-20 w-20 rounded-full bg-second" /><div className="h-3 w-20 rounded bg-second" /></div>)}
+        </div>
+      ) : allUsers.length === 0 ? (
         <EmptyContributors />
       ) : (
         <div className="p-4 flex gap-4 overflow-x-auto">
@@ -25,16 +29,16 @@ export default function Contributors() {
             return (
               <div
                 key={contributor.uid}
-                className="flex flex-row lg:flex-col items-center gap-2"
+                className="flex shrink-0 flex-col items-center gap-3 text-center"
               >
-                <div className="w-24 h-24 shrink-0">
+                  <div className="w-20 h-20 shrink-0">
                   <img
                     src={contributor.profilePicture}
                     alt={contributor.name}
                     loading="lazy"
                     decoding="async"
                     className="w-full h-full object-cover rounded-full"
-                  />sdf
+                  />
                 </div>
                 <div className="flex flex-col items-start lg:items-center">
                   <p className="text-base font-semibold">{contributor.name}</p>

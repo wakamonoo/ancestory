@@ -1,13 +1,9 @@
 "use client";
-import mayon from "@/assets/mayon.webp";
 import SecondaryButton from "@/components/buttons/secondaryButton";
 import EmptyStories from "@/components/fallbacks/emptyStories";
 import StoryCardLoader from "@/components/loaders/storyCardLoader";
 import { useLoader } from "@/context/loaderContext";
 import { useStory } from "@/context/storyContext";
-import { useUser } from "@/context/userContext";
-import { spawn } from "child_process";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaArrowRight } from "react-icons/fa";
@@ -62,13 +58,13 @@ export default function Discover() {
         </div>
 
         {storiesLoading ? (
-          <div className="mt-4 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
-            <StoryCardLoader />
+            <div className="mt-6 w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+            {Array.from({ length: 4 }, (_, index) => <StoryCardLoader key={index} />)}
           </div>
         ) : stories.length === 0 ? (
           <EmptyStories />
         ) : (
-          <div className="mt-4 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+          <div className="mt-6 w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
             {stories.slice(0, visibleCount).map((story) => {
               return (
                 <div
@@ -77,12 +73,12 @@ export default function Discover() {
                     setIsLoading(true);
                     router.push(`/stories/${story.storyId}`);
                   }}
-                  className="flex flex-row md:flex-col items-center md:items-start gap-2 p-2 cursor-pointer transition-all duration-200 rounded hover:bg-(--color-secondary) hover:shadow-lg"
+                  className="story-card flex flex-col items-start gap-3 p-3 cursor-pointer rounded-sm"
                 >
                   <img
                     src={story.poster}
                     alt={story.title}
-                    className="w-1/2 md:w-full aspect-3/2 object-cover"
+                    className="w-full aspect-3/2 object-cover"
                   />
                   <div className="min-w-0 w-full px-2 flex flex-col gap-2">
                     <h4 className=" text-2xl leading-none font-semibold">

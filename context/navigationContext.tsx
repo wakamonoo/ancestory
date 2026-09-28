@@ -81,11 +81,11 @@ export const NavigationProvider = ({ children }: NavigationProviderProps) => {
       });
 
       document
-        .getElementById("contributors")
+        .getElementById("places")
         ?.scrollIntoView({ behavior: "smooth" });
     } else {
       setIsLoading(true);
-      router.push("/#contributors");
+      router.push("/#places");
     }
   };
 

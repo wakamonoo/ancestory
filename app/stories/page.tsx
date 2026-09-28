@@ -5,6 +5,7 @@ import { useStory } from "@/context/storyContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { LuArrowLeft, LuMapPin } from "react-icons/lu";
+import EmptyStories from "@/components/fallbacks/emptyStories";
 
 export default function Stories() {
   const { stories, storiesLoading } = useStory();
@@ -16,7 +17,7 @@ export default function Stories() {
   }, [setIsLoading]);
 
   return (
-    <div className="w-full py-16">
+    <div className="w-full py-12 md:py-16">
       <div className="flex items-center gap-4">
         <button
           onClick={() => router.back()}
@@ -27,12 +28,17 @@ export default function Stories() {
         <p className="text-xs text-muted uppercase">Back</p>
       </div>
 
+      <div className="page-intro mt-5">
+        <p className="eyebrow text-xs font-semibold uppercase text-muted">The archive</p>
+        <h1 className="mt-2 text-4xl md:text-5xl font-bold">Stories from home</h1>
+        <p className="mt-2 max-w-2xl text-muted">Folklore, memories, and local history, preserved in the words of the people who know them.</p>
+      </div>
       {storiesLoading ? (
-        <div className="mt-4 w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
-          <StoryCardLoader />
+        <div className="mt-6 w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          {Array.from({ length: 8 }, (_, index) => <StoryCardLoader key={index} />)}
         </div>
-      ) : (
-        <div className="mt-4 w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+      ) : stories.length === 0 ? <EmptyStories /> : (
+        <div className="mt-6 w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           {stories.map((story) => {
             return (
               <div
@@ -41,12 +47,12 @@ export default function Stories() {
                   setIsLoading(true);
                   router.push(`/stories/${story.storyId}`);
                 }}
-                className="flex flex-row md:flex-col items-center md:items-start gap-2 p-2 cursor-pointer transition-all duration-200 rounded hover:bg-(--color-secondary) hover:shadow-lg"
+                className="story-card flex flex-col items-start gap-3 p-3 cursor-pointer rounded-sm"
               >
                 <img
                   src={story.poster}
                   alt={story.title}
-                  className="w-1/2 md:w-full aspect-3/2 object-cover"
+                  className="w-full aspect-3/2 object-cover"
                 />
                 <div className="min-w-0 w-full px-2 flex flex-col gap-2">
                   <h4 className=" text-2xl leading-none font-semibold">

@@ -1,11 +1,10 @@
 "use client";
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { useStory } from "@/context/storyContext";
 import { useEffect, useRef } from "react";
 
 export default function UserPlaces() {
-  const { userStories } = useStory();
+  const { userStories, userStoriesLoading } = useStory();
   const mapRef = useRef<HTMLDivElement>(null);
   const leafletMapRef = useRef<any>(null);
 
@@ -62,7 +61,7 @@ export default function UserPlaces() {
 
   return (
     <div className="w-full h-full">
-      <div ref={mapRef} className="h-[40vh] lg:h-full w-full mt-4" />
+      {userStoriesLoading ? <div className="skeleton mt-4 h-[40vh] w-full rounded-sm lg:h-full" aria-label="Loading profile map" /> : <div ref={mapRef} className="mt-4 h-[40vh] w-full overflow-hidden rounded-sm lg:h-full" />}
     </div>
   );
 }

@@ -53,7 +53,7 @@ export default function Footer() {
   }, []);
 
   return (
-    <div className="mt-16 py-4">
+    <footer className="mt-12 py-8">
       <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-4">
         <div className="flex flex-col sm:flex-row items-start md:items-center gap-8 md:gap-16 lg:gap-24">
           <button
@@ -101,6 +101,6 @@ export default function Footer() {
           <div id="kofi-widget" />
         </div>
       </div>
-    </div>
+    </footer>
   );
 }

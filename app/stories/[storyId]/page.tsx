@@ -5,12 +5,10 @@ import { useUser } from "@/context/userContext";
 import { Story } from "@/types/story";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { BiArrowBack, BiArrowToRight } from "react-icons/bi";
-import { BsClock, BsPerson } from "react-icons/bs";
-import { FaUser } from "react-icons/fa";
-import { FaPerson } from "react-icons/fa6";
+import { BsClock } from "react-icons/bs";
 import { GoPerson } from "react-icons/go";
 import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
+import PageSkeleton from "@/components/loaders/pageSkeleton";
 
 type StoryNav = {
   storyId: string;
@@ -23,6 +21,7 @@ export default function StoryPage() {
   const { allUsers } = useUser();
   const { stories } = useStory();
   const [story, setStory] = useState<Story | null>(null);
+  const [storyLoading, setStoryLoading] = useState(true);
   const [previousStory, setPreviousStory] = useState<StoryNav | null>(null);
   const [nextStory, setNextStory] = useState<StoryNav | null>(null);
   const { setIsLoading } = useLoader();
@@ -34,6 +33,8 @@ export default function StoryPage() {
 
   useEffect(() => {
     const getStory = async () => {
+      setStoryLoading(true);
+      setStory(null);
       try {
         const res = await fetch(`/api/stories/getStories/story/${storyId}`);
 
@@ -51,13 +52,16 @@ export default function StoryPage() {
         setStory(null);
         setPreviousStory(null);
         setNextStory(null);
+      } finally {
+        setStoryLoading(false);
       }
     };
 
     getStory();
   }, [storyId]);
 
-  if (!story) return null;
+  if (storyLoading) return <PageSkeleton variant="story" />;
+  if (!story) return <div className="mx-auto max-w-3xl py-24 text-center"><p className="eyebrow text-xs uppercase text-muted">The archive</p><h1 className="mt-3 text-4xl font-bold">This story isn’t available</h1><button onClick={() => router.push("/stories")} className="mt-6 text-accent underline underline-offset-4">Return to stories</button></div>;
 
   const contributor = allUsers.find((u) => u.uid === story.userId);
 
@@ -66,7 +70,7 @@ export default function StoryPage() {
   ).length;
 
   return (
-    <div className="w-full py-16">
+    <article className="mx-auto w-full max-w-6xl py-12 md:py-16">
       <div className="flex items-center gap-4">
         <button
           onClick={() => router.back()}
@@ -92,7 +96,7 @@ export default function StoryPage() {
         {story.source && (
           <p className="text-xs text-muted">From: {story.source}</p>
         )}
-        <h1 className="text-4xl font-bold my-4">{story.title}</h1>
+        <h1 className="max-w-4xl text-4xl md:text-6xl font-bold my-4 leading-[1.02]">{story.title}</h1>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <BsClock className="text-sm text-muted" />
@@ -108,7 +112,7 @@ export default function StoryPage() {
             <p className="text-sm text-muted">{contributor?.name}</p>
           </div>
         </div>
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 my-4">
+        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 my-8 md:my-12">
           <div className="w-full aspect-16/8 md:aspect-16/12">
             <img
               src={story.poster}
@@ -117,7 +121,7 @@ export default function StoryPage() {
             />
           </div>
           <div>
-            <p className="text-base leading-tight text-justify text-muted whitespace-pre-line">
+            <p className="max-w-prose text-base md:text-lg leading-relaxed text-muted whitespace-pre-line">
               {story.story}
             </p>
           </div>
@@ -185,6 +189,6 @@ export default function StoryPage() {
           )}
         </div>
       </div>
-    </div>
+    </article>
   );
 }

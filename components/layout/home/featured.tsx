@@ -1,8 +1,6 @@
 "use client";
 import { FaArrowRight } from "react-icons/fa";
-import { LuBookOpen, LuMapPin } from "react-icons/lu";
-import mayon from "@/assets/mayon.webp";
-import Image from "next/image";
+import { LuMapPin } from "react-icons/lu";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import SecondaryButton from "@/components/buttons/secondaryButton";
@@ -24,7 +22,7 @@ type Story = {
 
 export default function Featured() {
   const [featuredStory, setFeaturedStory] = useState<Story | null>(null);
-  const [featuredLoading, setFeaturedLoading] = useState(false);
+  const [featuredLoading, setFeaturedLoading] = useState(true);
   const { setIsLoading } = useLoader();
   const router = useRouter();
 
@@ -53,15 +51,15 @@ export default function Featured() {
       ) : !featuredStory ? (
         <EmptyStories />
       ) : (
-        <div className="flex w-full items-stretch gap-8">
-          <div className="hidden md:block md:w-2/5 lg:w-1/3">
+        <div className="flex w-full flex-col items-stretch gap-6 md:flex-row md:gap-10">
+          <div className="hidden aspect-[4/3] overflow-hidden rounded-sm md:block md:w-2/5 lg:w-1/3">
             <img
               src={featuredStory.poster}
               alt={featuredStory.title}
               className="w-full h-full object-cover"
             />
           </div>
-          <div className="w-full md:w-3/5 lg:w-2/3 flex flex-col gap-2">
+          <div className="w-full md:w-3/5 lg:w-2/3 flex flex-col gap-3 py-2">
             <p className="font-alt font-semibold uppercase text-base text-muted">
               Featured Story
             </p>
