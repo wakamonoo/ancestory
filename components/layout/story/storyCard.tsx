@@ -31,7 +31,7 @@ export default function StoryCard({ story }: StoryCardProps) {
           <p className="text-sm text-muted truncate">{story.place}</p>
         </div>
 
-        <div className="h-px w-full bg-brown" />
+        <div className="h-px w-full bg-(--color-accent)/40" />
         <p className="text-xs text-muted">
           {story.readingTime > 1
             ? `${story.readingTime} mins read`

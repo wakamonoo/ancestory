@@ -27,7 +27,7 @@ export default function Discover() {
       } else if (window.innerWidth >= 768) {
         setVisibleCount(2);
       } else {
-        setVisibleCount(1);
+        setVisibleCount(4);
       }
     };
 
@@ -64,11 +64,12 @@ export default function Discover() {
         {storiesLoading ? (
           <div className="mt-8 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
             <StoryCardLoader />
+            <StoryCardLoader />
           </div>
         ) : stories.length === 0 ? (
           <EmptyStories />
         ) : (
-          <div className="mt-8 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+          <div className="mt-8 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {stories.slice(0, visibleCount).map((story) => {
               return <StoryCard key={story.storyId} story={story} />;
             })}
