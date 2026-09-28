@@ -125,7 +125,7 @@ export default function StoryPage() {
         <div className="my-4 flex gap-4 items-center border-y border-panel py-4">
           <div className="w-24 h-24 rounded-full overflow-hidden">
             <img
-              src={contributor?.picture}
+              src={contributor?.profilePicture}
               alt={contributor?.name}
               className="w-full h-full object-cover"
             />
