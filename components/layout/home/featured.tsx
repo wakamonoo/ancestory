@@ -59,11 +59,7 @@ export default function Featured() {
             <div className="my-2">
               <h1 className="text-4xl text-normal">{featuredStory.title}</h1>
             </div>
-
-            <p className="text-base text-muted leading-tight line-clamp-3 lg:line-clamp-5 my-4">
-              {featuredStory.story}
-            </p>
-            <div className="mt-4 flex flex-wrap gap-x-8 gap-y-2">
+            <div className="my-4 flex flex-wrap gap-x-8 gap-y-2">
               <div className="flex items-center gap-2">
                 <LuMapPin className="text-sm text-muted shrink-0" />
                 <p className="text-sm text-muted font-alt">
@@ -79,17 +75,31 @@ export default function Featured() {
                 </p>
               </div>
             </div>
-            <div className="mt-8">
+            <div className="flex flex-wrap items-center gap-2 my-2">
+              {featuredStory.categories?.map((category, index) => (
+                <div key={index} className="flex items-center gap-2 p-2 bg-second rounded">
+                  <p className="text-brown text-xs font-semibold font-alt uppercase">
+                    {category}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <div className="h-px w-full bg-(--color-accent)/10 my-2" />
+            <p className="text-base text-muted leading-tight line-clamp-3 lg:line-clamp-5 my-2">
+              {featuredStory.story}
+            </p>
+
+            <div className="my-4">
               <SecondaryButton
                 onClick={() => {
                   setIsLoading(true);
                   router.push(`/stories/${featuredStory.storyId}`);
                 }}
               >
-                <p className="text-brown text-sm font-bold uppercase transition-all duration-200 group-hover:text-(--color-muted)">
+                <p className="text-accent text-sm font-bold uppercase transition-all duration-200 group-hover:text-(--color-brown)">
                   Read Story
                 </p>
-                <FaArrowRight className="text-brown text-sm shrink-0 transition-all duration-200 group-hover:text-(--color-muted)/80" />
+                <FaArrowRight className="text-accent text-sm shrink-0 transition-all duration-200 group-hover:text-(--color-brown)/80" />
               </SecondaryButton>
             </div>
           </div>

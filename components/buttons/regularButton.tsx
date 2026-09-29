@@ -21,10 +21,10 @@ export default function RegularButton({
       onClick={onClick}
       form={form}
       disabled={disabled}
-      className={`mt-2 w-full py-2 px-4 rounded flex justify-center items-center gap-2 ${
+      className={`mt-2 w-full p-4 rounded-lg flex justify-center items-center gap-2 ${
         disabled
-          ? "cursor-not-allowed bg-(--color-accent)/60"
-          : "hover:bg-(--color-accent)/80 cursor-pointer bg-accent"
+          ? "cursor-not-allowed bg-(--color-olive)/60"
+          : "hover:brightness-90 cursor-pointer bg-olive"
       }`}
     >
       {children}

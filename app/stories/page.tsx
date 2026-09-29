@@ -27,18 +27,28 @@ export default function Stories() {
         </button>
         <p className="text-xs text-muted uppercase">Back</p>
       </div>
-
-      {storiesLoading ? (
-        <div className="mt-4 w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
-          <StoryCardLoader />
+      <div className="mt-4">
+        <h1 className="text-2xl">All Stories</h1>
+        <p className="text-base text-muted mt-2">
+          Browse through our collection of local stories, folklore, memories, and history from different places and communities.
+        </p>
+        <div className="h-px w-full bg-(--color-accent)/10 my-8" />
+        <div>
+          {storiesLoading ? (
+            <div className="mt-4 w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+              <StoryCardLoader />
+              <StoryCardLoader />
+              <StoryCardLoader />
+            </div>
+          ) : (
+            <div className="mt-4 w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+              {stories.map((story) => {
+                return <StoryCard key={story.storyId} story={story} />;
+              })}
+            </div>
+          )}
         </div>
-      ) : (
-        <div className="mt-4 w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
-          {stories.map((story) => {
-            return <StoryCard key={story.storyId} story={story} />;
-          })}
-        </div>
-      )}
+      </div>
     </div>
   );
 }

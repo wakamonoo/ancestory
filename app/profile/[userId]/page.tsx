@@ -2,7 +2,7 @@
 import { useStory } from "@/context/storyContext";
 import { useUser } from "@/context/userContext";
 import mayon from "@/assets/mayon.webp";
-import { LuMapPin } from "react-icons/lu";
+import { LuArrowLeft, LuMapPin } from "react-icons/lu";
 import { useLoader } from "@/context/loaderContext";
 import { useRouter } from "next/navigation";
 import UserPlaces from "@/components/layout/profile/usePlaces";
@@ -22,6 +22,7 @@ export default function UserProfile() {
   const { userStories, userStoriesLoading } = useStory();
   const { setIsLoading } = useLoader();
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setIsLoading(false);
@@ -66,6 +67,15 @@ export default function UserProfile() {
                 </div>
               </div>
             </div>
+          </div>
+          <div className="absolute top-4 left-10 flex items-center gap-2">
+            <button
+              onClick={() => router.back()}
+              className="cursor-pointer group rounded-full p-2 transition-all duration-200 hover:bg-(--color-accent) active:bg-(--color-accent)"
+            >
+              <LuArrowLeft className="text-xs text-accent transition-all duration-200 group-hover:text-(--color-secondary) group-active:text-(--color-secondary) shrink-0" />
+            </button>
+            <p className="text-xs text-accent font-semibold uppercase">Back</p>
           </div>
           <div className="absolute top-4 right-10">
             <ActionButton onClick={() => setShowEditProfileModal(true)}>

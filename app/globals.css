@@ -8,14 +8,14 @@
 @layer base {
   :root {
     --color-bg: #f4f1e9; /* ———————————————————————————————————— primary bg (warm paper) ——— */
-    --color-accent: #9a5c45; /* ———————————————————————————————————— terracotta accent ——— */
+    --color-accent: #765746; /* ———————————————————————————————————— terracotta accent ——— */
     --color-text: #252421; /* ———————————————————————————————————— normal text ——— */
     --color-panel: #faf8f2; /* ———————————————————————————————————— panel bg ——— */
     --color-secondary: #ddd8ca; /* ———————————————————————————————————— secondary bg ——— */
     --color-muted: #77736a; /* ———————————————————————————————————— muted text ——— */
     --color-border: #d8d2c5; /* ———————————————————————————————————— dividers ——— */
     --color-olive: #66664b; /* ———————————————————————————————————— olive ——— */
-    --color-brown: #765746; /* ———————————————————————————————————— brown accent ——— */
+    --color-brown: #65493C; /* ———————————————————————————————————— brown accent ——— */
     --color-accent-dark: #7d4937; /* ———————————————————————————————————— hover ——— */
 
     --font-heading:

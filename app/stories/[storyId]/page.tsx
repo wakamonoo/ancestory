@@ -74,14 +74,15 @@ export default function StoryPage() {
             alt={story.title}
             className="absolute inset-0 w-full h-full object-cover"
           />
+          <div className="absolute inset-0 bg-linear-to-br from-(--color-bg) via-(--color-bg)/0 to-transparent" />
           <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
             <button
               onClick={() => router.back()}
-              className="cursor-pointer group rounded-full p-2 transition-all duration-200 hover:bg-(--color-muted) active:bg-(--color-muted)"
+              className="cursor-pointer group rounded-full p-2 transition-all duration-200 hover:bg-(--color-accent) active:bg-(--color-accent)"
             >
-              <LuArrowLeft className="text-xs text-brand transition-all duration-200 group-hover:text-(--color-secondary) group-active:text-(--color-secondary) shrink-0" />
+              <LuArrowLeft className="text-xs text-accent transition-all duration-200 group-hover:text-(--color-secondary) group-active:text-(--color-secondary) shrink-0" />
             </button>
-            <p className="text-xs text-brand uppercase">Back</p>
+            <p className="text-xs text-accent font-semibold uppercase">Back</p>
           </div>
         </div>
         <div className="p-4">

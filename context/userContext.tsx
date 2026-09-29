@@ -26,7 +26,7 @@ type UserContextType = {
   user: User | null;
   fetchUser: (uid: string) => Promise<void>;
   firebaseUser: FirebaseUser | null;
-  isLogged: boolean;
+  isLogged: boolean | null;
   isLoading: boolean;
   setShowSignInModal: Dispatch<SetStateAction<boolean>>;
   allUsers: User[];
@@ -50,7 +50,7 @@ export const useUser = () => {
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
-  const [isLogged, setIsLogged] = useState<boolean>(false);
+  const [isLogged, setIsLogged] = useState<boolean | null>(null);
   const [showSignInModal, setShowSignInModal] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [allUsers, setAllUsers] = useState<User[]>([]);

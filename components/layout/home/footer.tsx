@@ -1,5 +1,5 @@
 "use client";
-import Logo from "@/assets/logo.png";
+import Logo from "@/assets/main_logo.png";
 import RegularButton from "@/components/buttons/regularButton";
 import { useNavigation } from "@/context/navigationContext";
 import Image from "next/image";
@@ -36,7 +36,7 @@ export default function Footer() {
       if (window.kofiwidget2) {
         window.kofiwidget2.init(
           "Support AnceStory on Ko-fi",
-          "#9a5c45",
+          "#765746",
           "U5F225NGUC",
         );
 
@@ -71,7 +71,7 @@ export default function Footer() {
               onClick={handleStoriesClick}
               className="cursor-pointer group"
             >
-              <p className="text-sm font-semibold transition-all duration-200 text-muted group-hover:text-(--color-normal)">
+              <p className="text-sm font-semibold transition-all duration-200 text-accent group-hover:text-(--color-brownl)">
                 Stories
               </p>
             </button>
@@ -79,7 +79,7 @@ export default function Footer() {
               onClick={handlePlacesClick}
               className="cursor-pointer group"
             >
-              <p className="text-sm font-semibold transition-all duration-200 text-muted group-hover:text-(--color-normal)">
+              <p className="text-sm font-semibold transition-all duration-200 text-accent group-hover:text-(--color-brownl)">
                 Places
               </p>
             </button>
@@ -87,7 +87,7 @@ export default function Footer() {
               onClick={handleContributorsClick}
               className="cursor-pointer group"
             >
-              <p className="text-sm font-semibold transition-all duration-200 text-muted group-hover:text-(--color-normal)">
+              <p className="text-sm font-semibold transition-all duration-200 text-accent group-hover:text-(--color-brownl)">
                 Contributors
               </p>
             </button>

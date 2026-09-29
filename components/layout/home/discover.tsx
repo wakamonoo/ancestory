@@ -53,10 +53,10 @@ export default function Discover() {
                 router.push("/stories");
               }}
             >
-              <p className="text-brown font-bold uppercase text-sm transition-all duration-200 group-hover:text-(--color-muted)">
+              <p className="text-accent font-bold uppercase text-sm transition-all duration-200 group-hover:text-(--color-brown)">
                 View all
               </p>
-              <FaArrowRight className="text-brown text-sm transition-all duration-200 group-hover:text-(--color-muted)" />
+              <FaArrowRight className="text-accent text-sm transition-all duration-200 group-hover:text-(--color-brown)" />
             </SecondaryButton>
           )}
         </div>

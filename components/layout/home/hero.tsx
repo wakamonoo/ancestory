@@ -1,5 +1,6 @@
 "use client";
 import HeroImg from "@/assets/hero-img.png"
+import CTAButton from "@/components/buttons/ctaButton";
 import RegularButton from "@/components/buttons/regularButton";
 import Image from "next/image";
 import { FaArrowRight } from "react-icons/fa";
@@ -21,7 +22,7 @@ export default function Hero() {
             ones who still remember.
           </p>
           <div className="w-fit">
-            <RegularButton
+            <CTAButton
               onClick={() => {
                 document
                   .getElementById("discover")
@@ -32,7 +33,7 @@ export default function Hero() {
                 Explore the archive
               </p>
               <FaArrowRight className="text-sm text-brand shrink-0" />
-            </RegularButton>
+            </CTAButton>
           </div>
         </div>
         <div className="mt-8 md:mt-0 w-full md:w-3/5">
