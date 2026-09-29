@@ -63,10 +63,10 @@ export default function LocationPicker({
       }).addTo(map);
 
       if (selectedLocation) {
-        markerRef.current = L.marker([
-          selectedLocation.latitude,
-          selectedLocation.longitude,
-        ]).addTo(map);
+        markerRef.current = L.marker(
+          [selectedLocation.latitude, selectedLocation.longitude],
+          { icon: markerIcon },
+        ).addTo(map);
       }
 
       map.on("click", (e: any) => {
@@ -148,7 +148,7 @@ export default function LocationPicker({
             disabled={!selectedLocation}
             onClick={() => handleConfirm()}
           >
-            <p className="font-bold text-normal text-base">Add</p>
+            <p className="font-bold text-brand text-base">Mark Location</p>
           </RegularButton>
         </div>
       </div>

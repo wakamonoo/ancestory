@@ -32,7 +32,7 @@ export default function UserProfile() {
     <>
       <div className="w-full py-16">
         <div className="relative">
-          <div className="relative min-h-72 overflow-hidden">
+          <div className="relative min-h-64 max-h-84 overflow-hidden">
             <img
               src={user?.coverPhoto || Cover.src}
               alt={user?.name}
@@ -40,7 +40,7 @@ export default function UserProfile() {
             />
 
             <div className="absolute inset-0 bg-linear-to-r from-(--color-bg) via-(--color-bg)/80 to-transparent" />
-            <div className="relative flex items-center gap-4 min-h-72 px-8">
+            <div className="relative flex items-center gap-4 min-h-64 max-h-84 px-8">
               <div className="w-32 h-32 shrink-0 rounded-full overflow-hidden">
                 <img
                   src={user?.profilePicture}
@@ -58,9 +58,9 @@ export default function UserProfile() {
                     <p className="text-sm text-normal font-semibold">
                       {userStories.length}
                     </p>
-                    <span className="text-xs text-muted">Stories</span>
+                    <span className="text-xs text-normal">Stories</span>
                   </div>
-                  <div className="h-8 w-px bg-panel" />
+                  <div className="h-8 w-px bg-(--color-accent)/10" />
                   <p className="text-sm text-normal font-semibold">
                     Joined {new Date(user?.createdAt ?? "").getFullYear()}
                   </p>
@@ -68,16 +68,16 @@ export default function UserProfile() {
               </div>
             </div>
           </div>
-          <div className="absolute top-4 left-10 flex items-center gap-2">
+          <div className="absolute top-4 left-2  flex items-center gap-2">
             <button
               onClick={() => router.back()}
               className="cursor-pointer group rounded-full p-2 transition-all duration-200 hover:bg-(--color-accent) active:bg-(--color-accent)"
             >
-              <LuArrowLeft className="text-xs text-accent transition-all duration-200 group-hover:text-(--color-secondary) group-active:text-(--color-secondary) shrink-0" />
+              <LuArrowLeft className="text-base text-accent transition-all duration-200 group-hover:text-(--color-secondary) group-active:text-(--color-secondary) shrink-0" />
             </button>
             <p className="text-xs text-accent font-semibold uppercase">Back</p>
           </div>
-          <div className="absolute top-4 right-10">
+          <div className="absolute top-4 right-2">
             <ActionButton onClick={() => setShowEditProfileModal(true)}>
               <FaPencil className="text-base text-muted shrink-0" />
               <p className="text-muted font-bold">Edit</p>

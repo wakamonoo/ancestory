@@ -12,6 +12,16 @@ export async function POST(request: Request) {
     const mongodb = process.env.MONGODB;
     const db = client.db(mongodb);
 
+    const existingUser = await db.collection("users").findOne({ uid });
+
+    if (existingUser) {
+      return Response.json({
+        success: true,
+        message: "user signed up succesfully",
+        userName: existingUser.name,
+      });
+    }
+
     await db.collection("users").updateOne(
       {
         uid,
@@ -32,6 +42,7 @@ export async function POST(request: Request) {
     return Response.json({
       success: true,
       message: "user signed up succesfully",
+      userName: name,
     });
   } catch (err) {
     console.error("failed to create user", err);

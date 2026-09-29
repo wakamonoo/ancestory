@@ -50,7 +50,7 @@ export default function SignInModal() {
       }
       if (user && token) {
         try {
-          await fetch("api/users/signup", {
+          const res = await fetch("api/users/signup", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -59,11 +59,14 @@ export default function SignInModal() {
               token,
             }),
           });
+
+          const data = await res.json();
+
           setShowSignInModal(false);
           Swal.fire({
             toast: true,
             position: "bottom-start",
-            title: `Welcome,`,
+            title: `Welcome, ${data.userName}`,
             icon: "success",
             timer: 2000,
             showConfirmButton: false,
@@ -123,9 +126,7 @@ export default function SignInModal() {
           {isLogged ? (
             <RoundedButton onClick={handleSignIn}>
               <div className="flex gap-2 items-center justify-center">
-                <p className="font-bold text-brand text-base">
-                  Logout Account
-                </p>
+                <p className="font-bold text-brand text-base">Logout Account</p>
                 <MdLogout className="text-2xl text-brand shrink-0" />
               </div>
             </RoundedButton>

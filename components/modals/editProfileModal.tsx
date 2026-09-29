@@ -60,7 +60,7 @@ export default function EditProfileModal({
             Swal.fire({
               toast: true,
               position: "bottom-start",
-              title: errorData.message,
+              title: "File too large, 50 MB maximum per file!",
               icon: "error",
               timer: 2000,
               showConfirmButton: false,
@@ -98,7 +98,7 @@ export default function EditProfileModal({
             Swal.fire({
               toast: true,
               position: "bottom-start",
-              title: errorData.message,
+              title: "File too large, 50 MB maximum per file!",
               icon: "error",
               timer: 2000,
               showConfirmButton: false,
@@ -301,7 +301,7 @@ export default function EditProfileModal({
             disabled={!hasChanges}
             form="edit-profile-form"
           >
-            <p className="font-bold text-normal text-base">Submit changes</p>
+            <p className="font-bold text-normal text-base">Submit Changes</p>
           </RegularButton>
         </div>
       </div>

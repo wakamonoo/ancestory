@@ -8,9 +8,9 @@ export type Story = {
     longitude: number;
   };
   poster: string;
-  story: string;
+  story?: string;
   categories: string[];
-  source?: string;
+  source: string;
   readingTime: number;
   createdAt: string;
 };

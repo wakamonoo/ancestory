@@ -8,9 +8,11 @@ import { useLoader } from "@/context/loaderContext";
 import LocationPicker from "./locationPickerModal";
 import SecondaryButton from "../buttons/secondaryButton";
 import TertiaryButton from "../buttons/tertiaryButton";
+import { Story } from "@/types/story";
 
-type AddStoryModalProps = {
-  setShowAddStoryModal: (value: boolean) => void;
+type EditStoryModalProps = {
+  storyToEdit: Story;
+  setShowEditStoryModal: (value: boolean) => void;
 };
 
 type Location = {
@@ -18,7 +20,10 @@ type Location = {
   longitude: number;
 };
 
-export default function AddStoryModal({ setShowAddStoryModal }: AddStoryModalProps) {
+export default function EditStoryModal({
+  storyToEdit,
+  setShowEditStoryModal,
+}: EditStoryModalProps) {
   const { user } = useUser();
   const [title, setTitle] = useState<string>("");
   const [place, setPlace] = useState<string>("");
@@ -30,6 +35,15 @@ export default function AddStoryModal({ setShowAddStoryModal }: AddStoryModalPro
   const [source, setSource] = useState<string>("");
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const { setIsLoading } = useLoader();
+
+  useEffect(() => {
+    setTitle(storyToEdit.title);
+    setPlace(storyToEdit.place);
+    setLocation(storyToEdit.location);
+    setStory(storyToEdit.story ?? "");
+    setCategories(storyToEdit.categories);
+    setSource(storyToEdit.source);
+  }, [storyToEdit]);
 
   useEffect(() => {
     const textarea = inputRef.current;
@@ -53,7 +67,6 @@ export default function AddStoryModal({ setShowAddStoryModal }: AddStoryModalPro
       if (
         !title.trim() ||
         !place.trim() ||
-        !file ||
         !story.trim() ||
         categories.length === 0
       ) {
@@ -75,53 +88,60 @@ export default function AddStoryModal({ setShowAddStoryModal }: AddStoryModalPro
         });
         return;
       }
-      const formData = new FormData();
 
-      formData.append("file", file);
+      let poster = storyToEdit.poster;
 
-      const uploadRes = await fetch("/api/uploads/storyPosters", {
-        method: "POST",
-        body: formData,
-      });
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
 
-      if (!uploadRes.ok) {
-        const errorData = await uploadRes.json();
+        const uploadRes = await fetch("/api/uploads/storyPosters", {
+          method: "POST",
+          body: formData,
+        });
 
-        if (uploadRes.status === 413) {
-          Swal.fire({
-            toast: true,
-            position: "bottom-start",
-            title: "File too large, 50 MB maximum per file!",
-            icon: "error",
-            timer: 2000,
-            showConfirmButton: false,
-            background: "var(--color-secondary)",
-            iconColor: "var(--color-accent)",
-            customClass: {
-              popup:
-                "!w-full !max-w-xs !inline-flex !items-center !justify-center !border !border-(--color-panel) !text-normal !rounded-lg !shadow-lg !px-4 !py-2",
-              title:
-                "!text-base !font-semibold !text-(--color-text) !leading-4.5",
-            },
-          });
-          return;
+        if (!uploadRes.ok) {
+          const errorData = await uploadRes.json();
+
+          if (uploadRes.status === 413) {
+            Swal.fire({
+              toast: true,
+              position: "bottom-start",
+              title: "File too large, 50 MB maximum per file!",
+              icon: "error",
+              timer: 2000,
+              showConfirmButton: false,
+              background: "var(--color-secondary)",
+              iconColor: "var(--color-accent)",
+              customClass: {
+                popup:
+                  "!w-full !max-w-xs !inline-flex !items-center !justify-center !border !border-(--color-panel) !text-normal !rounded-lg !shadow-lg !px-4 !py-2",
+                title:
+                  "!text-base !font-semibold !text-(--color-text) !leading-4.5",
+              },
+            });
+            return;
+          }
+          throw new Error(errorData.error || "Upload failed");
         }
-        throw new Error(errorData.error || "Upload failed");
+
+        const { url } = await uploadRes.json();
+
+        poster = url;
       }
 
-      const { url } = await uploadRes.json();
-
-      await fetch("/api/stories/addStory", {
-        method: "POST",
+      await fetch("/api/stories/updateStory", {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          storyId: storyToEdit.storyId,
           userId: user?.uid,
           title,
           place,
           location,
-          url,
+          poster,
           story,
           categories,
           source,
@@ -129,12 +149,12 @@ export default function AddStoryModal({ setShowAddStoryModal }: AddStoryModalPro
         }),
       });
 
-      setShowAddStoryModal(false);
+      setShowEditStoryModal(false);
 
       Swal.fire({
         toast: true,
         position: "bottom-start",
-        title: "Story now live!",
+        title: "Story udpated!",
         icon: "success",
         timer: 2000,
         showConfirmButton: false,
@@ -167,11 +187,11 @@ export default function AddStoryModal({ setShowAddStoryModal }: AddStoryModalPro
       setIsLoading(false);
     }
   };
-  
+
   return (
     <>
       <div
-        onClick={() => setShowAddStoryModal(false)}
+        onClick={() => setShowEditStoryModal(false)}
         className="fixed inset-0 z-9999 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm"
       >
         <div
@@ -179,11 +199,11 @@ export default function AddStoryModal({ setShowAddStoryModal }: AddStoryModalPro
           className="relative flex flex-col w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-2xl border border-panel bg-second shadow-2xl"
         >
           <div className="flex items-center justify-between border-b border-panel p-4">
-            <h1 className="text-base font-bold text-normal">Share a Story</h1>
+            <h1 className="text-base font-bold text-normal">Edit Story</h1>
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setShowAddStoryModal(false);
+                setShowEditStoryModal(false);
               }}
               className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-vibe transition hover:bg-(--color-panel) hover:text-(--color-accent) shrink-0"
             >
@@ -217,6 +237,11 @@ export default function AddStoryModal({ setShowAddStoryModal }: AddStoryModalPro
                   </p>
                 </TertiaryButton>
               </div>
+              <img
+                src={file ? URL.createObjectURL(file) : storyToEdit.poster}
+                alt={storyToEdit.title}
+                className="w-full max-h-64 object-cover rounded-lg"
+              />
               <label
                 htmlFor="fileUpload"
                 className="w-full cursor-pointer flex gap-4 items-center justify-center p-4 border border-dashed"
@@ -224,7 +249,7 @@ export default function AddStoryModal({ setShowAddStoryModal }: AddStoryModalPro
                 <RiImage2Fill className="text-4xl shrink-0" />
                 <div className="flex flex-col justify-center items-start">
                   <p className="text-base font-bold">
-                    {file ? file.name : "Add poster"}
+                    {file ? file.name : "Change poster"}
                   </p>
                   <span className="text-xs text-muted">
                     (Maximum size of 50mb)
@@ -312,7 +337,7 @@ export default function AddStoryModal({ setShowAddStoryModal }: AddStoryModalPro
             </div>
 
             <RegularButton onClick={submitStory}>
-              <p className="font-bold text-brand text-base">Submit Story</p>
+              <p className="font-bold text-brand text-base">Save Changes</p>
             </RegularButton>
           </div>
         </div>
