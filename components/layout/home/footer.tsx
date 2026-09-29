@@ -100,7 +100,9 @@ export default function Footer() {
       </div>
       <div className="h-px w-full bg-(--color-accent)/10 my-4" />
       <div className="flex flex-col sm:flex-row sm:justify-between gap-2">
-        <h4 className="text-xs text-muted">Ancestral Stories, Local People.</h4>
+        <h4 className="text-xs text-muted">
+          Local Stories. Lasting Impressions.
+        </h4>
         <p className="text-xs text-muted">{`© ${new Date().getFullYear()} AnceStory. All rights reserved.`}</p>
       </div>
     </div>

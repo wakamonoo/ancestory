@@ -1,4 +1,6 @@
 "use client";
+import SecondaryButton from "@/components/buttons/secondaryButton";
+import StoryCard from "@/components/layout/story/storyCard";
 import { useLoader } from "@/context/loaderContext";
 import { useStory } from "@/context/storyContext";
 import { useUser } from "@/context/userContext";
@@ -7,7 +9,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BiArrowBack, BiArrowToRight } from "react-icons/bi";
 import { BsClock, BsPerson } from "react-icons/bs";
-import { FaUser } from "react-icons/fa";
+import { FaArrowRight, FaUser } from "react-icons/fa";
 import { FaPerson } from "react-icons/fa6";
 import { GoPerson } from "react-icons/go";
 import { LuArrowLeft, LuArrowRight, LuMapPin } from "react-icons/lu";
@@ -25,6 +27,7 @@ export default function StoryPage() {
   const [story, setStory] = useState<Story | null>(null);
   const [previousStory, setPreviousStory] = useState<StoryNav | null>(null);
   const [nextStory, setNextStory] = useState<StoryNav | null>(null);
+  const [otherStories, setOtherStories] = useState<Story[]>([]);
   const { setIsLoading } = useLoader();
   const router = useRouter();
 
@@ -46,11 +49,13 @@ export default function StoryPage() {
         setStory(data.story);
         setPreviousStory(data.previous);
         setNextStory(data.next);
+        setOtherStories(data.otherStories);
       } catch (err) {
         console.error(err);
         setStory(null);
         setPreviousStory(null);
         setNextStory(null);
+        setOtherStories([]);
       }
     };
 
@@ -126,7 +131,7 @@ export default function StoryPage() {
         </div>
       </div>
       <div>
-        <div className="my-4 flex gap-4 items-center border-y border-panel py-4">
+        <div className="my-4 lg:my-0 flex gap-4 items-center border-y border-(--color-accent)/10 py-4">
           <div className="w-24 h-24 rounded-full overflow-hidden">
             <img
               src={contributor?.profilePicture}
@@ -187,6 +192,31 @@ export default function StoryPage() {
               </div>
             </div>
           )}
+        </div>
+        <div className="mt-4 border-t border-(--color-accent)/10 py-4">
+          <div className="w-full flex justify-between">
+            <p className="font-alt font-semibold uppercase text-base text-brown">
+              Other Stories
+            </p>
+            {otherStories.length > 0 && (
+              <SecondaryButton
+                onClick={() => {
+                  setIsLoading(true);
+                  router.push("/stories");
+                }}
+              >
+                <p className="text-accent font-bold uppercase text-sm transition-all duration-200 group-hover:text-(--color-brown)">
+                  View all
+                </p>
+                <FaArrowRight className="text-accent text-sm transition-all duration-200 group-hover:text-(--color-brown)" />
+              </SecondaryButton>
+            )}
+          </div>
+          <div className="mt-4 w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-8">
+            {otherStories.map((story) => (
+              <StoryCard key={story.storyId} story={story} />
+            ))}
+          </div>
         </div>
       </div>
     </div>

@@ -59,19 +59,34 @@ export async function GET(
             _id: 0,
             storyId: 1,
             title: 1,
-            place:1,
+            place: 1,
+          },
+        },
+      )
+      .sort({ createdAt: 1 })
+      .limit(1)
+      .next();
+
+    const otherStories = await stories
+      .find(
+        {
+          storyId: { $ne: storyId },
+        },
+        {
+          projection: {
+            _id: 0,
           },
         },
       )
       .sort({ createdAt: -1 })
-      .limit(1)
-      .next();
+      .toArray();
 
     return Response.json({
       success: true,
       story,
       previous,
       next,
+      otherStories,
     });
   } catch (err) {
     console.error("failed to fetch story", err);

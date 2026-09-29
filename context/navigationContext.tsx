@@ -59,14 +59,9 @@ export const NavigationProvider = ({ children }: NavigationProviderProps) => {
 
   const handleStoriesClick = () => {
     if (pathname === "/") {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-
       document
         .getElementById("discover")
-        ?.scrollIntoView({ behavior: "smooth" });
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
     } else {
       setIsLoading(true);
       router.push("/#discover");
@@ -75,30 +70,20 @@ export const NavigationProvider = ({ children }: NavigationProviderProps) => {
 
   const handlePlacesClick = () => {
     if (pathname === "/") {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-
       document
-        .getElementById("contributors")
-        ?.scrollIntoView({ behavior: "smooth" });
+        .getElementById("places")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
     } else {
       setIsLoading(true);
-      router.push("/#contributors");
+      router.push("/#places");
     }
   };
 
   const handleContributorsClick = () => {
     if (pathname === "/") {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-
       document
         .getElementById("contributors")
-        ?.scrollIntoView({ behavior: "smooth" });
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
     } else {
       setIsLoading(true);
       router.push("/#contributors");
