@@ -3,8 +3,6 @@ import Logo from "@/assets/main_logo.png";
 import { FaBars, FaChevronDown, FaSearch, FaUser } from "react-icons/fa";
 import { useRef, useState } from "react";
 import Image from "next/image";
-import MinMenu from "../../options/minMenu";
-import MaxMenu from "../../options/maxMenu";
 import SignInModal from "@/components/modals/signInModal";
 import { useUser } from "@/context/userContext";
 import { usePathname, useRouter } from "next/navigation";
@@ -14,19 +12,21 @@ import AddStoryModal from "@/components/modals/addStoryModal";
 import { MdClose } from "react-icons/md";
 import { FaXmark } from "react-icons/fa6";
 import UserIconLoader from "@/components/loaders/userIconLoader";
+import MaxMenuOptions from "@/components/options/maxMenuOptions";
+import MinMenuOptions from "@/components/options/minMenuOptions";
 
 export default function NavBar() {
   const { user, isLogged, isLoading } = useUser();
-  const [showMinMenu, setShowMinMenu] = useState(false);
-  const [showMaxMenu, setShowMaxMenu] = useState(false);
+  const [showMinMenuOptions, setShowMinMenuOptions] = useState(false);
+  const [showMaxMenuOptions, setShowMaxMenuOptions] = useState(false);
   const {
     handleHomeClick,
     handleStoriesClick,
     handlePlacesClick,
     handleContributorsClick,
   } = useNavigation();
-  const minMenuButtonRef = useRef<HTMLButtonElement | null>(null);
-  const maxMenuButtonRef = useRef<HTMLButtonElement | null>(null);
+  const minMenuOptionsButtonRef = useRef<HTMLButtonElement | null>(null);
+  const maxMenuOptionsButtonRef = useRef<HTMLButtonElement | null>(null);
   const [showAddStoryModal, setShowAddStoryModal] = useState(false);
 
   return (
@@ -34,7 +34,11 @@ export default function NavBar() {
       <div className="fixed z-9999 w-full flex justify-between items-center py-4 px-4 md:px-8 lg:px-16 h-14 bg-brand">
         <button onClick={handleHomeClick} className="cursor-pointer">
           <div className="w-32 h-auto">
-            <Image src={Logo} alt="AnceStory" className="w-full h-full object-contain" />
+            <Image
+              src={Logo}
+              alt="AnceStory"
+              className="w-full h-full object-contain"
+            />
           </div>
         </button>
 
@@ -68,28 +72,28 @@ export default function NavBar() {
           <div>
             <div className="relative">
               <button
-                ref={minMenuButtonRef}
-                onClick={() => setShowMinMenu((prev) => !prev)}
+                ref={minMenuOptionsButtonRef}
+                onClick={() => setShowMinMenuOptions((prev) => !prev)}
                 className="cursor-pointer block lg:hidden"
               >
-                {showMinMenu ? (
+                {showMinMenuOptions ? (
                   <FaXmark className="text-2xl shrink-0" />
                 ) : (
                   <FaBars className="text-2xl shrink-0" />
                 )}
               </button>
-              {showMinMenu && (
-                <MinMenu
-                  setShowMinMenu={setShowMinMenu}
-                  minMenuButtonRef={minMenuButtonRef}
+              {showMinMenuOptions && (
+                <MinMenuOptions
+                  setShowMinMenuOptions={setShowMinMenuOptions}
+                  minMenuOptionsButtonRef={minMenuOptionsButtonRef}
                   setShowAddStoryModal={setShowAddStoryModal}
                 />
               )}
             </div>
             <div className="relative hidden lg:flex">
               <button
-                ref={maxMenuButtonRef}
-                onClick={() => setShowMaxMenu((prev) => !prev)}
+                ref={maxMenuOptionsButtonRef}
+                onClick={() => setShowMaxMenuOptions((prev) => !prev)}
                 className="cursor-pointer flex items-center gap-2"
               >
                 {isLogged && user?.profilePicture ? (
@@ -109,10 +113,10 @@ export default function NavBar() {
                 )}
                 <FaChevronDown className="text-sm" />
               </button>
-              {showMaxMenu && (
-                <MaxMenu
-                  setShowMaxMenu={setShowMaxMenu}
-                  maxMenuButtonRef={maxMenuButtonRef}
+              {showMaxMenuOptions && (
+                <MaxMenuOptions
+                  setShowMaxMenuOptions={setShowMaxMenuOptions}
+                  maxMenuOptionsButtonRef={maxMenuOptionsButtonRef}
                   setShowAddStoryModal={setShowAddStoryModal}
                 />
               )}

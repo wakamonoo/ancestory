@@ -16,12 +16,15 @@ import EditProfileModal from "@/components/modals/editProfileModal";
 import Cover from "@/assets/cover.png";
 import EmptyUserStories from "@/components/fallbacks/emptyUserStories";
 import StoryCardLoader from "@/components/loaders/storyCardLoader";
+import ConfirmAccountDeleteModal from "@/components/modals/confirmAccountDeleteModal";
 
 export default function UserProfile() {
   const { user } = useUser();
   const { userStories, userStoriesLoading } = useStory();
   const { setIsLoading } = useLoader();
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
+  const [showConfirmAccountDeleteModal, setShowConfirmAccountDeleteModal] =
+    useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -100,7 +103,16 @@ export default function UserProfile() {
         </div>
       </div>
       {showEditProfileModal && (
-        <EditProfileModal setShowEditProfileModal={setShowEditProfileModal} />
+        <EditProfileModal
+          setShowEditProfileModal={setShowEditProfileModal}
+          setShowConfirmAccountDeleteModal={setShowConfirmAccountDeleteModal}
+        />
+      )}
+      {showConfirmAccountDeleteModal && user && (
+        <ConfirmAccountDeleteModal
+          accountToDelete={user}
+          setShowConfirmAccountDeleteModal={setShowConfirmAccountDeleteModal}
+        />
       )}
     </>
   );

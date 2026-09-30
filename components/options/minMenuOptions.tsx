@@ -17,17 +17,17 @@ import { useNavigation } from "@/context/navigationContext";
 import { useLoader } from "@/context/loaderContext";
 import { useRouter } from "next/navigation";
 
-type MinMenuProps = {
-  setShowMinMenu: (value: boolean) => void;
-  minMenuButtonRef: React.RefObject<HTMLButtonElement | null>;
+type MinMenuOptionsProps = {
+  setShowMinMenuOptions: (value: boolean) => void;
+  minMenuOptionsButtonRef: React.RefObject<HTMLButtonElement | null>;
   setShowAddStoryModal: (value: boolean) => void;
 };
 
-export default function MinMenu({
-  setShowMinMenu,
-  minMenuButtonRef,
+export default function MinMenuOptionsOptions({
+  setShowMinMenuOptions,
+  minMenuOptionsButtonRef,
   setShowAddStoryModal,
-}: MinMenuProps) {
+}: MinMenuOptionsProps) {
   const { user, setShowSignInModal } = useUser();
   const divRef = useRef<HTMLDivElement | null>(null);
   const { setIsLoading } = useLoader();
@@ -40,10 +40,10 @@ export default function MinMenu({
       if (
         divRef.current &&
         !divRef.current.contains(e.target as Node) &&
-        minMenuButtonRef.current &&
-        !minMenuButtonRef.current.contains(e.target as Node)
+        minMenuOptionsButtonRef.current &&
+        !minMenuOptionsButtonRef.current.contains(e.target as Node)
       ) {
-        setShowMinMenu(false);
+        setShowMinMenuOptions(false);
       }
     }
     document.addEventListener("pointerdown", handleOutClick);
@@ -55,7 +55,7 @@ export default function MinMenu({
   return (
     <div
       ref={divRef}
-      className="absolute top-12 right-0 bg-brand h-fit w-[80vw] p-4 rounded-lg shadow-2xl z-150"
+      className="absolute top-12 right-0 bg-brand h-fit w-[80vw] border border-panel bg-second rounded-lg shadow-2xl p-2 z-150"
     >
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
@@ -78,7 +78,7 @@ export default function MinMenu({
             <MenuButton
               onClick={() => {
                 setIsLoading(true);
-                setShowMinMenu(false);
+                setShowMinMenuOptions(false);
                 router.push(`/profile/${user?.uid}}`);
               }}
             >
@@ -105,7 +105,7 @@ export default function MinMenu({
             <MenuButton
               onClick={() => {
                 if (user) {
-                  setShowMinMenu(false);
+                  setShowMinMenuOptions(false);
                   setShowAddStoryModal(true);
                 } else {
                   setShowSignInModal(true);

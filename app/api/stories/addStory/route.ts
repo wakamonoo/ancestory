@@ -2,19 +2,19 @@ import clientPromise from "@/lib/mongodb";
 import { v4 as uuidv4 } from "uuid";
 
 export async function POST(request: Request) {
-  const {
-    userId,
-    title,
-    place,
-    location,
-    url,
-    story,
-    source,
-    categories,
-    readingTime,
-  } = await request.json();
-
   try {
+    const {
+      userId,
+      title,
+      place,
+      location,
+      url,
+      story,
+      source,
+      categories,
+      readingTime,
+    } = await request.json();
+
     const client = await clientPromise;
     const mongodb = process.env.MONGODB;
     const db = client.db(mongodb);

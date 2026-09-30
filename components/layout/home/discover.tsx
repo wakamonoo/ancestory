@@ -1,6 +1,5 @@
 "use client";
 import mayon from "@/assets/mayon.webp";
-import SecondaryButton from "@/components/buttons/secondaryButton";
 import EmptyStories from "@/components/fallbacks/emptyStories";
 import StoryCardLoader from "@/components/loaders/storyCardLoader";
 import { useLoader } from "@/context/loaderContext";
@@ -13,6 +12,7 @@ import { useEffect, useState } from "react";
 import { FaArrowRight } from "react-icons/fa";
 import { LuMapPin } from "react-icons/lu";
 import StoryCard from "../story/storyCard";
+import TransparentButton from "@/components/buttons/transparentButton";
 
 export default function Discover() {
   const { stories, storiesLoading } = useStory();
@@ -47,7 +47,7 @@ export default function Discover() {
             From the archive
           </p>
           {stories.length > 0 && (
-            <SecondaryButton
+            <TransparentButton
               onClick={() => {
                 setIsLoading(true);
                 router.push("/stories");
@@ -57,7 +57,7 @@ export default function Discover() {
                 View all
               </p>
               <FaArrowRight className="text-accent text-sm transition-all duration-200 group-hover:text-(--color-brown)" />
-            </SecondaryButton>
+            </TransparentButton>
           )}
         </div>
 

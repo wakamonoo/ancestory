@@ -6,13 +6,16 @@ import { MdClose } from "react-icons/md";
 import Swal from "sweetalert2";
 import RegularButton from "../buttons/regularButton";
 import Cover from "@/assets/cover.png";
+import SecondaryButton from "../buttons/secondaryButton";
 
 type EditProfileModalProps = {
   setShowEditProfileModal: (value: boolean) => void;
+  setShowConfirmAccountDeleteModal: (value: boolean) => void;
 };
 
 export default function EditProfileModal({
   setShowEditProfileModal,
+  setShowConfirmAccountDeleteModal,
 }: EditProfileModalProps) {
   const { user } = useUser();
   const [userName, setUserName] = useState(user?.name ?? "");
@@ -36,9 +39,9 @@ export default function EditProfileModal({
   const handleProfileChange = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    try {
-      setIsLoading(true);
+    setIsLoading(true);
 
+    try {
       let profilePicture =
         typeof userProfilePicture === "string" ? userProfilePicture : "";
 
@@ -182,22 +185,22 @@ export default function EditProfileModal({
         className="relative flex flex-col w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-2xl border border-panel bg-second shadow-2xl"
       >
         <div className="flex items-center justify-between border-b border-panel p-4">
-          <h1 className="text-base font-bold text-normal">Edit profile</h1>
+          <h1 className="text-base font-semibold text-normal">Edit profile</h1>
           <button
             onClick={(e) => {
               e.stopPropagation();
               setShowEditProfileModal(false);
             }}
-            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-vibe transition hover:bg-(--color-panel) hover:text-(--color-accent) shrink-0"
+            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full transition-all duration-200 group hover:bg-(--color-panel) shrink-0"
           >
-            <MdClose className="text-xl" />
+            <MdClose className="text-xl text-normal transition-all duration-20 group-hover:text-(--color-accent)" />
           </button>
         </div>
-        <div className="p-4">
+        <div className="px-4">
           <form
             id="edit-profile-form"
             onSubmit={handleProfileChange}
-            className="flex flex-col w-full"
+            className="mt-4 flex flex-col w-full"
           >
             <div className="w-full h-32 relative shrink-0">
               <img
@@ -295,13 +298,25 @@ export default function EditProfileModal({
             </div>
           </form>
         </div>
-        <div className="flex flex-col md:flex-row md:gap-2 border-t border-panel p-4">
+        <div className="ml-auto flex w-fit gap-2 p-4">
+          <SecondaryButton
+            onClick={() => {
+              setShowEditProfileModal(false);
+              setShowConfirmAccountDeleteModal(true);
+            }}
+          >
+            <p className="font-bold text-brand text-base whitespace-nowrap">
+              Delete Account
+            </p>
+          </SecondaryButton>
           <RegularButton
             type="submit"
             disabled={!hasChanges}
             form="edit-profile-form"
           >
-            <p className="font-bold text-normal text-base">Submit Changes</p>
+            <p className="font-bold text-brand text-base whitespace-nowrap">
+              Submit Changes
+            </p>
           </RegularButton>
         </div>
       </div>

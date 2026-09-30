@@ -122,20 +122,22 @@ export default function LocationPicker({
         className="relative flex flex-col w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-2xl border border-panel bg-second shadow-2xl"
       >
         <div className="flex items-center justify-between border-b border-panel p-4">
-          <h1 className="text-base font-bold text-normal">Pin Location</h1>
+          <h1 className="text-base font-semibold text-normal">Pin Location</h1>
           <button
             onClick={(e) => {
               e.stopPropagation();
               setShowLocationPicker(false);
             }}
-            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-vibe transition hover:bg-(--color-panel) hover:text-(--color-accent) shrink-0"
+            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full transition-all duration-200 group hover:bg-(--color-panel) shrink-0"
           >
-            <MdClose className="text-xl" />
+            <MdClose className="text-xl text-normal transition-all duration-20 group-hover:text-(--color-accent)" />
           </button>
         </div>
-        <div className="p-4 overflow-y-auto custom-scroll">
-          <p>Click on the map to pinpoint where this story comes from.</p>
-          <div ref={mapRef} className="h-400 w-full rounded-lg" />
+        <div className="px-4">
+          <p className="mt-4 text-left text-base text-normal font-medium leading-5">
+            Click on the map to pinpoint where this story comes from.
+          </p>
+          <div ref={mapRef} className="mt-4 h-72 w-full rounded-lg" />
           {selectedLocation && (
             <p className="mt-2 text-xs text-muted">
               {selectedLocation.latitude.toFixed(6)},{" "}
@@ -143,12 +145,12 @@ export default function LocationPicker({
             </p>
           )}
         </div>
-        <div className="flex border-t border-panel p-4">
+        <div className="ml-auto flex w-fit p-4">
           <RegularButton
             disabled={!selectedLocation}
             onClick={() => handleConfirm()}
           >
-            <p className="font-bold text-brand text-base">Mark Location</p>
+            <p className="font-bold text-brand text-base whitespace-nowrap">Mark Location</p>
           </RegularButton>
         </div>
       </div>

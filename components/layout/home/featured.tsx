@@ -5,13 +5,13 @@ import mayon from "@/assets/mayon.webp";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import SecondaryButton from "@/components/buttons/secondaryButton";
 import { useLoader } from "@/context/loaderContext";
 import EmptyStories from "@/components/fallbacks/emptyStories";
 import FeaturedStoryLoader from "@/components/loaders/featuredStoryLoader";
 import RegularButton from "@/components/buttons/regularButton";
 import { BsClock } from "react-icons/bs";
 import { Story } from "@/types/story";
+import TransparentButton from "@/components/buttons/transparentButton";
 
 export default function Featured() {
   const [featuredStory, setFeaturedStory] = useState<Story | null>(null);
@@ -90,7 +90,7 @@ export default function Featured() {
             </p>
 
             <div className="my-4">
-              <SecondaryButton
+              <TransparentButton
                 onClick={() => {
                   setIsLoading(true);
                   router.push(`/stories/${featuredStory.storyId}`);
@@ -100,7 +100,7 @@ export default function Featured() {
                   Read Story
                 </p>
                 <FaArrowRight className="text-accent text-sm shrink-0 transition-all duration-200 group-hover:text-(--color-brown)/80" />
-              </SecondaryButton>
+              </TransparentButton>
             </div>
           </div>
         </div>

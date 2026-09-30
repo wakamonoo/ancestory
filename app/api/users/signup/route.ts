@@ -2,9 +2,9 @@ import admin from "@/lib/firebase/admin";
 import clientPromise from "@/lib/mongodb";
 
 export async function POST(request: Request) {
-  const { token } = await request.json();
-
   try {
+    const { token } = await request.json();
+
     const decoded = await admin.auth().verifyIdToken(token);
     const { uid, email, name, picture } = decoded;
 

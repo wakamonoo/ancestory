@@ -11,16 +11,7 @@ import {
   useContext,
 } from "react";
 import SignInModal from "@/components/modals/signInModal";
-
-type User = {
-  uid: string;
-  email: string;
-  name: string;
-  profilePicture: string;
-  coverPhoto: string;
-  bio: string;
-  createdAt: string;
-};
+import { User } from "@/types/user";
 
 type UserContextType = {
   user: User | null;

@@ -1,20 +1,20 @@
 import clientPromise from "@/lib/mongodb";
 
 export async function PUT(request: Request) {
-  const {
-    storyId,
-    userId,
-    title,
-    place,
-    location,
-    poster,
-    story,
-    source,
-    categories,
-    readingTime,
-  } = await request.json();
-
   try {
+    const {
+      storyId,
+      userId,
+      title,
+      place,
+      location,
+      poster,
+      story,
+      source,
+      categories,
+      readingTime,
+    } = await request.json();
+
     const client = await clientPromise;
     const mongodb = process.env.MONGODB;
     const db = client.db(mongodb);

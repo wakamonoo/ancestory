@@ -117,23 +117,25 @@ export default function SignInModal() {
               e.stopPropagation();
               setShowSignInModal(false);
             }}
-            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-vibe transition hover:bg-(--color-panel) hover:text-(--color-accent) shrink-0"
+            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full transition-all duration-200 group hover:bg-(--color-panel) shrink-0"
           >
-            <MdClose className="text-xl" />
+            <MdClose className="text-xl text-normal transition-all duration-20 group-hover:text-(--color-accent)" />
           </button>
         </div>
         <div className="flex flex-col gap-2 items-center justify-center px-4 pb-4">
           {isLogged ? (
             <RoundedButton onClick={handleSignIn}>
               <div className="flex gap-2 items-center justify-center">
-                <p className="font-bold text-brand text-base">Logout Account</p>
+                <p className="font-bold text-brand text-base whitespace-nowrap">
+                  Logout Account
+                </p>
                 <MdLogout className="text-2xl text-brand shrink-0" />
               </div>
             </RoundedButton>
           ) : (
             <RoundedButton onClick={handleSignIn}>
               <div className="flex gap-2 items-center justify-center">
-                <p className="font-bold text-brand text-base">
+                <p className="font-bold text-brand text-base whitespace-nowrap">
                   Continue with Google
                 </p>
                 <FcGoogle className="text-2xl shrink-0" />

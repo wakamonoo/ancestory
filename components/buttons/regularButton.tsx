@@ -23,8 +23,8 @@ export default function RegularButton({
       disabled={disabled}
       className={`mt-2 w-full p-4 rounded-lg flex justify-center items-center gap-2 ${
         disabled
-          ? "cursor-not-allowed bg-(--color-olive)/60"
-          : "hover:brightness-90 cursor-pointer bg-olive"
+          ? "cursor-not-allowed bg-(--color-accent)/60"
+          : "hover:brightness-90 cursor-pointer bg-accent"
       }`}
     >
       {children}

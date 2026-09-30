@@ -21,7 +21,7 @@ export default function MenuButton({
       onClick={onClick}
       form={form}
       disabled={disabled}
-      className="cursor-pointer flex items-center gap-4 p-2 bg-brand rounded transition-all duration-200 hover:bg-(--color-secondary) active:bg-(--color-secondary)"
+      className="cursor-pointer flex items-center gap-4 p-2 bg-second rounded transition-all duration-200 hover:bg-(--color-panel) active:bg-(--color-panel)"
     >
       {children}
     </button>

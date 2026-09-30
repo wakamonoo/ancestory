@@ -18,7 +18,9 @@ type Location = {
   longitude: number;
 };
 
-export default function AddStoryModal({ setShowAddStoryModal }: AddStoryModalProps) {
+export default function AddStoryModal({
+  setShowAddStoryModal,
+}: AddStoryModalProps) {
   const { user } = useUser();
   const [title, setTitle] = useState<string>("");
   const [place, setPlace] = useState<string>("");
@@ -47,34 +49,34 @@ export default function AddStoryModal({ setShowAddStoryModal }: AddStoryModalPro
   const readingTime = calculateReadingTime(story);
 
   const submitStory = async () => {
-    try {
-      setIsLoading(true);
+    if (
+      !title.trim() ||
+      !place.trim() ||
+      !file ||
+      !story.trim() ||
+      categories.length === 0
+    ) {
+      Swal.fire({
+        toast: true,
+        position: "bottom-start",
+        title: "Please provide required fields!",
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+        background: "var(--color-secondary)",
+        iconColor: "var(--color-accent)",
+        customClass: {
+          popup:
+            "!w-full !max-w-xs !inline-flex !items-center !justify-center !border !border-(--color-panel) !text-normal !rounded-lg !shadow-lg !px-4 !py-2",
+          title: "!text-base !font-semibold !text-(--color-text) !leading-4.5",
+        },
+      });
+      return;
+    }
 
-      if (
-        !title.trim() ||
-        !place.trim() ||
-        !file ||
-        !story.trim() ||
-        categories.length === 0
-      ) {
-        Swal.fire({
-          toast: true,
-          position: "bottom-start",
-          title: "Please provide required fields!",
-          icon: "error",
-          timer: 2000,
-          showConfirmButton: false,
-          background: "var(--color-secondary)",
-          iconColor: "var(--color-accent)",
-          customClass: {
-            popup:
-              "!w-full !max-w-xs !inline-flex !items-center !justify-center !border !border-(--color-panel) !text-normal !rounded-lg !shadow-lg !px-4 !py-2",
-            title:
-              "!text-base !font-semibold !text-(--color-text) !leading-4.5",
-          },
-        });
-        return;
-      }
+    setIsLoading(true);
+
+    try {
       const formData = new FormData();
 
       formData.append("file", file);
@@ -167,7 +169,7 @@ export default function AddStoryModal({ setShowAddStoryModal }: AddStoryModalPro
       setIsLoading(false);
     }
   };
-  
+
   return (
     <>
       <div
@@ -179,18 +181,20 @@ export default function AddStoryModal({ setShowAddStoryModal }: AddStoryModalPro
           className="relative flex flex-col w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-2xl border border-panel bg-second shadow-2xl"
         >
           <div className="flex items-center justify-between border-b border-panel p-4">
-            <h1 className="text-base font-bold text-normal">Share a Story</h1>
+            <h1 className="text-base font-semibold text-normal">
+              Share a Story
+            </h1>
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setShowAddStoryModal(false);
               }}
-              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-vibe transition hover:bg-(--color-panel) hover:text-(--color-accent) shrink-0"
+              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full transition-all duration-200 group hover:bg-(--color-panel) shrink-0"
             >
-              <MdClose className="text-xl" />
+              <MdClose className="text-xl text-normal transition-all duration-20 group-hover:text-(--color-accent)" />
             </button>
           </div>
-          <div className="p-4 overflow-y-auto custom-scroll">
+          <div className="px-4 overflow-y-auto custom-scroll">
             <div className="flex flex-wrap gap-4">
               <div className="py-2 flex flex-col flex-1">
                 <h4>Title</h4>
@@ -219,7 +223,7 @@ export default function AddStoryModal({ setShowAddStoryModal }: AddStoryModalPro
               </div>
               <label
                 htmlFor="fileUpload"
-                className="w-full cursor-pointer flex gap-4 items-center justify-center p-4 border border-dashed"
+                className="w-full cursor-pointer flex gap-4 items-center justify-center p-4 border border-dashed border-(--color-accent)"
               >
                 <RiImage2Fill className="text-4xl shrink-0" />
                 <div className="flex flex-col justify-center items-start">
@@ -310,9 +314,12 @@ export default function AddStoryModal({ setShowAddStoryModal }: AddStoryModalPro
                 </option>
               </select>
             </div>
-
+          </div>
+          <div className="ml-auto flex w-fit p-4">
             <RegularButton onClick={submitStory}>
-              <p className="font-bold text-brand text-base">Submit Story</p>
+              <p className="font-bold text-brand text-base whitespace-nowrap">
+                Submit Story
+              </p>
             </RegularButton>
           </div>
         </div>

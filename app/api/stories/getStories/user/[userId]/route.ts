@@ -4,8 +4,9 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ userId: string }> },
 ) {
-  const { userId } = await params;
   try {
+    const { userId } = await params;
+    
     const client = await clientPromise;
     const mongodb = process.env.MONGODB;
     const db = client.db(mongodb);
