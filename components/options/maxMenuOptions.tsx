@@ -58,7 +58,7 @@ export default function MaxMenuOptionsOptions({
               if (user) {
                 setIsLoading(true);
                 setShowMaxMenuOptions(false);
-                router.push(`/profile/${user?.uid}}`);
+                router.push(`/profile/${user?.uid}`);
               } else {
                 setShowSignInModal(true);
               }

@@ -3,8 +3,8 @@ import { FaImage } from "react-icons/fa";
 export default function FeaturedStoryLoader() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-[2.5fr_1.5fr] items-start w-full gap-2 md:gap-8 mt-4 animate-pulse">
-      <div className="flex items-center justify-center w-full aspect-21/9 bg-second">
-      <FaImage className="text-4xl text-(--color-panel) shrink-0" />
+      <div className="flex items-center justify-center w-full aspect-21/9 bg-second shrink-0">
+        <FaImage className="text-4xl text-(--color-panel)" />
       </div>
       <div className="w-full flex flex-col">
         <div className="my-2 h-10 w-32 bg-second rounded" />

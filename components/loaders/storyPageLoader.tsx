@@ -3,8 +3,8 @@ import { FaImage } from "react-icons/fa";
 export default function StoryPageLoader() {
   return (
     <div className="w-full animate-pulse">
-      <div className="flex items-center justify-center w-full aspect-video bg-second">
-        <FaImage className="text-4xl text-(--color-panel) shrink-0" />
+      <div className="flex items-center justify-center w-full aspect-video bg-second shrink-0">
+        <FaImage className="text-4xl text-(--color-panel)" />
       </div>
       <div className="p-4">
         <div className="h-4 w-18 bg-second rounded" />

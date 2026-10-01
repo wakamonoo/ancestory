@@ -5,7 +5,7 @@ export default function ContributorLoader() {
     <div className="flex items-center gap-2 animate-pulse w-full">
       <div className="p-0.5 rounded-full border-2 border-panel">
         <div className="flex items-center justify-center w-18 h-18 rounded-full border border-panel bg-second overflow-hidden shrink-0">
-          <FaImage className="text-4xl text-(--color-panel) shrink-0" />
+          <FaImage className="text-4xl text-(--color-panel)" />
         </div>
       </div>
       <div className="flex flex-col gap-1 items-start w-full">

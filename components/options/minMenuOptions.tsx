@@ -79,7 +79,7 @@ export default function MinMenuOptionsOptions({
               onClick={() => {
                 setIsLoading(true);
                 setShowMinMenuOptions(false);
-                router.push(`/profile/${user?.uid}}`);
+                router.push(`/profile/${user?.uid}`);
               }}
             >
               <img
