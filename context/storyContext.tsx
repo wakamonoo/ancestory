@@ -37,7 +37,7 @@ export const StoryProvider = ({ children }: { children: ReactNode }) => {
   const [stories, setStories] = useState<Story[]>([]);
   const [storiesLoading, setStoriesLoading] = useState(true);
   const [userStories, setUserStories] = useState<Story[]>([]);
-  const [userStoriesLoading, setUserStoriesLoading] = useState(false);
+  const [userStoriesLoading, setUserStoriesLoading] = useState(true);
 
   const fetchStories = async () => {
     try {

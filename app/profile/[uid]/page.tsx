@@ -18,11 +18,13 @@ import EmptyUserStories from "@/components/fallbacks/emptyUserStories";
 import StoryCardLoader from "@/components/loaders/storyCardLoader";
 import ConfirmAccountDeleteModal from "@/components/modals/confirmAccountDeleteModal";
 import { User } from "@/types/user";
+import UserInfoLoader from "@/components/loaders/userInfoLoader";
 
 export default function UserProfile() {
   const { uid } = useParams<{ uid: string }>();
   const { user } = useUser();
   const [profileUser, setProfileUser] = useState<User | null>(null);
+  const [profileUserLoading, setProfileUserLoading] = useState(true);
   const { fetchUserStories, userStories } = useStory();
   const { setIsLoading } = useLoader();
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
@@ -56,6 +58,8 @@ export default function UserProfile() {
       } catch (err) {
         console.error("error fetching profile", err);
         setProfileUser(null);
+      } finally {
+        setProfileUserLoading(false);
       }
     };
 
@@ -73,39 +77,43 @@ export default function UserProfile() {
               className="absolute inset-0 w-full h-full object-cover"
             />
 
-            <div className="absolute inset-0 bg-linear-to-r from-(--color-bg) via-(--color-bg)/80 to-transparent" />
-            <div className="relative flex items-center gap-4 min-h-64 max-h-84 px-8">
-              <div className="w-32 h-32 shrink-0 rounded-full overflow-hidden">
-                <img
-                  src={profileUser?.profilePicture}
-                  alt={profileUser?.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="flex flex-col">
-                <p className="text-base text-normal font-bold">
-                  {profileUser?.name}
-                </p>
-                {profileUser?.bio && (
-                  <p className="text-sm text-muted italic">
-                    {profileUser?.bio}
+            <div className="absolute inset-0 bg-linear-to-r from-(--color-bg) via-(--color-bg)/40 to-transparent" />
+            {profileUserLoading ? (
+              <UserInfoLoader />
+            ) : (
+              <div className="relative flex items-center gap-4 min-h-64 max-h-84 px-8">
+                <div className="w-32 h-32 shrink-0 rounded-full overflow-hidden">
+                  <img
+                    src={profileUser?.profilePicture}
+                    alt={profileUser?.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <p className="text-base text-normal font-bold">
+                    {profileUser?.name}
                   </p>
-                )}
-                <div className="mt-4 flex items-center gap-4">
-                  <div className="flex flex-col items-center">
-                    <p className="text-sm text-normal font-semibold">
-                      {userStories.length}
+                  {profileUser?.bio && (
+                    <p className="text-sm text-muted italic">
+                      {profileUser?.bio}
                     </p>
-                    <span className="text-xs text-normal">Stories</span>
+                  )}
+                  <div className="mt-4 flex items-center gap-4">
+                    <div className="flex flex-col items-center">
+                      <p className="text-sm text-normal font-semibold">
+                        {userStories.length}
+                      </p>
+                      <span className="text-xs text-normal">Stories</span>
+                    </div>
+                    <div className="h-8 w-px bg-(--color-accent)/10" />
+                    <p className="text-sm text-normal font-semibold">
+                      Joined{" "}
+                      {new Date(profileUser?.createdAt ?? "").getFullYear()}
+                    </p>
                   </div>
-                  <div className="h-8 w-px bg-(--color-accent)/10" />
-                  <p className="text-sm text-normal font-semibold">
-                    Joined{" "}
-                    {new Date(profileUser?.createdAt ?? "").getFullYear()}
-                  </p>
                 </div>
               </div>
-            </div>
+            )}
           </div>
           <div className="absolute top-4 left-2  flex items-center gap-2">
             <button
