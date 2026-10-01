@@ -35,13 +35,11 @@ export const useStory = () => {
 
 export const StoryProvider = ({ children }: { children: ReactNode }) => {
   const [stories, setStories] = useState<Story[]>([]);
-  const [storiesLoading, setStoriesLoading] = useState(false);
+  const [storiesLoading, setStoriesLoading] = useState(true);
   const [userStories, setUserStories] = useState<Story[]>([]);
   const [userStoriesLoading, setUserStoriesLoading] = useState(false);
-  const { user } = useUser();
 
   const fetchStories = async () => {
-    setStoriesLoading(true);
     try {
       const res = await fetch("/api/stories/getStories", {
         method: "GET",

@@ -1,7 +1,11 @@
+import { FaImage } from "react-icons/fa";
+
 export default function StoryCardLoader() {
   return (
-    <div className="flex flex-row md:flex-col items-center md:items-start gap-2  rounded animate-pulse">
-      <div className="w-1/2 md:w-full aspect-3/2 object-cover bg-second" />
+    <div className="flex flex-row md:flex-col items-center md:items-start gap-2 rounded animate-pulse">
+      <div className="flex items-center justify-center w-1/2 md:w-full aspect-3/2 object-cover bg-second">
+        <FaImage className="text-4xl text-(--color-panel) shrink-0" />
+      </div>
       <div className="min-w-0 w-full px-2 flex flex-col gap-2">
         <div className="h-8 w-32 rounded bg-second" />
 
@@ -10,7 +14,10 @@ export default function StoryCardLoader() {
           <div className="h-5 w-24 bg-second" />
         </div>
         <div className="h-px w-full bg-(--color-accent)/40" />
-        <div className="h-4 w-12 bg-second" />
+        <div className="flex items-center gap-2">
+          <div className="h-5 w-5 bg-second" />
+          <div className="h-5 w-18 bg-second" />
+        </div>
       </div>
     </div>
   );

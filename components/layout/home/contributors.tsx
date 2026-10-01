@@ -1,15 +1,16 @@
 "use client";
 import EmptyContributors from "@/components/fallbacks/emptyContributors";
+import ContributorLoader from "@/components/loaders/contributorLoader";
 import { useLoader } from "@/context/loaderContext";
 import { useStory } from "@/context/storyContext";
 import { useUser } from "@/context/userContext";
 import { useRouter } from "next/navigation";
 
 export default function Contributors() {
-  const { allUsers } = useUser();
+  const { allUsers, allUsersLoading } = useUser();
   const { stories } = useStory();
   const router = useRouter();
-  const {setIsLoading} = useLoader()
+  const { setIsLoading } = useLoader();
 
   return (
     <div id="contributors" className="w-full gap-2 py-16">
@@ -17,7 +18,11 @@ export default function Contributors() {
         Our Contributors
       </p>
       <h1 className="text-2xl">Real people. Shared stories.</h1>
-      {allUsers.length === 0 ? (
+      {allUsersLoading ? (
+        <div className="mt-8 flex gap-4 overflow-x-auto">
+          <ContributorLoader />
+        </div>
+      ) : allUsers.length === 0 ? (
         <EmptyContributors />
       ) : (
         <div className="mt-8 flex gap-4 overflow-x-auto">
@@ -46,7 +51,15 @@ export default function Contributors() {
                   </div>
                 </div>
                 <div className="flex flex-col items-start">
-                  <p className="text-base">{contributor.name}</p>
+                  <p
+                    onClick={() => {
+                      setIsLoading(true);
+                      router.push(`/profile/${contributor?.uid}`);
+                    }}
+                    className="cursor-pointer text-base"
+                  >
+                    {contributor.name}
+                  </p>
                   <span className="text-xs text-muted">
                     {publishedStories > 1
                       ? `${publishedStories} Stories`

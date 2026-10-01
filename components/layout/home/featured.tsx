@@ -15,13 +15,12 @@ import TransparentButton from "@/components/buttons/transparentButton";
 
 export default function Featured() {
   const [featuredStory, setFeaturedStory] = useState<Story | null>(null);
-  const [featuredLoading, setFeaturedLoading] = useState(false);
+  const [featuredLoading, setFeaturedLoading] = useState(true);
   const { setIsLoading } = useLoader();
   const router = useRouter();
 
   useEffect(() => {
     const getFeaturedStory = async () => {
-      setFeaturedLoading(true);
       try {
         const rest = await fetch("/api/stories/getFeaturedStory");
         const data = await rest.json();
@@ -77,7 +76,10 @@ export default function Featured() {
             </div>
             <div className="flex flex-wrap items-center gap-2 my-2">
               {featuredStory.categories?.map((category, index) => (
-                <div key={index} className="flex items-center gap-2 p-2 bg-second rounded">
+                <div
+                  key={index}
+                  className="flex items-center gap-2 p-2 bg-second rounded"
+                >
                   <p className="text-brown text-xs font-semibold font-alt uppercase">
                     {category}
                   </p>
