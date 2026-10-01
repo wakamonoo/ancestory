@@ -14,6 +14,7 @@ import { FaXmark } from "react-icons/fa6";
 import UserIconLoader from "@/components/loaders/userIconLoader";
 import MaxMenuOptions from "@/components/options/maxMenuOptions";
 import MinMenuOptions from "@/components/options/minMenuOptions";
+import { useStory } from "@/context/storyContext";
 
 export default function NavBar() {
   const { user, isLogged, isLoading } = useUser();

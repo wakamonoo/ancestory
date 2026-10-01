@@ -6,7 +6,11 @@ export async function GET(request: Request) {
     const mongodb = process.env.MONGODB;
     const db = client.db(mongodb);
 
-    const result = await db.collection("stories").find().toArray();
+    const result = await db
+      .collection("stories")
+      .find()
+      .sort({ createdAt: -1 })
+      .toArray();
 
     return Response.json({
       success: true,

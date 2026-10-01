@@ -49,7 +49,7 @@ export default function MaxMenuOptionsOptions({
   return (
     <div
       ref={divRef}
-      className="absolute top-12 right-0 bg-brand h-fit w-[20vw] border border-panel bg-second rounded-lg shadow-2xl p-2 z-150"
+      className="absolute top-12 right-0 bg-brand h-fit w-[20vw] border border-(--color-accent)/10 bg-second rounded-lg shadow-2xl p-2 z-150"
     >
       <div className="flex flex-col gap-4">
         {user ? (
@@ -80,7 +80,7 @@ export default function MaxMenuOptionsOptions({
             <p className="text-base text-normal">Profile</p>
           </MenuButton>
         )}
-        <div className="w-full h-px bg-panel" />
+        <div className="h-px w-full bg-(--color-accent)/10" />
         <div className="flex flex-col gap-2">
           <MenuButton
             onClick={() => {

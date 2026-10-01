@@ -1,10 +1,28 @@
+import Image from "next/image";
+
 export default function MainLoader() {
   return (
     <div className="fixed inset-0 z-99999 flex items-center justify-center backdrop-blur-lg">
-      <div className="flex items-center justify-center bg-second w-16 h-20 rounded-tl-4xl rounded-tr-4xl p-2">
-        <div className="relative w-12 h-16 rounded-tl-4xl rounded-tr-4xl bg-accent animate-pulse">
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-second w-4 h-12 rounded-tl-2xl rounded-tr-2xl" />
-        </div>
+      <div className="relative flex items-center justify-center w-24 h-24 bg-second p-4 rounded-full">
+        <div
+          className="absolute w-full h-full rounded-full border-[3px] border-gray-100/10 border-r-(--color-accent) border-b-(--color-accent) animate-spin"
+          style={{ animationDuration: "3s" }}
+        />
+        <div
+          className="absolute w-full h-full rounded-full border-[3px] border-gray-100/10 border-t-(--color-accent) animate-spin"
+          style={{ animationDuration: "2s", animationDirection: "reverse" }}
+        />
+
+        <div className="absolute inset-0 bg-linear-to-tr from-[#0ff]/10 via-transparent to-[#0ff]/5 animate-pulse rounded-full blur-sm" />
+
+        <Image
+          src="/icons/icon.png"
+          alt="icon"
+          width={0}
+          height={0}
+          sizes="100vw"
+          className="w-full h-full object-contain shrink-0"
+        />
       </div>
     </div>
   );

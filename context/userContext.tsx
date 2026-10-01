@@ -15,12 +15,14 @@ import { User } from "@/types/user";
 
 type UserContextType = {
   user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
   fetchUser: (uid: string) => Promise<void>;
   firebaseUser: FirebaseUser | null;
   isLogged: boolean | null;
   isLoading: boolean;
   setShowSignInModal: Dispatch<SetStateAction<boolean>>;
   allUsers: User[];
+  setAllUsers: React.Dispatch<React.SetStateAction<User[]>>;
   allUsersLoading: boolean;
 };
 
@@ -110,12 +112,14 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     <UserContext.Provider
       value={{
         user,
+        setUser,
         fetchUser,
         firebaseUser,
         isLogged,
         isLoading,
         setShowSignInModal,
         allUsers,
+        setAllUsers,
         allUsersLoading,
       }}
     >

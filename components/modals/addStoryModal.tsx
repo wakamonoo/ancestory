@@ -8,6 +8,7 @@ import { useLoader } from "@/context/loaderContext";
 import LocationPicker from "./locationPickerModal";
 import SecondaryButton from "../buttons/secondaryButton";
 import TertiaryButton from "../buttons/tertiaryButton";
+import { useStory } from "@/context/storyContext";
 
 type AddStoryModalProps = {
   setShowAddStoryModal: (value: boolean) => void;
@@ -22,6 +23,7 @@ export default function AddStoryModal({
   setShowAddStoryModal,
 }: AddStoryModalProps) {
   const { user } = useUser();
+  const { setStories } = useStory();
   const [title, setTitle] = useState<string>("");
   const [place, setPlace] = useState<string>("");
   const [location, setLocation] = useState<Location | null>(null);
@@ -113,7 +115,7 @@ export default function AddStoryModal({
 
       const { url } = await uploadRes.json();
 
-      await fetch("/api/stories/addStory", {
+      const res = await fetch("/api/stories/addStory", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -130,6 +132,14 @@ export default function AddStoryModal({
           readingTime,
         }),
       });
+
+      if (!res.ok) {
+        throw new Error("failed to add story");
+      }
+
+      const { story: newStory } = await res.json();
+
+      setStories((prev) => [newStory, ...prev]);
 
       setShowAddStoryModal(false);
 
@@ -178,9 +188,9 @@ export default function AddStoryModal({
       >
         <div
           onClick={(e) => e.stopPropagation()}
-          className="relative flex flex-col w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-2xl border border-panel bg-second shadow-2xl"
+          className="relative flex flex-col w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-2xl border border-(--color-accent)/10 bg-second shadow-2xl"
         >
-          <div className="flex items-center justify-between border-b border-panel p-4">
+          <div className="flex items-center justify-between border-b border-(--color-accent)/10 p-4">
             <h1 className="text-base font-semibold text-normal">
               Share a Story
             </h1>
@@ -279,7 +289,7 @@ export default function AddStoryModal({
                     ),
                   )
                 }
-                className="w-full rounded-lg border border-panel bg-second p-2 custom-scroll"
+                className="w-full rounded-lg border border-(--color-accent)/10 bg-second p-2 custom-scroll"
               >
                 <option
                   value=""

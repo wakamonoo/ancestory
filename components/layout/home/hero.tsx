@@ -1,5 +1,5 @@
 "use client";
-import HeroImg from "@/assets/hero-img.png"
+import HeroImg from "@/assets/hero-img.png";
 import CTAButton from "@/components/buttons/ctaButton";
 import RegularButton from "@/components/buttons/regularButton";
 import Image from "next/image";
@@ -40,7 +40,7 @@ export default function Hero() {
           <Image
             src={HeroImg}
             alt="hero"
-            className="w-full h-full object-cover"
+            className="w-full h-[45vh] md:h-[70vh] object-cover"
           />
         </div>
       </div>

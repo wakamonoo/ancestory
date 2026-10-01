@@ -5,6 +5,7 @@ import { Story } from "@/types/story";
 import { useLoader } from "@/context/loaderContext";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
+import { useStory } from "@/context/storyContext";
 
 type ConfirmStoryDeleteModalProps = {
   storyToDelete: Story;
@@ -15,6 +16,7 @@ export default function ConfirmStoryDeleteModal({
   storyToDelete,
   setShowConfirmStoryDeleteModal,
 }: ConfirmStoryDeleteModalProps) {
+  const { setStories } = useStory();
   const { setIsLoading } = useLoader();
   const router = useRouter();
 
@@ -25,6 +27,7 @@ export default function ConfirmStoryDeleteModal({
         method: "DELETE",
       });
 
+      setStories((prev) => prev.filter((story) => story.storyId !== storyToDelete.storyId))
       setShowConfirmStoryDeleteModal(false);
 
       router.back();
@@ -73,7 +76,7 @@ export default function ConfirmStoryDeleteModal({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-md  overflow-hidden rounded-2xl border border-panel bg-second shadow-2xl"
+        className="relative w-full max-w-md  overflow-hidden rounded-2xl border border-(--color-accent)/10 bg-second shadow-2xl"
       >
         <div className="flex items-center justify-between p-4">
           <h1 className="text-base font-semibold text-normal">Delete Story</h1>
@@ -94,10 +97,14 @@ export default function ConfirmStoryDeleteModal({
         </div>
         <div className="ml-auto flex w-fit gap-2 p-4">
           <SecondaryButton onClick={deleteStory}>
-            <p className="font-bold text-brand text-base whitespace-nowrap">Confirm</p>
+            <p className="font-bold text-brand text-base whitespace-nowrap">
+              Confirm
+            </p>
           </SecondaryButton>
           <RegularButton onClick={() => setShowConfirmStoryDeleteModal(false)}>
-            <p className="font-bold text-brand text-base whitespace-nowrap">Cancel</p>
+            <p className="font-bold text-brand text-base whitespace-nowrap">
+              Cancel
+            </p>
           </RegularButton>
         </div>
       </div>

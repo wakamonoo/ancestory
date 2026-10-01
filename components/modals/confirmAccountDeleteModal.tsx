@@ -6,6 +6,8 @@ import { useLoader } from "@/context/loaderContext";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import { User } from "@/types/user";
+import { useUser } from "@/context/userContext";
+import { GoogleAuthProvider, reauthenticateWithPopup } from "firebase/auth";
 
 type ConfirmAccountDeleteModalProps = {
   accountToDelete: User;
@@ -16,15 +18,27 @@ export default function ConfirmAccountDeleteModal({
   accountToDelete,
   setShowConfirmAccountDeleteModal,
 }: ConfirmAccountDeleteModalProps) {
+  const { firebaseUser, setAllUsers } = useUser();
   const { setIsLoading } = useLoader();
   const router = useRouter();
 
   const deleteAccount = async () => {
     setIsLoading(true);
+
     try {
+      if (!firebaseUser) {
+        throw new Error("no authenticated firebase user");
+      }
+      const provider = new GoogleAuthProvider();
+      await reauthenticateWithPopup(firebaseUser, provider);
+
       await fetch(`/api/users/deleteUser/${accountToDelete.uid}`, {
         method: "DELETE",
       });
+
+      await firebaseUser.delete();
+
+      setAllUsers((prev) => prev.filter((u) => u.uid !== accountToDelete.uid))
 
       setShowConfirmAccountDeleteModal(false);
 
@@ -74,10 +88,12 @@ export default function ConfirmAccountDeleteModal({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-md  overflow-hidden rounded-2xl border border-panel bg-second shadow-2xl"
+        className="relative w-full max-w-md  overflow-hidden rounded-2xl border border-(--color-accent)/10 bg-second shadow-2xl"
       >
         <div className="flex items-center justify-between p-4">
-          <h1 className="text-base font-semibold text-normal">Delete Account</h1>
+          <h1 className="text-base font-semibold text-normal">
+            Delete Account
+          </h1>
           <button
             onClick={(e) => {
               e.stopPropagation();

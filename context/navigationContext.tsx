@@ -9,6 +9,7 @@ import {
 } from "react";
 import { useLoader } from "./loaderContext";
 import { usePathname, useRouter } from "next/navigation";
+import { useStory } from "./storyContext";
 
 type NavigationContextType = {
   handleHomeClick: () => void;
@@ -39,18 +40,22 @@ export const useNavigation = () => {
 };
 
 export const NavigationProvider = ({ children }: NavigationProviderProps) => {
+  const { fetchStories } = useStory();
   const { setIsLoading } = useLoader();
   const router = useRouter();
   const pathname = usePathname();
 
-  const handleHomeClick = () => {
+  const handleHomeClick = async () => {
     if (pathname === "/") {
       window.scrollTo({
         top: 0,
         behavior: "smooth",
       });
 
+      setIsLoading(true);
+      await fetchStories();
       router.push("/");
+      setIsLoading(false);
     } else {
       setIsLoading(true);
       router.push("/");

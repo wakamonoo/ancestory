@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 import RoundedButton from "../buttons/roundedButton";
 
 export default function SignInModal() {
-  const { isLogged, setShowSignInModal } = useUser();
+  const { fetchUser, isLogged, setShowSignInModal } = useUser();
 
   const handleSignIn = async () => {
     if (isLogged) {
@@ -50,7 +50,7 @@ export default function SignInModal() {
       }
       if (user && token) {
         try {
-          const res = await fetch("api/users/signup", {
+          const res = await fetch("/api/users/signup", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -63,6 +63,9 @@ export default function SignInModal() {
           const data = await res.json();
 
           setShowSignInModal(false);
+
+          await fetchUser(user.uid);
+
           Swal.fire({
             toast: true,
             position: "bottom-start",
@@ -109,7 +112,7 @@ export default function SignInModal() {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-md overflow-hidden rounded-2xl border border-panel bg-second shadow-2xl"
+        className="relative w-full max-w-md overflow-hidden rounded-2xl border border-(--color-accent)/10 bg-second shadow-2xl"
       >
         <div className="flex items-center justify-end px-4 pt-4">
           <button

@@ -55,7 +55,7 @@ export default function MinMenuOptionsOptions({
   return (
     <div
       ref={divRef}
-      className="absolute top-12 right-0 bg-brand h-fit w-[80vw] border border-panel bg-second rounded-lg shadow-2xl p-2 z-150"
+      className="absolute top-12 right-0 bg-brand h-fit w-[80vw] border border-(--color-accent)/10 bg-second rounded-lg shadow-2xl p-2 z-150"
     >
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
@@ -72,7 +72,7 @@ export default function MinMenuOptionsOptions({
             <p className="text-sm">Contributors</p>
           </MenuButton>
         </div>
-        <div className="w-full h-px bg-panel" />
+        <div className="h-px w-full bg-(--color-accent)/10" />
         <div className="flex flex-col">
           {user ? (
             <MenuButton
@@ -98,9 +98,7 @@ export default function MinMenuOptionsOptions({
               <p className="text-base text-normal">Profile</p>
             </MenuButton>
           )}
-          <div className="my-4">
-            <div className="w-full h-px bg-panel" />
-          </div>
+          <div className="h-px w-full bg-(--color-accent)/10 my-4" />
           <div className="flex ml-10 mt-2 flex-col gap-2">
             <MenuButton
               onClick={() => {

@@ -17,7 +17,7 @@ export default function EditProfileModal({
   setShowEditProfileModal,
   setShowConfirmAccountDeleteModal,
 }: EditProfileModalProps) {
-  const { user } = useUser();
+  const { user, setUser, setAllUsers } = useUser();
   const [userName, setUserName] = useState(user?.name ?? "");
   const [userProfilePicture, setuserProfilePicture] = useState<string | File>(
     user?.profilePicture ?? "",
@@ -136,6 +136,32 @@ export default function EditProfileModal({
         }),
       });
 
+      setUser((prev) => {
+        if (!prev) return null;
+        
+        return {
+          ...prev,
+          name: userName,
+          profilePicture,
+          coverPhoto,
+          bio: userBio,
+        };
+      });
+
+      setAllUsers((prev) =>
+        prev.map((u) =>
+          u.uid === user?.uid
+            ? {
+                ...u,
+                name: userName,
+                profilePicture,
+                coverPhoto,
+                bio: userBio,
+              }
+            : u,
+        ),
+      );
+
       setShowEditProfileModal(false);
 
       Swal.fire({
@@ -182,9 +208,9 @@ export default function EditProfileModal({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative flex flex-col w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-2xl border border-panel bg-second shadow-2xl"
+        className="relative flex flex-col w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-2xl border border-(--color-accent)/10 bg-second shadow-2xl"
       >
-        <div className="flex items-center justify-between border-b border-panel p-4">
+        <div className="flex items-center justify-between border-b border-(--color-accent)/10 p-4">
           <h1 className="text-base font-semibold text-normal">Edit profile</h1>
           <button
             onClick={(e) => {

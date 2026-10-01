@@ -119,9 +119,9 @@ export default function LocationPicker({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative flex flex-col w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-2xl border border-panel bg-second shadow-2xl"
+        className="relative flex flex-col w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-2xl border border-(--color-accent)/10 bg-second shadow-2xl"
       >
-        <div className="flex items-center justify-between border-b border-panel p-4">
+        <div className="flex items-center justify-between border-b border-(--color-accent)/10 p-4">
           <h1 className="text-base font-semibold text-normal">Pin Location</h1>
           <button
             onClick={(e) => {

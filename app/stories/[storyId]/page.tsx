@@ -203,9 +203,10 @@ export default function StoryPage() {
               <div className="flex flex-col items-start">
                 <div className="flex gap-2 items-center">
                   <button
-                    onClick={() =>
-                      router.push(`/stories/${previousStory?.storyId}`)
-                    }
+                    onClick={() => {
+                      setIsLoading(true);
+                      router.push(`/stories/${previousStory?.storyId}`);
+                    }}
                     className="cursor-pointer group rounded-full p-2 transition-all duration-200 hover:bg-(--color-muted) active:bg-(--color-muted)"
                   >
                     <LuArrowLeft className="text-xs text-muted  transition-all duration-200 group-hover:text-(--color-secondary) group-active:text-(--color-secondary) shrink-0" />
@@ -227,9 +228,10 @@ export default function StoryPage() {
                 <div className="flex gap-2 items-center">
                   <p className="text-xs text-muted">Next</p>
                   <button
-                    onClick={() =>
-                      router.push(`/stories/${nextStory?.storyId}`)
-                    }
+                    onClick={() => {
+                      setIsLoading(true);
+                      router.push(`/stories/${nextStory?.storyId}`);
+                    }}
                     className="cursor-pointer group rounded-full p-2 transition-all duration-200 hover:bg-(--color-muted) active:bg-(--color-muted)"
                   >
                     <LuArrowRight className="text-xs text-muted  transition-all duration-200 group-hover:text-(--color-secondary) group-active:text-(--color-secondary) shrink-0" />

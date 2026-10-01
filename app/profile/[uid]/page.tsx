@@ -4,7 +4,7 @@ import { useUser } from "@/context/userContext";
 import mayon from "@/assets/mayon.webp";
 import { LuArrowLeft, LuMapPin } from "react-icons/lu";
 import { useLoader } from "@/context/loaderContext";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import UserPlaces from "@/components/layout/profile/usePlaces";
 import UserStories from "@/components/layout/profile/userStories";
 import { useEffect, useState } from "react";
@@ -17,10 +17,13 @@ import Cover from "@/assets/cover.png";
 import EmptyUserStories from "@/components/fallbacks/emptyUserStories";
 import StoryCardLoader from "@/components/loaders/storyCardLoader";
 import ConfirmAccountDeleteModal from "@/components/modals/confirmAccountDeleteModal";
+import { User } from "@/types/user";
 
 export default function UserProfile() {
+  const { uid } = useParams<{ uid: string }>();
   const { user } = useUser();
-  const { userStories, userStoriesLoading } = useStory();
+  const [profileUser, setProfileUser] = useState<User | null>(null);
+  const { fetchUserStories, userStories } = useStory();
   const { setIsLoading } = useLoader();
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
   const [showConfirmAccountDeleteModal, setShowConfirmAccountDeleteModal] =
@@ -31,14 +34,42 @@ export default function UserProfile() {
     setIsLoading(false);
   }, []);
 
+  useEffect(() => {
+    if (!uid) return;
+
+    fetchUserStories(uid);
+  }, [uid]);
+
+  useEffect(() => {
+    if (!uid) return;
+
+    const fetchProfileUser = async () => {
+      try {
+        const res = await fetch(`/api/users/userGet/${uid}`);
+
+        if (!res.ok) {
+          throw new Error("failed to fetch profile");
+        }
+        const data = await res.json();
+
+        setProfileUser(data.result);
+      } catch (err) {
+        console.error("error fetching profile", err);
+        setProfileUser(null);
+      }
+    };
+
+    fetchProfileUser();
+  }, [uid]);
+
   return (
     <>
       <div className="w-full py-16">
         <div className="relative">
           <div className="relative min-h-64 max-h-84 overflow-hidden">
             <img
-              src={user?.coverPhoto || Cover.src}
-              alt={user?.name}
+              src={profileUser?.coverPhoto || Cover.src}
+              alt={profileUser?.name}
               className="absolute inset-0 w-full h-full object-cover"
             />
 
@@ -46,15 +77,19 @@ export default function UserProfile() {
             <div className="relative flex items-center gap-4 min-h-64 max-h-84 px-8">
               <div className="w-32 h-32 shrink-0 rounded-full overflow-hidden">
                 <img
-                  src={user?.profilePicture}
-                  alt={user?.name}
+                  src={profileUser?.profilePicture}
+                  alt={profileUser?.name}
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="flex flex-col">
-                <p className="text-base text-normal font-bold">{user?.name}</p>
-                {user?.bio && (
-                  <p className="text-sm text-muted italic">{user?.bio}</p>
+                <p className="text-base text-normal font-bold">
+                  {profileUser?.name}
+                </p>
+                {profileUser?.bio && (
+                  <p className="text-sm text-muted italic">
+                    {profileUser?.bio}
+                  </p>
                 )}
                 <div className="mt-4 flex items-center gap-4">
                   <div className="flex flex-col items-center">
@@ -65,7 +100,8 @@ export default function UserProfile() {
                   </div>
                   <div className="h-8 w-px bg-(--color-accent)/10" />
                   <p className="text-sm text-normal font-semibold">
-                    Joined {new Date(user?.createdAt ?? "").getFullYear()}
+                    Joined{" "}
+                    {new Date(profileUser?.createdAt ?? "").getFullYear()}
                   </p>
                 </div>
               </div>
@@ -80,23 +116,29 @@ export default function UserProfile() {
             </button>
             <p className="text-xs text-accent font-semibold uppercase">Back</p>
           </div>
-          <div className="absolute top-4 right-2">
-            <ActionButton onClick={() => setShowEditProfileModal(true)}>
-              <FaPencil className="text-base text-muted shrink-0" />
-              <p className="text-muted font-bold">Edit</p>
-            </ActionButton>
-          </div>
+          {profileUser?.uid === user?.uid && (
+            <div className="absolute top-4 right-2">
+              <ActionButton onClick={() => setShowEditProfileModal(true)}>
+                <FaPencil className="text-base text-muted shrink-0" />
+                <p className="text-muted font-bold">Edit</p>
+              </ActionButton>
+            </div>
+          )}
         </div>
         <div className="mt-4 grid grid-cols-1 lg:grid-cols-[3fr_1fr] items-stretch gap-4 lg:gap-8">
           <div>
             <p className="font-alt font-semibold uppercase text-base text-brown">
-              Your Curated Stories
+              {profileUser?.uid === user?.uid
+                ? "Your Curated Stories"
+                : `${profileUser?.name}'s Curated Stories`}
             </p>
             <UserStories />
           </div>
           <div>
             <p className="font-alt font-semibold uppercase text-base text-brown">
-              Your AnceStory Map
+              {profileUser?.uid === user?.uid
+                ? "Your Ancestral Map"
+                : `${profileUser?.name}'s Ancestral Map`}
             </p>
             <UserPlaces />
           </div>

@@ -11,7 +11,10 @@ import { Story } from "@/types/story";
 
 type StoryContextType = {
   stories: Story[];
+  setStories: React.Dispatch<React.SetStateAction<Story[]>>;
+  fetchStories: () => Promise<void>;
   userStories: Story[];
+  fetchUserStories: (uid: string) => Promise<void>;
   storiesLoading: boolean;
   userStoriesLoading: boolean;
 };
@@ -37,54 +40,58 @@ export const StoryProvider = ({ children }: { children: ReactNode }) => {
   const [userStoriesLoading, setUserStoriesLoading] = useState(false);
   const { user } = useUser();
 
+  const fetchStories = async () => {
+    setStoriesLoading(true);
+    try {
+      const res = await fetch("/api/stories/getStories", {
+        method: "GET",
+      });
+
+      const data = await res.json();
+      setStories(data.result);
+    } catch (err) {
+      console.error("failed to fetch stories", err);
+      setStories([]);
+    } finally {
+      setStoriesLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const handleGetStories = async () => {
-      setStoriesLoading(true);
-      try {
-        const res = await fetch("/api/stories/getStories", {
-          method: "GET",
-        });
-
-        const data = await res.json();
-        setStories(data.result);
-      } catch (err) {
-        console.error("failed to fetch stories", err);
-        setStories([]);
-      } finally {
-        setStoriesLoading(false);
-      }
-    };
-
-    handleGetStories();
+    fetchStories();
   }, []);
 
-  useEffect(() => {
-    const getStory = async () => {
-      setUserStoriesLoading(true);
-      try {
-        const res = await fetch(`/api/stories/getStories/user/${user?.uid}`);
+  const fetchUserStories = async (uid: string) => {
+    setUserStoriesLoading(true);
+    try {
+      const res = await fetch(`/api/stories/getStories/user/${uid}`);
 
-        if (!res.ok) {
-          throw new Error("failed to fetch story");
-        }
-
-        const data = await res.json();
-
-        setUserStories(data.story);
-      } catch (err) {
-        console.error(err);
-        setUserStories([]);
-      } finally {
-        setUserStoriesLoading(false);
+      if (!res.ok) {
+        throw new Error("failed to fetch story");
       }
-    };
 
-    getStory();
-  }, [user?.uid]);
+      const data = await res.json();
+
+      setUserStories(data.story);
+    } catch (err) {
+      console.error(err);
+      setUserStories([]);
+    } finally {
+      setUserStoriesLoading(false);
+    }
+  };
 
   return (
     <StoryContext.Provider
-      value={{ stories, userStories, storiesLoading, userStoriesLoading }}
+      value={{
+        stories,
+        setStories,
+        fetchStories,
+        userStories,
+        fetchUserStories,
+        storiesLoading,
+        userStoriesLoading,
+      }}
     >
       {children}
     </StoryContext.Provider>

@@ -37,7 +37,7 @@ export default function StoryOptions({
   return (
     <div
       ref={divRef}
-      className="flex flex-col gap-2 absolute top-full right-0 w-60 border border-panel bg-second rounded-lg shadow-2xl p-2 z-150"
+      className="flex flex-col gap-2 absolute top-full right-0 w-60 border border-(--color-accent)/10 bg-second rounded-lg shadow-2xl p-2 z-150"
     >
       <MenuButton
         onClick={() => {
