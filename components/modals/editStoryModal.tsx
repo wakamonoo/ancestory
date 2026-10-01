@@ -7,7 +7,6 @@ import { useUser } from "@/context/userContext";
 import { useLoader } from "@/context/loaderContext";
 import LocationPicker from "./locationPickerModal";
 import SecondaryButton from "../buttons/secondaryButton";
-import TertiaryButton from "../buttons/tertiaryButton";
 import { Story } from "@/types/story";
 
 type EditStoryModalProps = {
@@ -224,18 +223,20 @@ export default function EditStoryModal({
               </div>
               <div className="py-2 flex flex-col flex-1">
                 <h4>Place</h4>
-                <input
-                  type="text"
-                  value={place}
-                  onChange={(e) => setPlace(e.target.value)}
-                  placeholder="Where does this story from?"
-                  className="bg-panel p-2 rounded w-full outline-none text-base text-normal"
-                />
-                <TertiaryButton onClick={() => setShowLocationPicker(true)}>
-                  <p className="text-sm text-muted transition-all duration-200 group-hover:text-(--color-normal)">
-                    {location ? "Change pin location" : "Pin location"}
-                  </p>
-                </TertiaryButton>
+                <div className="flex flex-col gap-2">
+                  <input
+                    type="text"
+                    value={place}
+                    onChange={(e) => setPlace(e.target.value)}
+                    placeholder="Where does this story from?"
+                    className="bg-panel p-2 rounded w-full outline-none text-base text-normal"
+                  />
+                  <SecondaryButton onClick={() => setShowLocationPicker(true)}>
+                    <p className="font-bold text-brand text-base whitespace-nowrap">
+                      {location ? "Change pin location" : "Pin location"}
+                    </p>
+                  </SecondaryButton>
+                </div>
               </div>
               <img
                 src={file ? URL.createObjectURL(file) : storyToEdit.poster}
@@ -338,7 +339,9 @@ export default function EditStoryModal({
           </div>
           <div className="ml-auto flex w-fit p-4">
             <RegularButton onClick={submitStory}>
-              <p className="font-bold text-brand text-base whitespace-nowrap">Save Changes</p>
+              <p className="font-bold text-brand text-base whitespace-nowrap">
+                Save Changes
+              </p>
             </RegularButton>
           </div>
         </div>

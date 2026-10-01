@@ -115,20 +115,11 @@ export default function UserProfile() {
               </div>
             )}
           </div>
-          <div className="absolute top-4 left-2  flex items-center gap-2">
-            <button
-              onClick={() => router.back()}
-              className="cursor-pointer group rounded-full p-2 transition-all duration-200 hover:bg-(--color-accent) active:bg-(--color-accent)"
-            >
-              <LuArrowLeft className="text-base text-accent transition-all duration-200 group-hover:text-(--color-secondary) group-active:text-(--color-secondary) shrink-0" />
-            </button>
-            <p className="text-xs text-accent font-semibold uppercase">Back</p>
-          </div>
           {profileUser?.uid === user?.uid && (
             <div className="absolute top-4 right-2">
               <ActionButton onClick={() => setShowEditProfileModal(true)}>
-                <FaPencil className="text-base text-muted shrink-0" />
-                <p className="text-muted font-bold">Edit</p>
+                <FaPencil className="text-base text-normal shrink-0" />
+                <p className="text-normal font-bold">Edit</p>
               </ActionButton>
             </div>
           )}

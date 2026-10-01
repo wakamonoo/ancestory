@@ -21,7 +21,7 @@ export default function RegularButton({
       onClick={onClick}
       form={form}
       disabled={disabled}
-      className={`mt-2 w-full p-4 rounded-lg flex justify-center items-center gap-2 ${
+      className={`w-full p-4 rounded-lg flex justify-center items-center gap-2 ${
         disabled
           ? "cursor-not-allowed bg-(--color-accent)/60"
           : "hover:brightness-90 cursor-pointer bg-accent"

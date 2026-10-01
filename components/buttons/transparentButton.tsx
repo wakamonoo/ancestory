@@ -15,7 +15,7 @@ export default function TransparentButton({
     <button
       type={type}
       onClick={onClick}
-      className="cursor-pointer group w-fit flex gap-4 items-center justify-center transition-all duration-200)"
+      className="cursor-pointer group w-fit flex gap-4 items-center justify-center transition-all duration-200"
     >
       {children}
     </button>

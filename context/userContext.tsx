@@ -45,9 +45,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [isLogged, setIsLogged] = useState<boolean | null>(null);
   const [showSignInModal, setShowSignInModal] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [allUsersLoading, setAllUsersLoading] = useState<boolean>(true);
+
+  const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
   const fetchUser = async (uid: string) => {
     try {
@@ -78,6 +80,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
           setUser(null);
           setIsLogged(false);
         }
+         
+        await delay(2000)
         setIsLoading(false);
       },
     );

@@ -24,7 +24,7 @@ export default function RoundedButton({
       className={`mt-2 w-full py-2 px-4 rounded-full flex justify-center items-center gap-1 ${
         disabled
           ? "cursor-not-allowed bg-(--color-accent)/60"
-          : "hover:bg-(--color-accent)/80 cursor-pointer bg-accent"
+          : "hover:brightness-90 cursor-pointer bg-accent"
       }`}
     >
       {children}

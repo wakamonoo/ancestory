@@ -5,6 +5,8 @@ import { FcGoogle } from "react-icons/fc";
 import { MdClose, MdLogout } from "react-icons/md";
 import Swal from "sweetalert2";
 import RoundedButton from "../buttons/roundedButton";
+import Image from "next/image";
+import Logo from "@/assets/main_logo.png";
 
 export default function SignInModal() {
   const { fetchUser, isLogged, setShowSignInModal } = useUser();
@@ -125,7 +127,17 @@ export default function SignInModal() {
             <MdClose className="text-xl text-normal transition-all duration-20 group-hover:text-(--color-accent)" />
           </button>
         </div>
-        <div className="flex flex-col gap-2 items-center justify-center px-4 pb-4">
+        <div className="relative px-4">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-brand rounded-full" />
+          <div className="relative w-full h-auto shrink-0">
+            <Image
+              src={Logo}
+              alt="AnceStory Logo"
+              className="w-full h-full object-contain"
+            />
+          </div>
+        </div>
+        <div className="flex flex-col gap-2 items-center justify-center p-4">
           {isLogged ? (
             <RoundedButton onClick={handleSignIn}>
               <div className="flex gap-2 items-center justify-center">

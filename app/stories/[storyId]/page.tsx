@@ -101,27 +101,15 @@ export default function StoryPage() {
                 alt={story.title}
                 className="absolute inset-0 w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-linear-to-b from-(--color-bg) via-(--color-bg)/0 to-transparent" />
-              <div className="absolute top-4 left-2 flex items-center gap-2">
-                <button
-                  onClick={() => router.back()}
-                  className="cursor-pointer group rounded-full p-2 transition-all duration-200 hover:bg-(--color-accent) active:bg-(--color-accent)"
-                >
-                  <LuArrowLeft className="text-base text-accent transition-all duration-200 group-hover:text-(--color-secondary) group-active:text-(--color-secondary) shrink-0" />
-                </button>
-                <p className="text-xs text-accent font-semibold uppercase">
-                  Back
-                </p>
-              </div>
               {user?.uid === story.userId && (
                 <div className="absolute top-4 right-2">
                   <div className="relative">
                     <button
                       ref={storyOptionsButtonRe}
                       onClick={() => setShowStoryOptions((prev) => !prev)}
-                      className="cursor-pointer rounded-full group p-2 transition-all duration-200 hover:bg-(--color-accent) active:bg-(--color-accent)"
+                      className="flex gap-2 cursor-pointer rounded-full p-2 bg-(--color-panel)/60 transition-all duration-200 hover:bg-(--color-panel) active:bg-(--color-panel)"
                     >
-                      <BiDotsVertical className="text-base text-accent transition-all duration-200 group-hover:text-(--color-secondary) group-active:text-(--color-secondary) shrink-0" />
+                      <BiDotsVertical className="text-base text-normal shrink-0" />
                     </button>
                     {showStoryOptions && (
                       <StoryOptions
