@@ -77,7 +77,7 @@ export const metadata = {
   },
 
   verification: {
-    google: "YOUR_GOOGLE_VERIFICATION_CODE",
+    google: "iYKOhXEC4XjkkIKgKZzvAmLnQtaQsCHa8-HREmlTjU8",
   },
 
   manifest: "/manifest.json",
