@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://ancestory-wakamonoo.vercel.app
+Host: https://ancestory.site
 
 # Sitemaps
-Sitemap: https://ancestory-wakamonoo.vercel.app/sitemap.xml
+Sitemap: https://ancestory.site/sitemap.xml

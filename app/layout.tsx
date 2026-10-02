@@ -104,7 +104,7 @@ export const metadata = {
     title: "AnceStory • Local Stories, Lasting Impressions",
     description:
       "Discover and preserve local stories, places, and memories with AnceStory. Explore stories from communities, learn about meaningful places, and share the experiences that shape local heritage.",
-    url: "https://ancestory-wakamonoo.vercel.app",
+    url: "https://ancestory.site",
     siteName: "AnceStory",
     locale: "en-US",
     type: "website",
@@ -125,7 +125,7 @@ export const metadata = {
     images: "/main_logo.png",
   },
 
-  metadataBase: new URL("https://ancestory-wakamonoo.vercel.app"),
+  metadataBase: new URL("https://ancestory.site"),
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
