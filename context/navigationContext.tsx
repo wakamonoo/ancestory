@@ -13,9 +13,10 @@ import { useStory } from "./storyContext";
 
 type NavigationContextType = {
   handleHomeClick: () => void;
-  handleStoriesClick: () => void;
+  handleDiscoverClick: () => void;
   handlePlacesClick: () => void;
   handleContributorsClick: () => void;
+  handleAboutClick: () => void;
 };
 
 type NavigationProviderProps = {
@@ -24,9 +25,10 @@ type NavigationProviderProps = {
 
 export const NavigationContext = createContext<NavigationContextType>({
   handleHomeClick: () => {},
-  handleStoriesClick: () => {},
+  handleDiscoverClick: () => {},
   handlePlacesClick: () => {},
   handleContributorsClick: () => {},
+  handleAboutClick: () => {},
 });
 
 export const useNavigation = () => {
@@ -62,7 +64,7 @@ export const NavigationProvider = ({ children }: NavigationProviderProps) => {
     }
   };
 
-  const handleStoriesClick = () => {
+  const handleDiscoverClick = () => {
     if (pathname === "/") {
       document
         .getElementById("discover")
@@ -95,13 +97,25 @@ export const NavigationProvider = ({ children }: NavigationProviderProps) => {
     }
   };
 
+  const handleAboutClick = () => {
+    if (pathname === "/") {
+      document
+        .getElementById("about")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      setIsLoading(true);
+      router.push("/#about");
+    }
+  };
+
   return (
     <NavigationContext.Provider
       value={{
         handleHomeClick,
-        handleStoriesClick,
+        handleDiscoverClick,
         handlePlacesClick,
         handleContributorsClick,
+        handleAboutClick,
       }}
     >
       {children}

@@ -12,12 +12,16 @@ import { FaArrowRight } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { useLoader } from "@/context/loaderContext";
 import { useNavigation } from "@/context/navigationContext";
+import { useStory } from "@/context/storyContext";
+import { useUser } from "@/context/userContext";
 
 export default function About() {
-  const { handleStoriesClick } = useNavigation();
+  const { user, setShowSignInModal } = useUser();
+  const { handleDiscoverClick } = useNavigation();
+  const { setShowAddStoryModal } = useStory();
 
   return (
-    <div className="w-full py-16">
+    <div id="about" className="w-full py-16">
       <div className="relative w-full h-72">
         <div className="inset-0 w-full h-72">
           <Image
@@ -28,13 +32,13 @@ export default function About() {
           />
         </div>
         <div className="absolute inset-0 bg-linear-to-r from-(olive) via-(--color-olive)/20 to-transparent" />
-        <div className="absolute inset-0 flex justify-start items-center max-w-4xl">
+        <div className="absolute inset-0 flex justify-start items-center max-w-5xl">
           <div className="p-8 md:px-16 lg:px-32 xl:px-64">
             <div className="flex gap-2 items-center">
               <p className="font-alt font-semibold uppercase text-base text-(--color-bg)/80 tracking-widest">
                 About AnceStory
               </p>
-              <div className="flex-1 h-px bg-(--color-panel)/60" />
+              <div className="w-32 h-px bg-(--color-panel)/60" />
             </div>
 
             <h1 className="mt-4 text-2xl text-(--color-panel)">
@@ -60,11 +64,11 @@ export default function About() {
           />
         </div>
         <div className="p-8 md:px-16 lg:px-32 xl:px-64">
-          <div className="flex gap-2 items-center max-w-4xl">
+          <div className="flex gap-2 items-center">
             <p className="font-alt font-semibold uppercase text-base text-(--color-bg)/80 tracking-widest">
               Why AnceStory exist
             </p>
-            <div className="flex-1 h-px bg-(--color-panel)/60" />
+            <div className="w-32 h-px bg-(--color-panel)/60" />
           </div>
           <div className="mt-4 flex items-center justify-center">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-start divide-y sm:divide-y-0 sm:divide-x divide-(--color-panel)/60">
@@ -137,12 +141,12 @@ export default function About() {
           />
         </div>
         <div className="absolute inset-0 bg-linear-to-r from-(accent) via-(--color-accent) to-transparent" />
-        <div className="relative max-w-4xl p-8 md:px-16 lg:px-32 xl:px-64">
+        <div className="relative max-w-5xl p-8 md:px-16 lg:px-32 xl:px-64">
           <div className="flex gap-2 items-center">
             <p className="font-alt font-semibold uppercase text-base text-(--color-bg)/80 tracking-widest">
               Where it came from
             </p>
-            <div className="flex-1 h-px bg-(--color-panel)/60" />
+            <div className="w-32 h-px bg-(--color-panel)/60" />
           </div>
 
           <h1 className="mt-4 text-2xl text-(--color-panel)">
@@ -167,7 +171,7 @@ export default function About() {
       <div className="w-full">
         <div className="flex flex-col items-start justify-center p-8 md:px-16 lg:px-32 xl:px-64">
           <div className="flex flex-col items-start">
-            <div className="w-24 h-px bg-(--color-accent)/60" />
+            <div className="w-32 h-px bg-(--color-accent)/60" />
             <h1 className="mt-4 text-2xl text-brown">
               There are still stories waiting to be remembered.
             </h1>
@@ -176,13 +180,20 @@ export default function About() {
             </p>
           </div>
           <div className="flex flex-wrap w-fit gap-2 mt-4">
-            <SecondaryButton onClick={handleStoriesClick}>
+            <SecondaryButton onClick={handleDiscoverClick}>
               <p className="font-bold text-brand text-base whitespace-nowrap">
                 Explore The Stories
               </p>
               <FaArrowRight className="text-base text-brand shrink-0" />
             </SecondaryButton>
             <RegularButton
+              onClick={() => {
+                if (user) {
+                  setShowAddStoryModal(true);
+                } else {
+                  setShowSignInModal(true);
+                }
+              }}
             >
               <p className="font-bold text-brand text-base whitespace-nowrap">
                 Share a Story

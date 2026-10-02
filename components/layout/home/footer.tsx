@@ -18,9 +18,10 @@ declare global {
 export default function Footer() {
   const {
     handleHomeClick,
-    handleStoriesClick,
+    handleDiscoverClick,
     handlePlacesClick,
     handleContributorsClick,
+    handleAboutClick,
   } = useNavigation();
 
   useEffect(() => {
@@ -54,8 +55,8 @@ export default function Footer() {
 
   return (
     <div className="mt-16 py-4">
-      <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-4">
-        <div className="flex flex-col sm:flex-row items-start md:items-center gap-8 md:gap-16 lg:gap-24">
+      <div className="flex flex-col lg:flex-row items-start lg:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row md:items-center gap-2 sm:gap-8 md:gap-16 lg:gap-24">
           <button
             onClick={handleHomeClick}
             className="w-32 h-auto cursor-pointer"
@@ -66,13 +67,13 @@ export default function Footer() {
               className="w-full h-full shrink-0 object-contain"
             />
           </button>
-          <div className="flex flex-col items-start md:flex-row gap-2 md:gap-8 lg:gap-16">
+          <div className="flex flex-wrap  gap-y-2 gap-x-4">
             <button
-              onClick={handleStoriesClick}
+              onClick={handleDiscoverClick}
               className="cursor-pointer group"
             >
               <p className="text-sm font-semibold transition-all duration-200 text-accent group-hover:text-(--color-brownl)">
-                Stories
+                Discover
               </p>
             </button>
             <button
@@ -89,6 +90,11 @@ export default function Footer() {
             >
               <p className="text-sm font-semibold transition-all duration-200 text-accent group-hover:text-(--color-brownl)">
                 Contributors
+              </p>
+            </button>
+            <button onClick={handleAboutClick} className="cursor-pointer group">
+              <p className="text-sm font-semibold transition-all duration-200 text-accent group-hover:text-(--color-brownl)">
+                About
               </p>
             </button>
           </div>

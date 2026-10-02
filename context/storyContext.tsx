@@ -8,6 +8,7 @@ import {
 } from "react";
 import { useUser } from "./userContext";
 import { Story } from "@/types/story";
+import AddStoryModal from "@/components/modals/addStoryModal";
 
 type StoryContextType = {
   stories: Story[];
@@ -17,6 +18,7 @@ type StoryContextType = {
   fetchUserStories: (uid: string) => Promise<void>;
   storiesLoading: boolean;
   userStoriesLoading: boolean;
+  setShowAddStoryModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const StoryContext = createContext<StoryContextType | undefined>(
@@ -38,6 +40,7 @@ export const StoryProvider = ({ children }: { children: ReactNode }) => {
   const [storiesLoading, setStoriesLoading] = useState(true);
   const [userStories, setUserStories] = useState<Story[]>([]);
   const [userStoriesLoading, setUserStoriesLoading] = useState(true);
+  const [showAddStoryModal, setShowAddStoryModal] = useState(false);
 
   const fetchStories = async () => {
     try {
@@ -89,8 +92,12 @@ export const StoryProvider = ({ children }: { children: ReactNode }) => {
         fetchUserStories,
         storiesLoading,
         userStoriesLoading,
+        setShowAddStoryModal,
       }}
     >
+      {showAddStoryModal && (
+        <AddStoryModal setShowAddStoryModal={setShowAddStoryModal} />
+      )}
       {children}
     </StoryContext.Provider>
   );

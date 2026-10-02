@@ -16,23 +16,27 @@ import { useUser } from "@/context/userContext";
 import { useNavigation } from "@/context/navigationContext";
 import { useLoader } from "@/context/loaderContext";
 import { useRouter } from "next/navigation";
+import { useStory } from "@/context/storyContext";
 
 type MinMenuOptionsProps = {
   setShowMinMenuOptions: (value: boolean) => void;
   minMenuOptionsButtonRef: React.RefObject<HTMLButtonElement | null>;
-  setShowAddStoryModal: (value: boolean) => void;
 };
 
 export default function MinMenuOptionsOptions({
   setShowMinMenuOptions,
   minMenuOptionsButtonRef,
-  setShowAddStoryModal,
 }: MinMenuOptionsProps) {
   const { user, setShowSignInModal } = useUser();
+  const { setShowAddStoryModal } = useStory();
   const divRef = useRef<HTMLDivElement | null>(null);
   const { setIsLoading } = useLoader();
-  const { handleStoriesClick, handlePlacesClick, handleContributorsClick } =
-    useNavigation();
+  const {
+    handleDiscoverClick,
+    handlePlacesClick,
+    handleContributorsClick,
+    handleAboutClick,
+  } = useNavigation();
   const router = useRouter();
 
   useEffect(() => {
@@ -59,9 +63,9 @@ export default function MinMenuOptionsOptions({
     >
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
-          <MenuButton onClick={handleStoriesClick}>
+          <MenuButton onClick={handleDiscoverClick}>
             <LuBook className="text-sm" />
-            <p className="text-sm">Stories</p>
+            <p className="text-sm">Discover</p>
           </MenuButton>
           <MenuButton onClick={handlePlacesClick}>
             <FaMapPin className="text-sm" />
@@ -70,6 +74,10 @@ export default function MinMenuOptionsOptions({
           <MenuButton onClick={handleContributorsClick}>
             <LuLink className="text-sm" />
             <p className="text-sm">Contributors</p>
+          </MenuButton>
+          <MenuButton onClick={handleAboutClick}>
+            <LuLink className="text-sm" />
+            <p className="text-sm">About</p>
           </MenuButton>
         </div>
         <div className="h-px w-full bg-(--color-accent)/10" />

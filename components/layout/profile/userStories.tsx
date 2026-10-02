@@ -13,7 +13,7 @@ export default function UserStories() {
   return (
     <div className="w-full">
       {userStoriesLoading ? (
-        <div className="mt-4 w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
+        <div className="mt-4 w-full grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
           <StoryCardLoader />
           <StoryCardLoader />
           <StoryCardLoader />
@@ -21,7 +21,7 @@ export default function UserStories() {
       ) : userStories.length === 0 ? (
         <EmptyUserStories />
       ) : (
-        <div className="mt-4 w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
+        <div className="mt-4 w-full grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
           {userStories.map((story) => {
             return <StoryCard key={story.storyId} story={story} />;
           })}

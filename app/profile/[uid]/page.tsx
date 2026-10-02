@@ -115,7 +115,7 @@ export default function UserProfile() {
               </div>
             )}
           </div>
-          {profileUser?.uid === user?.uid && (
+          {profileUser?.uid === user?.uid && !profileUserLoading && (
             <div className="absolute top-4 right-2">
               <ActionButton onClick={() => setShowEditProfileModal(true)}>
                 <FaPencil className="text-base text-normal shrink-0" />
@@ -124,7 +124,7 @@ export default function UserProfile() {
             </div>
           )}
         </div>
-        <div className="mt-4 grid grid-cols-1 lg:grid-cols-[3fr_1fr] items-stretch gap-4 lg:gap-8">
+        <div className="mt-4 grid grid-cols-1 lg:grid-cols-[2.5fr_1.5fr] items-stretch gap-4 lg:gap-8">
           <div>
             <p className="font-alt font-semibold uppercase text-base text-brown">
               {profileUser?.uid === user?.uid

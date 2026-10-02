@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function MainLoader() {
   return (
-    <div className="fixed inset-0 z-99999 flex items-center justify-center backdrop-blur-lg">
+    <div className="fixed inset-0 z-999999 flex items-center justify-center backdrop-blur-lg">
       <div className="relative flex items-center justify-center w-24 h-24 bg-second p-4 rounded-full">
         <div
           className="absolute w-full h-full rounded-full border-[3px] border-gray-100/10 border-r-(--color-accent) border-b-(--color-accent) animate-spin"

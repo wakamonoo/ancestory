@@ -183,7 +183,7 @@ export default function AddStoryModal({
     <>
       <div
         onClick={() => setShowAddStoryModal(false)}
-        className="fixed inset-0 z-9999 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm"
+        className="fixed inset-0 z-99999 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm"
       >
         <div
           onClick={(e) => e.stopPropagation()}

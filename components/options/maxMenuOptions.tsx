@@ -12,19 +12,19 @@ import { useUser } from "@/context/userContext";
 import MenuButton from "../buttons/menuButton";
 import { useRouter } from "next/navigation";
 import { useLoader } from "@/context/loaderContext";
+import { useStory } from "@/context/storyContext";
 
 type MaxMenuOptionsProps = {
   setShowMaxMenuOptions: (value: boolean) => void;
   maxMenuOptionsButtonRef: React.RefObject<HTMLButtonElement | null>;
-  setShowAddStoryModal: (value: boolean) => void;
 };
 
 export default function MaxMenuOptionsOptions({
   setShowMaxMenuOptions,
   maxMenuOptionsButtonRef,
-  setShowAddStoryModal,
 }: MaxMenuOptionsProps) {
   const { user, setShowSignInModal } = useUser();
+  const { setShowAddStoryModal } = useStory();
   const { setIsLoading } = useLoader();
   const divRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();

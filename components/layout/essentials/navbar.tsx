@@ -22,13 +22,13 @@ export default function NavBar() {
   const [showMaxMenuOptions, setShowMaxMenuOptions] = useState(false);
   const {
     handleHomeClick,
-    handleStoriesClick,
+    handleDiscoverClick,
     handlePlacesClick,
     handleContributorsClick,
+    handleAboutClick,
   } = useNavigation();
   const minMenuOptionsButtonRef = useRef<HTMLButtonElement | null>(null);
   const maxMenuOptionsButtonRef = useRef<HTMLButtonElement | null>(null);
-  const [showAddStoryModal, setShowAddStoryModal] = useState(false);
 
   return (
     <>
@@ -46,11 +46,11 @@ export default function NavBar() {
         <div className="flex items-center justify-center gap-16">
           <div className="hidden lg:flex lg:gap-16">
             <button
-              onClick={handleStoriesClick}
+              onClick={handleDiscoverClick}
               className="cursor-pointer group"
             >
               <p className="text-sm font-semibold transition-all duration-200 text-accent group-hover:text-(--color-brown)">
-                Stories
+                Discover
               </p>
             </button>
             <button
@@ -67,6 +67,11 @@ export default function NavBar() {
             >
               <p className="text-sm font-semibold transition-all duration-200 text-accent group-hover:text-(--color-brown)">
                 Contributors
+              </p>
+            </button>
+            <button onClick={handleAboutClick} className="cursor-pointer group">
+              <p className="text-sm font-semibold transition-all duration-200 text-accent group-hover:text-(--color-brown)">
+                About
               </p>
             </button>
           </div>
@@ -87,7 +92,6 @@ export default function NavBar() {
                 <MinMenuOptions
                   setShowMinMenuOptions={setShowMinMenuOptions}
                   minMenuOptionsButtonRef={minMenuOptionsButtonRef}
-                  setShowAddStoryModal={setShowAddStoryModal}
                 />
               )}
             </div>
@@ -118,17 +122,12 @@ export default function NavBar() {
                 <MaxMenuOptions
                   setShowMaxMenuOptions={setShowMaxMenuOptions}
                   maxMenuOptionsButtonRef={maxMenuOptionsButtonRef}
-                  setShowAddStoryModal={setShowAddStoryModal}
                 />
               )}
             </div>
           </div>
         </div>
       </div>
-
-      {showAddStoryModal && (
-        <AddStoryModal setShowAddStoryModal={setShowAddStoryModal} />
-      )}
     </>
   );
 }
