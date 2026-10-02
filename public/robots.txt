@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://ancestory-wakamonoo.vercel.app
+
+# Sitemaps
+Sitemap: https://ancestory-wakamonoo.vercel.app/sitemap.xml
