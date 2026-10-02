@@ -38,7 +38,7 @@ export default function Featured() {
 
   return (
     <div className="py-16">
-      <p className="font-alt font-semibold uppercase text-base text-brown">
+      <p className="font-alt font-semibold uppercase text-base text-brown tracking-widest">
         Featured Story
       </p>
       {featuredLoading ? (
@@ -55,7 +55,7 @@ export default function Featured() {
             />
           </div>
           <div className="w-full flex flex-col">
-            <div className="my-2">
+            <div className="my-2 md:mt-0">
               <h1 className="text-4xl text-normal">{featuredStory.title}</h1>
             </div>
             <div className="my-4 flex flex-wrap gap-x-8 gap-y-2">
@@ -87,7 +87,7 @@ export default function Featured() {
               ))}
             </div>
             <div className="h-px w-full bg-(--color-accent)/10 my-2" />
-            <p className="text-base text-muted leading-tight line-clamp-3 lg:line-clamp-5 my-2">
+            <p className="text-base text-muted leading-tight line-clamp-3 my-2">
               {featuredStory.story}
             </p>
 

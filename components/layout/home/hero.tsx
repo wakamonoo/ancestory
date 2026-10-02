@@ -17,9 +17,9 @@ export default function Hero() {
             Preserving the stories that might otherwise disappear.
           </h1>
           <p className="text-base text-muted">
-            AnceStory is a growing collection of local stories, folklore,
-            memories, and history told by the people who lived them, and the
-            ones who still remember.
+            AnceStory is a collection of local stories, folklore, memories, and
+            history, shared by the people who lived them and the ones who still
+            remember.
           </p>
           <div className="w-fit">
             <CTAButton
@@ -40,7 +40,7 @@ export default function Hero() {
           <Image
             src={HeroImg}
             alt="hero"
-            className="w-full h-[45vh] md:h-[70vh] object-cover"
+            className="w-full h-[45vh] object-cover"
           />
         </div>
       </div>

@@ -68,7 +68,7 @@ export default function UserProfile() {
 
   return (
     <>
-      <div className="w-full py-16">
+      <div className="w-full p-8 md:px-16 lg:px-32 xl:px-64 py-16">
         <div className="relative">
           <div className="relative min-h-64 max-h-84 overflow-hidden">
             <img

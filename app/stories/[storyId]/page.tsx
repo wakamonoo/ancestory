@@ -90,7 +90,7 @@ export default function StoryPage() {
 
   return (
     <>
-      <div className="w-full py-16 grid grid-cols-1 lg:grid-cols-[2.5fr_1.5fr] lg:gap-8 items-start">
+      <div className="w-full p-8 md:px-16 lg:px-32 xl:px-64 py-16 grid grid-cols-1 lg:grid-cols-[2.5fr_1.5fr] lg:gap-8 items-start">
         {storiesLoading || !story ? (
           <StoryPageLoader />
         ) : (

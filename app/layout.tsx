@@ -140,7 +140,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <LoaderProvider>
               <NavigationProvider>
                 <NavBar />
-                <main className="px-4 md:px-8 lg:px-16">{children}</main>
+                {children}
               </NavigationProvider>
             </LoaderProvider>
           </StoryProvider>

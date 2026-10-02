@@ -27,7 +27,7 @@ export default function Discover() {
       } else if (window.innerWidth >= 768) {
         setVisibleCount(2);
       } else {
-        setVisibleCount(4);
+        setVisibleCount(3);
       }
     };
 
@@ -43,7 +43,7 @@ export default function Discover() {
     <div id="discover" className="w-full gap-2 py-16">
       <div className="flex flex-col">
         <div className="w-full flex justify-between">
-         <p className="font-alt font-semibold uppercase text-base text-brown">
+         <p className="font-alt font-semibold uppercase text-base text-brown tracking-widest">
             From the archive
           </p>
           {stories.length > 0 && (
@@ -62,14 +62,14 @@ export default function Discover() {
         </div>
 
         {storiesLoading ? (
-          <div className="mt-8 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+          <div className="mt-8 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             <StoryCardLoader />
             <StoryCardLoader />
           </div>
         ) : stories.length === 0 ? (
           <EmptyStories />
         ) : (
-          <div className="mt-8 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="mt-8 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {stories.slice(0, visibleCount).map((story) => {
               return <StoryCard key={story.storyId} story={story} />;
             })}

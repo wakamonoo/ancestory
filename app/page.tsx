@@ -1,4 +1,5 @@
 "use client";
+import About from "@/components/layout/home/about";
 import Contributors from "@/components/layout/home/contributors";
 import Discover from "@/components/layout/home/discover";
 import Featured from "@/components/layout/home/featured";
@@ -17,7 +18,7 @@ export default function Page() {
 
   return (
     <>
-      <div className="mt-8 md:mt-0 divide-y divide-(--color-accent)/10">
+      <div className="p-8 md:px-16 lg:px-32 xl:px-64 mt-8 md:mt-0 divide-y divide-(--color-accent)/10">
         <Hero />
         <Featured />
         <Discover />
@@ -26,7 +27,10 @@ export default function Page() {
           <Contributors />
         </div>
       </div>
-      <Footer />
+      <About />
+      <div className="p-8 md:px-16 lg:px-32 xl:px-64">
+        <Footer />
+      </div>
     </>
   );
 }

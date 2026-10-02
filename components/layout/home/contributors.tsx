@@ -14,7 +14,7 @@ export default function Contributors() {
 
   return (
     <div id="contributors" className="w-full gap-2 py-16">
-      <p className="font-alt font-semibold uppercase text-base text-brown">
+      <p className="font-alt font-semibold uppercase text-base text-brown tracking-widest">
         Our Contributors
       </p>
       <h1 className="text-2xl">Real people. Shared stories.</h1>

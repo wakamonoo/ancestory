@@ -17,7 +17,7 @@ export default function Stories() {
   }, [setIsLoading]);
 
   return (
-    <div className="w-full py-16">
+    <div className="w-full p-8 md:px-16 lg:px-32 xl:px-64 py-16">
       <div className="flex items-center gap-4">
         <button
           onClick={() => router.back()}
@@ -34,7 +34,7 @@ export default function Stories() {
           and history from different places and communities.
         </p>
         <div className="h-px w-full bg-(--color-accent)/10 my-8" />
-        <div className="mt-4 w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        <div className="mt-4w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
           {storiesLoading ? (
             <>
               <StoryCardLoader />
