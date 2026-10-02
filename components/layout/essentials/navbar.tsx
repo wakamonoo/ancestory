@@ -32,7 +32,7 @@ export default function NavBar() {
 
   return (
     <>
-      <div className="fixed z-9999 w-full flex justify-between items-center p-8 md:px-16 lg:px-32 xl:px-64 h-14 bg-brand">
+      <div className="fixed z-100 w-full flex justify-between items-center p-8 md:px-16 lg:px-32 xl:px-64 h-14 bg-brand">
         <button onClick={handleHomeClick} className="cursor-pointer">
           <div className="w-32 h-auto">
             <Image

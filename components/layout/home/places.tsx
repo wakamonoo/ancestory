@@ -72,7 +72,7 @@ export default function Places() {
             makes them unique through the voices of those who call them home.
           </p>
         </div>
-        <div ref={mapRef} className="h-[40vh] lg:h-[30vh] w-full mt-4" />
+        <div ref={mapRef} className="h-[40vh] z-50 lg:h-[30vh] w-full mt-4" />
      
     </div>
   );

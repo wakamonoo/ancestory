@@ -84,7 +84,7 @@ export default function ConfirmAccountDeleteModal({
   return (
     <div
       onClick={() => setShowConfirmAccountDeleteModal(false)}
-      className="fixed inset-0 z-9999 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm"
+      className="fixed inset-0 z-150 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm"
     >
       <div
         onClick={(e) => e.stopPropagation()}
