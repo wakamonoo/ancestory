@@ -32,7 +32,6 @@ const playfair = Playfair_Display({
 });
 
 // Metadata
-
 export const metadata = {
   title: {
     default: "AnceStory • Local Stories, Lasting Impressions",
@@ -105,7 +104,7 @@ export const metadata = {
     title: "AnceStory • Local Stories, Lasting Impressions",
     description:
       "Discover and preserve local stories, places, and memories with AnceStory. Explore stories from communities, learn about meaningful places, and share the experiences that shape local heritage.",
-    url: "https://ancestory.site",
+    url: "https://ancestory-wakamonoo.vercel.app",
     siteName: "AnceStory",
     locale: "en-US",
     type: "website",
