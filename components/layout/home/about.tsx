@@ -1,11 +1,14 @@
 import Cover from "@/assets/cover.png";
 import AboutImage1 from "@/assets/aboutImage1.png";
+import AboutImage2 from "@/assets/aboutImage2.png";
 import ScratchedImage from "@/assets/scratchedImage.png";
 import Fill from "@/assets/black-paper.png";
 import Image from "next/image";
+import Icon from "@/assets/icon.png";
+import Texttile from "@/assets/low-contrast-linen.png";
 import { BiLeaf } from "react-icons/bi";
-import { BsHouse, BsHouseFill } from "react-icons/bs";
-import { FaChildReaching } from "react-icons/fa6";
+import { BsHouse, BsHouseFill, BsPeopleFill } from "react-icons/bs";
+import { FaChildReaching, FaPeopleGroup } from "react-icons/fa6";
 import SecondaryButton from "@/components/buttons/secondaryButton";
 import RegularButton from "@/components/buttons/regularButton";
 import { FaArrowRight } from "react-icons/fa";
@@ -14,6 +17,9 @@ import { useLoader } from "@/context/loaderContext";
 import { useNavigation } from "@/context/navigationContext";
 import { useStory } from "@/context/storyContext";
 import { useUser } from "@/context/userContext";
+import Arabasque from "@/assets/arabesque.png";
+import { GiCoconuts, GiWoodCabin } from "react-icons/gi";
+import { MdCabin } from "react-icons/md";
 
 export default function About() {
   const { user, setShowSignInModal } = useUser();
@@ -123,7 +129,14 @@ export default function About() {
           </div>
         </div>
       </div>
-      <div className="relative bg-accent w-full overflow-hidden">
+      <div
+        className="relative bg-accent w-full overflow-hidden"
+        style={{
+          backgroundImage: `url(${Texttile.src})`,
+          backgroundRepeat: "repeat",
+          backgroundSize: "140px 140px",
+        }}
+      >
         <div className="absolute top-1/2 -translate-y-1/2 -right-4 w-[70%] sm:w-[60%] md:w-1/2 h-auto">
           <Image
             src={ScratchedImage}
@@ -131,16 +144,7 @@ export default function About() {
             className="w-full h-full object-right"
           />
         </div>
-
-        <div className="inset-0 w-full">
-          <Image
-            src={Fill}
-            alt="About Image"
-            fill
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <div className="absolute inset-0 bg-linear-to-r from-(accent) via-(--color-accent) to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-r from-(accent) via-(--color-accent) lg:via-(--color-accent)/10 to-transparent" />
         <div className="relative max-w-5xl p-8 md:px-16 lg:px-32 xl:px-64">
           <div className="flex gap-2 items-center">
             <p className="font-alt font-semibold uppercase text-base text-(--color-bg)/80 tracking-widest">
@@ -156,26 +160,86 @@ export default function About() {
             Across towns and villages, stories are passed from grandparents to
             grandchildren, from neighbors to neighbors, and from one generation
             to the next.
-            <br /> <br />
-            Some explain the name of a place, some tell of people who once lived
-            there. Some are strange, some are beautiful, and some may be
-            difficult to explain.
-            <br /> <br />
-            But once the people who remember them are gone, the stories can
-            dissapear with them.
-            <br /> <br />
-            AnceStory was created to give those stories somewhere to remain.
           </p>
         </div>
       </div>
+
+      <div className="relative w-full bg-second  p-8 md:px-16 lg:px-32 xl:px-64">
+        <div className="inset-0 w-full h-auto opacity-15">
+          <Image
+            src={AboutImage2}
+            alt="About Image"
+            fill
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 lg:items-center gap-12">
+          <div className="flex flex-col divide-y divide(--color-muted)/60">
+            <div className="flex items-start gap-2 py-4">
+              <div className="flex items-center justify-center bg-accent w-14 h-14 rounded-full shrink-0">
+                <MdCabin className="text-4xl text-brand" />
+              </div>
+              <div className="flex flex-col items-start">
+                <h1 className="text-base text-brown">
+                  Some explain the name of a place,
+                </h1>
+                <p className="text-sm text-muted leading-tight">
+                  some tell of people who once lived there.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2 py-4">
+              <div className="flex items-center justify-center bg-accent w-14 h-14 rounded-full shrink-0">
+                <GiCoconuts className="text-4xl text-brand" />
+              </div>
+              <div className="flex flex-col items-start">
+                <h1 className="text-base text-brown">Some are strange,</h1>
+                <p className="text-sm text-muted leading-tight">
+                  some are beautiful, and some may be difficult to explain.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2 py-4">
+              <div className="flex items-center justify-center bg-accent w-14 h-14 rounded-full shrink-0">
+                <FaPeopleGroup className="text-4xl text-brand" />
+              </div>
+              <div className="flex flex-col items-start">
+                <h1 className="text-base text-brown">
+                  But once the people who remember them are gone,
+                </h1>
+                <p className="text-sm text-muted leading-tight">
+                  the stories can dissapear with them.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center divide-x divide-(--color-muted)/60">
+            <div className="pr-4">
+              <div className="w-14 h-14 shrink-0">
+                <Image
+                  src={Icon}
+                  alt="Icon"
+                  className="w-full h-full object contain"
+                />
+              </div>
+            </div>
+            <div className="pl-4">
+              <h1 className="text-2xl text-brown">
+                AnceStory was created to give those stories somewhere to remain.
+              </h1>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="w-full">
         <div className="flex flex-col items-start justify-center p-8 md:px-16 lg:px-32 xl:px-64">
           <div className="flex flex-col items-start">
-            <div className="w-32 h-px bg-(--color-accent)/60" />
+            <div className="w-32 h-px bg-(--color-muted)/60" />
             <h1 className="mt-4 text-2xl text-brown">
               There are still stories waiting to be remembered.
             </h1>
-            <p className="mt-2 text-base text-accent leading-tight">
+            <p className="mt-2 text-base text-muted leading-tight">
               Maybe one of them belongs to you.
             </p>
           </div>
