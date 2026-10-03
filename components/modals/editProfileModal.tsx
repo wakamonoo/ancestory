@@ -5,7 +5,7 @@ import { LuImageUp } from "react-icons/lu";
 import { MdClose } from "react-icons/md";
 import Swal from "sweetalert2";
 import RegularButton from "../buttons/regularButton";
-import Cover from "@/assets/cover.png";
+import CoverFallback from "@/assets/coverFallback.png";
 import SecondaryButton from "../buttons/secondaryButton";
 
 type EditProfileModalProps = {
@@ -233,7 +233,7 @@ export default function EditProfileModal({
                 src={
                   userCoverPhoto instanceof File
                     ? URL.createObjectURL(userCoverPhoto)
-                    : userCoverPhoto || Cover.src
+                    : userCoverPhoto || CoverFallback.src
                 }
                 alt={userName}
                 loading="lazy"

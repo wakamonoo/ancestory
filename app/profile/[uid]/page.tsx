@@ -13,7 +13,7 @@ import { FaPencil } from "react-icons/fa6";
 import RegularButton from "@/components/buttons/regularButton";
 import ActionButton from "@/components/buttons/actionButton";
 import EditProfileModal from "@/components/modals/editProfileModal";
-import Cover from "@/assets/cover.png";
+import CoverFallback from "@/assets/coverFallback.png";
 import EmptyUserStories from "@/components/fallbacks/emptyUserStories";
 import StoryCardLoader from "@/components/loaders/storyCardLoader";
 import ConfirmAccountDeleteModal from "@/components/modals/confirmAccountDeleteModal";
@@ -72,7 +72,7 @@ export default function UserProfile() {
         <div className="relative">
           <div className="relative min-h-64 max-h-84 overflow-hidden">
             <img
-              src={profileUser?.coverPhoto || Cover.src}
+              src={profileUser?.coverPhoto || CoverFallback.src}
               alt={profileUser?.name}
               className="absolute inset-0 w-full h-full object-cover"
             />

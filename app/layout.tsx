@@ -76,10 +76,6 @@ export const metadata = {
     follow: true,
   },
 
-  verification: {
-    google: "iYKOhXEC4XjkkIKgKZzvAmLnQtaQsCHa8-HREmlTjU8",
-  },
-
   manifest: "/manifest.json",
 
   icons: {
@@ -110,7 +106,7 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/main_logo.png",
+        url: "/heroImage.png",
         width: 1200,
         height: 630,
       },
@@ -122,7 +118,7 @@ export const metadata = {
     title: "AnceStory • Local Stories, Lasting Impressions",
     description:
       "Discover and preserve local stories, places, and memories with AnceStory. Explore stories from communities, learn about meaningful places, and share the experiences that shape local heritage.",
-    images: "/main_logo.png",
+    images: "/heroImage.png",
   },
 
   metadataBase: new URL("https://ancestory.site"),

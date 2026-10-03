@@ -1,5 +1,5 @@
 "use client";
-import HeroImg from "@/assets/hero-img.png";
+import HeroImg from "@/assets/heroImage.png";
 import CTAButton from "@/components/buttons/ctaButton";
 import RegularButton from "@/components/buttons/regularButton";
 import Image from "next/image";
