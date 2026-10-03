@@ -62,7 +62,7 @@ export default function UserPlaces() {
 
   return (
     <div className="w-full h-full">
-      <div ref={mapRef} className="h-[40vh] lg:h-full w-full mt-4" />
+      <div ref={mapRef} className="h-[40vh] z-50 lg:h-full w-full mt-4" />
     </div>
   );
 }

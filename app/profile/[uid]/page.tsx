@@ -94,7 +94,7 @@ export default function UserProfile() {
                     {profileUser?.name}
                   </p>
                   {profileUser?.bio && (
-                    <p className="text-sm text-muted italic">
+                    <p className="text-sm text-brown italic">
                       {profileUser?.bio}
                     </p>
                   )}
