@@ -15,7 +15,7 @@ export default function Stories() {
   }, [setIsLoading]);
 
   return (
-    <div className="w-full p-8 md:px-16 lg:px-32 xl:px-64 py-16">
+    <div className="w-full p-8 md:px-16 lg:px-32 xl:px-64 py-24">
       <div className="mt-4">
         <h1 className="text-lg leading-tight">All Stories</h1>
         <p className="text-base text-muted mt-2">

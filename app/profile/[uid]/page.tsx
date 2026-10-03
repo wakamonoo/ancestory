@@ -68,7 +68,7 @@ export default function UserProfile() {
 
   return (
     <>
-      <div className="w-full p-8 md:px-16 lg:px-32 xl:px-64 py-16">
+      <div className="w-full  py-24">
         <div className="relative">
           <div className="relative min-h-64 max-h-84 overflow-hidden">
             <img
@@ -81,7 +81,7 @@ export default function UserProfile() {
             {profileUserLoading ? (
               <UserInfoLoader />
             ) : (
-              <div className="relative flex items-center gap-4 min-h-64 max-h-84 px-8">
+              <div className="relative p-8 md:px-16 lg:px-32 xl:px-64 flex items-center gap-4 min-h-64 max-h-84">
                 <div className="w-32 h-32 shrink-0 rounded-full overflow-hidden">
                   <img
                     src={profileUser?.profilePicture}
@@ -124,7 +124,7 @@ export default function UserProfile() {
             </div>
           )}
         </div>
-        <div className="mt-4 grid grid-cols-1 lg:grid-cols-[2.5fr_1.5fr] items-stretch gap-4 lg:gap-8">
+        <div className="mt-4 p-8 md:px-16 lg:px-32 xl:px-64 grid grid-cols-1 lg:grid-cols-[2.5fr_1.5fr] items-stretch gap-4 lg:gap-8">
           <div>
             <p className="font-alt font-semibold uppercase text-base text-brown">
               {profileUser?.uid === user?.uid

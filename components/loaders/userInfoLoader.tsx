@@ -2,7 +2,7 @@ import { FaImage } from "react-icons/fa";
 
 export default function UserInfoLoader() {
   return (
-    <div className="relative flex items-center gap-4 min-h-64 max-h-84 px-8 animate-pulse">
+    <div className="relative p-8 md:px-16 lg:px-32 xl:px-64 flex items-center gap-4 min-h-64 max-h-84 animate-pulse">
       <div className="flex items-center justify-center w-32 h-32 rounded-full bg-second overflow-hidden shrink-0">
         <FaImage className="text-4xl text-(--color-panel)" />
       </div>
