@@ -1,7 +1,8 @@
 import AboutImage1 from "@/assets/aboutImage1.png";
 import AboutImage2 from "@/assets/aboutImage2.png";
 import AboutImage3 from "@/assets/aboutImage3.png";
-import ScratchedImage from "@/assets/scratchedImage.png";
+import ScratchedImage1 from "@/assets/scratchedImage1.png";
+import ScratchedImage2 from "@/assets/scratchedImage2.png";
 import Image from "next/image";
 import Icon from "@/assets/icon.png";
 import { BiLeaf } from "react-icons/bi";
@@ -25,7 +26,7 @@ export default function About() {
   return (
     <div id="about" className="w-full py-16">
       <div className="relative w-full h-72">
-        <div className="inset-0 w-full h-72">
+        <div className="inset-0 w-full h-72 pointer-events-none">
           <Image
             src={AboutImage1}
             alt="About Image"
@@ -57,7 +58,7 @@ export default function About() {
         </div>
       </div>
       <div className="relative bg-olive w-full h-full">
-        <div className="inset-0 w-full h-auto opacity-15">
+        <div className="inset-0 w-full h-auto opacity-15 pointer-events-none">
           <Image
             src={AboutImage2}
             alt="About Image"
@@ -76,7 +77,9 @@ export default function About() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-start divide-y sm:divide-y-0 sm:divide-x divide-(--color-panel)/60">
               <div className="relative p-4 w-fit flex flex-col items-center justify-center">
                 <div className="absolute top-4 left-12">
-                  <h1 className="text-(--color-bg)/80 text-lg leading-tight mt-2">01</h1>
+                  <h1 className="text-(--color-bg)/80 text-lg leading-tight mt-2">
+                    01
+                  </h1>
                 </div>
                 <div className="flex flex-col gap-2 items-center justify-center">
                   <BiLeaf className="text-4xl shrink-0 text-(--color-bg)/80" />
@@ -91,7 +94,9 @@ export default function About() {
               </div>
               <div className="relative p-4 w-fit flex flex-col items-center justify-center">
                 <div className="absolute top-4 left-12">
-                  <h1 className="text-(--color-bg)/80 text-lg leading-tight mt-2">02</h1>
+                  <h1 className="text-(--color-bg)/80 text-lg leading-tight mt-2">
+                    02
+                  </h1>
                 </div>
                 <div className="flex flex-col gap-2 items-center justify-center">
                   <BsHouseFill className="text-4xl shrink-0 text-(--color-bg)/80" />
@@ -107,7 +112,9 @@ export default function About() {
               </div>
               <div className="relative p-4 w-fit flex flex-col items-center justify-center">
                 <div className="absolute top-4 left-12">
-                  <h1 className="text-(--color-bg)/80 text-lg leading-tight mt-2">03</h1>
+                  <h1 className="text-(--color-bg)/80 text-lg leading-tight mt-2">
+                    03
+                  </h1>
                 </div>
                 <div className="flex flex-col gap-2 items-center justify-center">
                   <FaChildReaching className="text-4xl shrink-0 text-(--color-bg)/80" />
@@ -133,13 +140,25 @@ export default function About() {
           backgroundSize: "140px 140px",
         }}
       >
-        <div className="absolute top-1/2 -translate-y-1/2 -right-4 w-[70%] sm:w-[60%] md:w-1/2 h-auto">
-          <Image
-            src={ScratchedImage}
-            alt="About Image"
-            className="w-full h-full object-right"
-          />
+        <div className="absolute flex w-full top-1/2 -translate-y-1/2 -right-14 pointer-events-none">
+          <div className="flex w-full justify-end items-center">
+            <div className="w-[80%] sm:w-[60%] md:w-[40%] sm:mt-8 lg:mt-24 xl:mt-32 2xl:mt-44">
+              <Image
+                src={ScratchedImage1}
+                alt="About Image"
+                className="w-full h-auto object-cover"
+              />
+            </div>
+            <div className="w-[80%] sm:w-[60%] md:w-[40%] -ml-24 lg:-ml-32 xl:-ml-44 2xl:-ml-50">
+              <Image
+                src={ScratchedImage2}
+                alt="About Image"
+                className="w-full h-auto object-cover"
+              />
+            </div>
+          </div>
         </div>
+
         <div className="absolute inset-0 bg-linear-to-r from-(accent) via-(--color-accent) lg:via-(--color-accent)/10 to-transparent" />
         <div className="relative max-w-5xl p-8 md:px-16 lg:px-32 xl:px-64">
           <div className="flex gap-2 items-center">
@@ -161,7 +180,7 @@ export default function About() {
       </div>
 
       <div className="relative w-full bg-second  p-8 md:px-16 lg:px-32 xl:px-64">
-        <div className="inset-0 w-full h-auto opacity-15">
+        <div className="inset-0 w-full h-auto opacity-15 pointer-events-none">
           <Image
             src={AboutImage3}
             alt="About Image"
