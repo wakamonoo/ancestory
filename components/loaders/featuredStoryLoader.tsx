@@ -7,7 +7,7 @@ export default function FeaturedStoryLoader() {
         <FaImage className="text-4xl text-(--color-panel)" />
       </div>
       <div className="w-full flex flex-col">
-        <div className="my-2 h-10 w-32 bg-second rounded" />
+        <div className="h-8 w-32 bg-second rounded" />
         <div className="my-4 flex flex-wrap gap-x-8 gap-y-2">
           <div className="flex items-center gap-2">
             <div className="h-5 w-5 bg-second" />

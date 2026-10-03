@@ -42,10 +42,30 @@ export default function Discover() {
   return (
     <div id="discover" className="w-full gap-2 py-16">
       <div className="flex flex-col">
-        <div className="w-full flex justify-between">
-         <p className="font-alt font-semibold uppercase text-base text-brown tracking-widest">
-            From the archive
-          </p>
+        <p className="font-alt font-semibold uppercase text-base text-brown tracking-widest">
+          From the archive
+        </p>
+        <h1 className="text-lg leading-tight">Stories from Every Corner.</h1>
+        <p className="text-base text-muted mt-2">
+          Discover stories from different places, people, and generations, each
+          offering a glimpse into the places they come from.
+        </p>
+
+        {storiesLoading ? (
+          <div className="mt-8 w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-2">
+            <StoryCardLoader />
+            <StoryCardLoader />
+          </div>
+        ) : stories.length === 0 ? (
+          <EmptyStories />
+        ) : (
+          <div className="mt-8 w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-2">
+            {stories.slice(0, visibleCount).map((story) => {
+              return <StoryCard key={story.storyId} story={story} />;
+            })}
+          </div>
+        )}
+        <div className="mt-8 flex justify-end">
           {stories.length > 0 && (
             <TransparentButton
               onClick={() => {
@@ -60,21 +80,6 @@ export default function Discover() {
             </TransparentButton>
           )}
         </div>
-
-        {storiesLoading ? (
-          <div className="mt-8 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-            <StoryCardLoader />
-            <StoryCardLoader />
-          </div>
-        ) : stories.length === 0 ? (
-          <EmptyStories />
-        ) : (
-          <div className="mt-8 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {stories.slice(0, visibleCount).map((story) => {
-              return <StoryCard key={story.storyId} story={story} />;
-            })}
-          </div>
-        )}
       </div>
     </div>
   );

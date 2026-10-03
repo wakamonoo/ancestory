@@ -137,7 +137,7 @@ export default function StoryPage() {
                 ))}
               </div>
               <div className="my-4">
-                <h1 className="text-4xl">{story.title}</h1>
+                <h1 className="text-2xl">{story.title}</h1>
               </div>
               <div className="flex flex-wrap items-center gap-x-4">
                 <div className="flex items-center gap-2">
@@ -176,7 +176,7 @@ export default function StoryPage() {
           <div className="my-4 lg:my-0 flex gap-4 items-center border-y border-(--color-accent)/10 py-4">
             {allUsersLoading || !contributor ? (
               <div className="flex items-center justify-center w-24 h-24 shrink-0 rounded-full bg-second animate-pulse">
-                <FaImage className="text-4xl text-(--color-panel)" />
+                <FaImage className="text-lg text-(--color-panel)" />
               </div>
             ) : (
               <div
@@ -298,7 +298,7 @@ export default function StoryPage() {
                 </TransparentButton>
               )}
             </div>
-            <div className="mt-4 w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-8">
+            <div className="mt-4 w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-1 xl:grid-cols-2 gap-y-4 gap-x-2">
               {storyDetailsLoading ? (
                 <>
                   <StoryCardLoader />

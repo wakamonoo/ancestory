@@ -66,7 +66,7 @@ export default function Places() {
           <p className="font-alt font-semibold uppercase text-base text-brown tracking-widest">
             Explore by place
           </p>
-          <h1 className="text-2xl">Find stories from these places</h1>
+          <h1 className="text-lg leading-tight">Find stories from these places</h1>
           <p className="text-base text-muted mt-2">
             Each place has its own rhythm, people, and stories. Explore what
             makes them unique through the voices of those who call them home.

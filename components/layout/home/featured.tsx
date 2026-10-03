@@ -55,9 +55,7 @@ export default function Featured() {
             />
           </div>
           <div className="w-full flex flex-col">
-            <div className="my-2 md:mt-0">
-              <h1 className="text-4xl text-normal">{featuredStory.title}</h1>
-            </div>
+            <h1 className="text-2xl text-normal">{featuredStory.title}</h1>
             <div className="my-4 flex flex-wrap gap-x-8 gap-y-2">
               <div className="flex items-center gap-2">
                 <LuMapPin className="text-sm text-muted shrink-0" />

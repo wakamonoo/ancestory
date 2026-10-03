@@ -1,19 +1,15 @@
-import Cover from "@/assets/cover.png";
 import AboutImage1 from "@/assets/aboutImage1.png";
 import AboutImage2 from "@/assets/aboutImage2.png";
+import AboutImage3 from "@/assets/aboutImage3.png";
 import ScratchedImage from "@/assets/scratchedImage.png";
-import Fill from "@/assets/black-paper.png";
 import Image from "next/image";
 import Icon from "@/assets/icon.png";
-import Texttile from "@/assets/low-contrast-linen.png";
 import { BiLeaf } from "react-icons/bi";
 import { BsHouse, BsHouseFill, BsPeopleFill } from "react-icons/bs";
 import { FaChildReaching, FaPeopleGroup } from "react-icons/fa6";
 import SecondaryButton from "@/components/buttons/secondaryButton";
 import RegularButton from "@/components/buttons/regularButton";
 import { FaArrowRight } from "react-icons/fa";
-import { useRouter } from "next/navigation";
-import { useLoader } from "@/context/loaderContext";
 import { useNavigation } from "@/context/navigationContext";
 import { useStory } from "@/context/storyContext";
 import { useUser } from "@/context/userContext";
@@ -31,7 +27,7 @@ export default function About() {
       <div className="relative w-full h-72">
         <div className="inset-0 w-full h-72">
           <Image
-            src={Cover}
+            src={AboutImage1}
             alt="About Image"
             fill
             className="w-full h-full object-cover"
@@ -47,7 +43,7 @@ export default function About() {
               <div className="w-32 h-px bg-(--color-panel)/60" />
             </div>
 
-            <h1 className="mt-4 text-2xl text-(--color-panel)">
+            <h1 className="mt-4 text-lg leading-tight text-(--color-panel)">
               The stories behind where we come from.
             </h1>
             <p className="mt-2 text-base text-(--color-bg)/80 leading-tight">
@@ -63,7 +59,7 @@ export default function About() {
       <div className="relative bg-olive w-full h-full">
         <div className="inset-0 w-full h-auto opacity-15">
           <Image
-            src={AboutImage1}
+            src={AboutImage2}
             alt="About Image"
             fill
             className="w-full h-full object-cover"
@@ -80,7 +76,7 @@ export default function About() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-start divide-y sm:divide-y-0 sm:divide-x divide-(--color-panel)/60">
               <div className="relative p-4 w-fit flex flex-col items-center justify-center">
                 <div className="absolute top-4 left-12">
-                  <h1 className="text-(--color-bg)/80 text-lg mt-2">01</h1>
+                  <h1 className="text-(--color-bg)/80 text-lg leading-tight mt-2">01</h1>
                 </div>
                 <div className="flex flex-col gap-2 items-center justify-center">
                   <BiLeaf className="text-4xl shrink-0 text-(--color-bg)/80" />
@@ -95,7 +91,7 @@ export default function About() {
               </div>
               <div className="relative p-4 w-fit flex flex-col items-center justify-center">
                 <div className="absolute top-4 left-12">
-                  <h1 className="text-(--color-bg)/80 text-lg mt-2">02</h1>
+                  <h1 className="text-(--color-bg)/80 text-lg leading-tight mt-2">02</h1>
                 </div>
                 <div className="flex flex-col gap-2 items-center justify-center">
                   <BsHouseFill className="text-4xl shrink-0 text-(--color-bg)/80" />
@@ -111,7 +107,7 @@ export default function About() {
               </div>
               <div className="relative p-4 w-fit flex flex-col items-center justify-center">
                 <div className="absolute top-4 left-12">
-                  <h1 className="text-(--color-bg)/80 text-lg mt-2">03</h1>
+                  <h1 className="text-(--color-bg)/80 text-lg leading-tight mt-2">03</h1>
                 </div>
                 <div className="flex flex-col gap-2 items-center justify-center">
                   <FaChildReaching className="text-4xl shrink-0 text-(--color-bg)/80" />
@@ -132,7 +128,7 @@ export default function About() {
       <div
         className="relative bg-accent w-full overflow-hidden"
         style={{
-          backgroundImage: `url(${Texttile.src})`,
+          backgroundImage: `url(${Arabasque.src})`,
           backgroundRepeat: "repeat",
           backgroundSize: "140px 140px",
         }}
@@ -153,7 +149,7 @@ export default function About() {
             <div className="w-32 h-px bg-(--color-panel)/60" />
           </div>
 
-          <h1 className="mt-4 text-2xl text-(--color-panel)">
+          <h1 className="mt-4 text-lg leading-tight text-(--color-panel)">
             What happens to a story when there is no one left to tell it?
           </h1>
           <p className="mt-2 text-base text-(--color-bg)/80 leading-tight">
@@ -167,7 +163,7 @@ export default function About() {
       <div className="relative w-full bg-second  p-8 md:px-16 lg:px-32 xl:px-64">
         <div className="inset-0 w-full h-auto opacity-15">
           <Image
-            src={AboutImage2}
+            src={AboutImage3}
             alt="About Image"
             fill
             className="w-full h-full object-cover"
@@ -224,7 +220,7 @@ export default function About() {
               </div>
             </div>
             <div className="pl-4">
-              <h1 className="text-2xl text-brown">
+              <h1 className="text-lg leading-tight text-brown">
                 AnceStory was created to give those stories somewhere to remain.
               </h1>
             </div>
@@ -236,7 +232,7 @@ export default function About() {
         <div className="flex flex-col items-start justify-center p-8 md:px-16 lg:px-32 xl:px-64">
           <div className="flex flex-col items-start">
             <div className="w-32 h-px bg-(--color-muted)/60" />
-            <h1 className="mt-4 text-2xl text-brown">
+            <h1 className="mt-4 text-lg leading-tight text-brown">
               There are still stories waiting to be remembered.
             </h1>
             <p className="mt-2 text-base text-muted leading-tight">

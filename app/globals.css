@@ -183,12 +183,12 @@
 .story-content::first-letter {
   float: left;
   font-family: var(--font-heading), serif;
-  font-size: 4rem;
+  font-size: 2rem;
   font-weight: 200;
   line-weight: 0.75;
   line-height: 0.08;
   padding-right: 0.12em;
-  padding-top: 0.5em;
-  margin-bottom: -0.05em;
+  padding-top: 0.6em;
+  margin-bottom: -0.06em;
   color: var(--color-text);
 }

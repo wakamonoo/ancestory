@@ -17,7 +17,11 @@ export default function Contributors() {
       <p className="font-alt font-semibold uppercase text-base text-brown tracking-widest">
         Our Contributors
       </p>
-      <h1 className="text-2xl">Real people. Shared stories.</h1>
+      <h1 className="text-lg leading-tight">Real people. Shared stories.</h1>
+      <p className="text-base text-muted mt-2">
+        Every story has a voice behind it. Meet the people who share the
+        memories, knowledge, and stories connected to the places they know.
+      </p>
       {allUsersLoading ? (
         <div className="mt-8 flex gap-4 overflow-x-auto">
           <ContributorLoader />
