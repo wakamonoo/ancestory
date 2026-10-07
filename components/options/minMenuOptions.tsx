@@ -76,7 +76,7 @@ export default function MinMenuOptionsOptions({
             <p className="text-sm">Contributors</p>
           </MenuButton>
           <MenuButton onClick={handleAboutClick}>
-            <LuLink className="text-sm" />
+            <FaInfoCircle className="text-sm" />
             <p className="text-sm">About</p>
           </MenuButton>
         </div>
